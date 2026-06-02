@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Track Shipment — Stackly Transport</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/tracking.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=200&h=80&output=webp&q=80&fit=inside"
+             alt="LogiFlow by Stackly" width="160" height="44" />
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="tracking.html" class="active">Tracking</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <a href="404.html" class="btn-primary nav-cta">Get a Quote</a>
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+    <!-- ═══ MOBILE MENU PANEL ═══ -->
+  <div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Navigation menu">
+    <div class="mobile-menu-panel">
+      <div class="menu-panel-header">
+        <a href="index.html" class="menu-panel-logo">
+          <img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=200&h=80&output=webp&q=80&fit=inside" alt="LogiFlow" width="130" height="36" />
+        </a>
+        <button class="menu-close-btn" aria-label="Close menu">✕</button>
+      </div>
+      <nav class="menu-nav-links">
+        <a href="index.html">Home <span class="menu-arrow">→</span></a>
+        <a href="services.html">Services <span class="menu-arrow">→</span></a>
+        <a href="tracking.html" class="active">Tracking <span class="menu-arrow">→</span></a>
+        <a href="about.html">About <span class="menu-arrow">→</span></a>
+        <a href="contact.html">Contact <span class="menu-arrow">→</span></a>
+      </nav>
+      <div class="menu-panel-footer">
+        <a href="contact.html" class="btn-primary mobile-cta-btn">Get a Free Quote →</a>
+        <div class="menu-contact-info">
+          <div class="menu-contact-item"><span>📞</span><span>+91 22 4000 1234</span></div>
+          <div class="menu-contact-item"><span>✉️</span><span>info@logiflow.com</span></div>
+        </div>
+        <div class="mobile-socials">
+          <a href="404.html">in</a><a href="404.html">𝕏</a><a href="404.html">f</a>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="mobile-socials"><a href="#">LinkedIn</a><a href="#">Twitter</a><a href="#">Facebook</a></div>
+  </div>
+
+  <!-- HERO — track search -->
+  <section class="track-hero">
+    <div class="hero-slider-wrap">
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1508361001413-7a9dca21d08a?w=1600&fm=webp')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600&fm=webp')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1568952433726-3896e3881c65?w=1600&fm=webp')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=1600&fm=webp')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1465447142348-e9952c393450?w=1600&fm=webp')"></div>
+    </div>
+    <div class="track-overlay"></div>
+    <div class="container track-hero-content">
+      <span class="section-label" style="color:var(--orange-lt)">Live Tracking</span>
+      <h1 class="track-title">Where Is<br>Your Cargo?</h1>
+      <p class="track-sub">Enter your tracking ID or booking reference below to see real-time location and status updates.</p>
+
+      <!-- Search Box -->
+      <div class="track-box">
+        <div class="track-tabs">
+          <button class="ttab active" data-tab="tracking">Tracking ID</button>
+          <button class="ttab" data-tab="booking">Booking Ref</button>
+          <button class="ttab" data-tab="container">Container No.</button>
+        </div>
+        <div class="track-input-row">
+          <input type="text" id="trackingInput" class="track-input" placeholder="e.g. LF-2025-048291" maxlength="30" />
+          <button class="btn-primary track-btn" id="trackBtn">Track Now →</button>
+        </div>
+        <div class="track-examples">
+          Try: <button class="ex-link" onclick="fillDemo('LF-2025-048291')">LF-2025-048291</button> ·
+             <button class="ex-link" onclick="fillDemo('BK-78432-A')">BK-78432-A</button>
+        </div>
+      </div>
+
+      <div class="slider-dots" style="margin-top:24px"></div>
+    </div>
+  </section>
+
+  <!-- TRACKING RESULT (shown after demo) -->
+  <section class="section" id="trackResult" style="display:none">
+    <div class="container">
+      <div class="result-header">
+        <div>
+          <span class="section-label">Tracking Result</span>
+          <h2 class="section-title" style="font-size:28px">Shipment #<span id="resultId">LF-2025-048291</span></h2>
+        </div>
+        <span class="status-pill in-transit">● In Transit</span>
+      </div>
+
+      <div class="result-grid">
+        <!-- Map placeholder -->
+        <div class="result-map">
+          <img src="https://images.unsplash.com/photo-1569336415962-a4bd9f69c054?w=800&fm=webp" alt="Route map" />
+          <div class="map-pin origin">📍 Mumbai</div>
+          <div class="map-pin dest">🏁 Frankfurt</div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="result-timeline">
+          <h3>Shipment Timeline</h3>
+          <div class="tl-list">
+            <div class="tl-item done"><div class="tl-dot done"></div><div><strong>Picked Up</strong><p>Mumbai Warehouse, IN · 14 Jan 09:00</p></div></div>
+            <div class="tl-item done"><div class="tl-dot done"></div><div><strong>Departed Origin</strong><p>Mumbai Port, IN · 14 Jan 18:30</p></div></div>
+            <div class="tl-item done"><div class="tl-dot done"></div><div><strong>In Transit — Suez Canal</strong><p>International Waters · 19 Jan 03:15</p></div></div>
+            <div class="tl-item active"><div class="tl-dot active pulse"></div><div><strong>Currently at Port Said, Egypt</strong><p>Estimated departure: 21 Jan 2025</p></div></div>
+            <div class="tl-item"><div class="tl-dot pending"></div><div><strong>Arrived Hamburg Port</strong><p>Expected: 28 Jan 2025</p></div></div>
+            <div class="tl-item"><div class="tl-dot pending"></div><div><strong>Customs Clearance Frankfurt</strong><p>Expected: 29 Jan 2025</p></div></div>
+            <div class="tl-item"><div class="tl-dot pending"></div><div><strong>Delivered to Recipient</strong><p>Expected: 30 Jan 2025</p></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shipment details -->
+      <div class="detail-cards">
+        <div class="detail-card"><div class="dc-label">Origin</div><div class="dc-val">Mumbai, India</div></div>
+        <div class="detail-card"><div class="dc-label">Destination</div><div class="dc-val">Frankfurt, Germany</div></div>
+        <div class="detail-card"><div class="dc-label">Service</div><div class="dc-val">Ocean FCL</div></div>
+        <div class="detail-card"><div class="dc-label">Container</div><div class="dc-val">MSCU4829103</div></div>
+        <div class="detail-card"><div class="dc-label">Weight</div><div class="dc-val">12,400 kg</div></div>
+        <div class="detail-card"><div class="dc-label">ETA</div><div class="dc-val">30 Jan 2025</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES STRIP -->
+  <section class="section section-alt">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:48px">
+        <span class="section-label">Our Tracking Platform</span>
+        <h2 class="section-title">Visibility That Never Sleeps</h2>
+      </div>
+      <div class="track-features">
+        <div class="tf-card"><div class="tf-icon">🛰️</div><h4>GPS Live Location</h4><p>Your shipment's exact position updated every 5 minutes on an interactive map.</p></div>
+        <div class="tf-card"><div class="tf-icon">📱</div><h4>SMS & Email Alerts</h4><p>Automatic milestone notifications for departure, customs, and delivery.</p></div>
+        <div class="tf-card"><div class="tf-icon">📄</div><h4>Document Hub</h4><p>Download bills of lading, invoices, and delivery proofs from one portal.</p></div>
+        <div class="tf-card"><div class="tf-icon">🔗</div><h4>API Integration</h4><p>Embed tracking data directly into your ERP or customer portal via REST API.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+   <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo"><a href="index.html"><img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=200&h=80&output=webp&q=80&fit=inside" alt="Stackly LogiFlow" width="140" /></a></div>
+          <p>An end-to-end logistics platform rooted in technology, driven by precision. Every shipment, every mile — handled with care since 2008.</p>
+          <div class="footer-social"><a href="404.html">in</a><a href="404.html">𝕏</a><a href="404.html">f</a><a href="404.html">▶</a></div>
+        </div>
+        <div class="footer-col"><h4>Explore</h4><ul><li><a href="index.html">Home</a></li><li><a href="services.html">Our Services</a></li><li><a href="tracking.html">Track Shipment</a></li><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+        <div class="footer-col"><h4>Services</h4><ul><li><a href="services.html">Road Freight</a></li><li><a href="services.html">Air Freight</a></li><li><a href="services.html">Ocean Freight</a></li><li><a href="services.html">Warehousing</a></li><li><a href="services.html">Cold Chain</a></li></ul></div>
+        <div class="footer-col"><h4>Contact Us</h4><ul><li><a href="404.html">Level 12, One BKC Tower, Mumbai</a></li><li><a href="404.html">+91 22 4000 1234</a></li><li><a href="404.html">info@logiflow.com</a></li><li><a href="404.html">Mon–Fri: 8am – 8pm IST</a></li><li><a href="404.html">24/7 Emergency Line</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Stackly Logistics — Powered by Stackly. All rights reserved.</p>
+        <div class="footer-bottom-logo"><img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=200&h=80&output=webp&q=80&fit=inside" alt="Stackly" width="80" /></div>
+        <p>Privacy Policy · Terms of Service · Cookie Settings</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/tracking.js"></script>
+</body>
+</html>

@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Logistics & Transport | Powered by Stackly</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+    /* ─── HOME-SPECIFIC STYLES ─── */
+    .cat-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 16px; margin-top: 56px;
+    }
+    .cat-card {
+      position: relative; border-radius: var(--radius-lg); overflow: hidden;
+      cursor: pointer; display: block; text-decoration: none;
+    }
+    .cat-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s ease; }
+    .cat-card:hover img { transform: scale(1.07); }
+    .cat-big { grid-row: 1 / 3; min-height: 480px; }
+    .cat-small { min-height: 220px; }
+    .cat-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(28,28,28,0.75) 0%, rgba(28,28,28,0.1) 60%, transparent 100%);
+      transition: opacity 0.4s;
+    }
+    .cat-card:hover .cat-overlay { opacity: 0.9; }
+    .cat-label { position: absolute; bottom: 24px; left: 24px; }
+    .cat-label h4 { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .cat-label span { font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 600; }
+    .cat-arrow {
+      position: absolute; top: 20px; right: 20px;
+      width: 38px; height: 38px; background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: #fff; transition: var(--transition);
+    }
+    .cat-card:hover .cat-arrow { background: var(--orange); transform: rotate(45deg); }
+
+    .who-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+    .who-img-wrap { position: relative; }
+    .who-img-main { border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg); }
+    .who-img-main img { width: 100%; height: 520px; object-fit: cover; display: block; }
+    .who-img-badge {
+      position: absolute; bottom: -24px; right: -20px;
+      background: var(--orange); color: #fff; border-radius: var(--radius-lg);
+      padding: 22px 28px; box-shadow: var(--shadow-lg);
+    }
+    .who-img-badge .badge-num { font-family: var(--font-display); font-size: 44px; font-weight: 800; line-height: 1; display: block; }
+    .who-img-badge .badge-txt { font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: 0.08em; opacity: 0.88; }
+    .who-feats { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 32px 0 36px; }
+    .who-feat { background: var(--cream); border-radius: var(--radius-md); padding: 20px 18px; transition: var(--transition); }
+    .who-feat:hover { background: rgba(232,99,26,0.07); transform: translateY(-3px); }
+    .who-feat .wf-emoji { font-size: 28px; margin-bottom: 10px; }
+    .who-feat strong { display: block; font-family: var(--font-display); font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+    .who-feat p { font-size: 12px; color: var(--mid-gray); line-height: 1.5; }
+
+    .featured-grid { display: flex; gap: 24px; overflow: hidden; position: relative; }
+    .feat-track { display: flex; gap: 24px; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); }
+    .feat-card {
+      flex: 0 0 calc(33.333% - 16px); background: var(--white);
+      border-radius: var(--radius-lg); overflow: hidden;
+      box-shadow: var(--shadow-sm); transition: var(--transition); position: relative;
+    }
+    .feat-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
+    .feat-img { position: relative; overflow: hidden; }
+    .feat-img img { width: 100%; height: 220px; object-fit: cover; transition: transform 0.6s ease; display: block; }
+    .feat-card:hover .feat-img img { transform: scale(1.06); }
+    .feat-badge {
+      position: absolute; top: 14px; left: 14px;
+      background: var(--orange); color: #fff;
+      padding: 5px 12px; border-radius: 100px;
+      font-family: var(--font-display); font-size: 11px; font-weight: 800;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .feat-badge.new-badge { background: var(--steel); }
+    .feat-body { padding: 22px 22px 26px; }
+    .feat-service { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange); margin-bottom: 8px; }
+    .feat-body h4 { font-family: var(--font-display); font-size: 18px; font-weight: 800; margin-bottom: 8px; color: var(--charcoal); }
+    .feat-body p { font-size: 13px; color: var(--mid-gray); line-height: 1.65; margin-bottom: 18px; }
+    .feat-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--warm-tan); padding-top: 16px; }
+    .feat-eta { font-family: var(--font-display); font-size: 13px; font-weight: 800; color: var(--charcoal); }
+    .feat-eta span { font-size: 11px; color: var(--mid-gray); font-weight: 400; display: block; }
+    .feat-add {
+      width: 36px; height: 36px; background: var(--orange); color: #fff;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 300; transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      text-decoration: none;
+    }
+    .feat-add:hover { background: var(--orange-dk); transform: scale(1.18) rotate(90deg); }
+    .feat-nav { display: flex; justify-content: center; gap: 12px; margin-top: 36px; }
+    .feat-btn {
+      width: 48px; height: 48px; border-radius: 50%;
+      border: 2px solid var(--warm-tan); background: var(--white);
+      font-size: 18px; color: var(--charcoal); transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .feat-btn:hover { border-color: var(--orange); background: var(--orange); color: #fff; transform: scale(1.1); }
+
+    .process-steps { display: flex; align-items: flex-start; gap: 0; position: relative; margin-top: 64px; }
+    .process-steps::before {
+      content: ''; position: absolute; top: 38px; left: 8%; right: 8%; height: 2px;
+      background: linear-gradient(90deg, var(--orange), var(--steel)); z-index: 0;
+    }
+    .step { flex: 1; text-align: center; padding: 0 16px; position: relative; z-index: 1; }
+    .step-num {
+      width: 76px; height: 76px; border-radius: 50%;
+      background: var(--white); border: 3px solid var(--orange);
+      font-family: var(--font-display); font-size: 22px; font-weight: 800;
+      color: var(--orange); display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; box-shadow: var(--shadow-md); transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .step:hover .step-num { background: var(--orange); color: #fff; transform: scale(1.12); }
+    .step-icon { font-size: 28px; margin-bottom: 8px; }
+    .step h4 { font-family: var(--font-display); font-size: 16px; font-weight: 800; margin-bottom: 8px; }
+    .step p { font-size: 13px; color: var(--mid-gray); line-height: 1.6; }
+    .step-arrow { font-size: 20px; color: var(--lt-gray); padding-top: 28px; flex-shrink: 0; display: none; }
+
+    .industry-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+    .ind-card { border-radius: var(--radius-lg); overflow: hidden; position: relative; box-shadow: var(--shadow-md); transition: var(--transition); }
+    .ind-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
+    .ind-img { position: relative; }
+    .ind-img img { width: 100%; height: 240px; object-fit: cover; display: block; transition: transform 0.6s ease; }
+    .ind-card:hover .ind-img img { transform: scale(1.05); }
+    .ind-tag { position: absolute; top: 16px; left: 16px; background: var(--orange); color: #fff; padding: 5px 14px; border-radius: 100px; font-family: var(--font-display); font-size: 11px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+    .ind-body { background: var(--white); padding: 24px 24px 28px; }
+    .ind-meta { font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--mid-gray); letter-spacing: 0.06em; margin-bottom: 10px; }
+    .ind-body h3 { font-family: var(--font-display); font-size: 20px; font-weight: 800; margin-bottom: 10px; }
+    .ind-body p { font-size: 13px; color: var(--mid-gray); line-height: 1.65; margin-bottom: 18px; }
+    .ind-spots { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--orange); margin-bottom: 14px; }
+    .ind-cta { display: flex; align-items: center; justify-content: space-between; }
+    .ind-price { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--charcoal); }
+    .ind-price small { font-size: 13px; color: var(--mid-gray); font-weight: 400; }
+    .ind-gift-banner {
+      background: linear-gradient(135deg, var(--steel) 0%, var(--steel-dk) 100%);
+      border-radius: var(--radius-lg); padding: 32px 36px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 32px; flex-wrap: wrap; gap: 20px;
+    }
+    .ind-gift-banner .gift-icon { font-size: 36px; }
+    .ind-gift-banner h4 { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .ind-gift-banner p { font-size: 13px; color: rgba(255,255,255,0.7); }
+
+    .testimonials { background: var(--cream); }
+    .testi-layout { display: grid; grid-template-columns: 1fr 1.4fr; gap: 56px; align-items: center; margin-top: 56px; }
+    .testi-img-col { border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg); }
+    .testi-img-col img { width: 100%; height: 520px; object-fit: cover; display: block; }
+    .testi-slide { background: var(--white); border-radius: var(--radius-lg); padding: 32px; box-shadow: var(--shadow-sm); display: none; }
+    .testi-slide.active { display: block; animation: fadeInUp 0.5s ease; }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    .testi-stars { color: #f59e0b; font-size: 18px; letter-spacing: 2px; margin-bottom: 16px; }
+    .testi-quote { font-size: 17px; color: var(--charcoal); line-height: 1.75; font-style: italic; margin-bottom: 24px; }
+    .testi-author { display: flex; align-items: center; gap: 14px; }
+    .ta-name { font-family: var(--font-display); font-size: 15px; font-weight: 800; display: block; }
+    .ta-role { font-size: 12px; color: var(--mid-gray); }
+    .testi-controls { display: flex; gap: 10px; margin-top: 24px; }
+    .testi-dot-btn { width: 10px; height: 10px; border-radius: 50%; background: var(--warm-tan); border: none; cursor: pointer; transition: var(--transition); }
+    .testi-dot-btn.active { background: var(--orange); width: 28px; border-radius: 5px; }
+    .testi-arrows { display: flex; gap: 10px; margin-top: 16px; }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, 200px);
+      gap: 10px; margin-top: 20px;
+    }
+    .gal-item { border-radius: var(--radius-md); overflow: hidden; position: relative; cursor: pointer; }
+    .gal-item:nth-child(1) { grid-column: 1; grid-row: 1; }
+    .gal-item:nth-child(2) { grid-column: 2; grid-row: 1 / 3; }
+    .gal-item:nth-child(3) { grid-column: 3; grid-row: 1; }
+    .gal-item:nth-child(4) { grid-column: 4; grid-row: 1; }
+    .gal-item:nth-child(5) { grid-column: 1; grid-row: 2; }
+    .gal-item:nth-child(6) { grid-column: 3; grid-row: 2; }
+    .gal-item:nth-child(7) { grid-column: 4; grid-row: 2; }
+    .gal-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; display: block; }
+    .gal-item:hover img { transform: scale(1.08); }
+    .gal-hover { position: absolute; inset: 0; background: rgba(232,99,26,0.7); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; font-size: 28px; }
+    .gal-item:hover .gal-hover { opacity: 1; }
+
+    .newsletter-section {
+      background: linear-gradient(135deg, var(--steel-dk) 0%, var(--steel) 100%);
+      padding: 90px 0; position: relative; overflow: hidden;
+    }
+    .newsletter-section::before {
+      content: ''; position: absolute; top: -80px; right: -80px;
+      width: 360px; height: 360px; border-radius: 50%;
+      background: rgba(232,99,26,0.12); pointer-events: none;
+    }
+    .newsletter-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+    .nl-text h2 { font-family: var(--font-display); font-size: clamp(32px,4vw,50px); font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: 16px; }
+    .nl-text h2 em { color: var(--orange-lt); font-style: italic; }
+    .nl-text p { color: rgba(255,255,255,0.7); font-size: 16px; line-height: 1.7; }
+    .nl-input-row { display: flex; gap: 10px; }
+    .nl-input { flex: 1; padding: 15px 20px; font-size: 15px; font-family: var(--font-body); border: 2px solid rgba(255,255,255,0.2); border-radius: var(--radius-xl); color: #fff; background: rgba(255,255,255,0.1); outline: none; transition: var(--transition); }
+    .nl-input::placeholder { color: rgba(255,255,255,0.45); }
+    .nl-input:focus { border-color: var(--orange); background: rgba(255,255,255,0.15); }
+    .nl-fine { font-size: 12px; color: rgba(255,255,255,0.45); text-align: center; margin-top: 12px; }
+
+    /* Responsive overrides */
+    @media (max-width: 1024px) {
+      .cat-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto auto; }
+      .cat-big { grid-row: 1; min-height: 300px; grid-column: 1 / 3; }
+      .who-inner { grid-template-columns: 1fr; gap: 40px; }
+      .who-img-badge { bottom: 16px; right: 16px; }
+      .testi-layout { grid-template-columns: 1fr; gap: 40px; }
+      .testi-img-col img { height: 320px; }
+      .industry-grid { grid-template-columns: 1fr 1fr; }
+      .newsletter-inner { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: repeat(3,1fr); grid-template-rows: repeat(3,160px); }
+      .gal-item:nth-child(2) { grid-column: auto; grid-row: auto; }
+    }
+    @media (max-width: 768px) {
+      .who-inner { grid-template-columns: 1fr; }
+      .who-img-main img { height: 320px; }
+      .who-feats { grid-template-columns: 1fr; }
+      .industry-grid { grid-template-columns: 1fr; }
+      .feat-card { flex: 0 0 85vw; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(4,140px); }
+      .gal-item { grid-column: auto !important; grid-row: auto !important; }
+      .process-steps { flex-direction: column; align-items: center; }
+      .process-steps::before { display: none; }
+      .step { width: 100%; max-width: 320px; }
+      .cat-grid { grid-template-columns: 1fr; }
+      .cat-big { grid-column: 1; grid-row: auto; min-height: 260px; }
+      .cat-small { min-height: 180px; }
+    }
+    @media (max-width: 480px) {
+      .nl-input-row { flex-direction: column; }
+      .gallery-grid { grid-template-columns: 1fr; grid-template-rows: none; }
+      .gal-item { height: 200px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── TICKER ── -->
+  <div class="ticker-bar">
+    <div class="ticker-track">
+      <div class="ticker-item"><span class="ticker-dot">●</span> 48,000+ shipments this month</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span> 180+ countries served</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span> 99% on-time delivery rate</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span> ISO 9001 & TAPA A certified</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span> Net-zero target by 2035</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span> 24/7 real-time tracking</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span> 48,000+ shipments this month</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span> 180+ countries served</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span> 99% on-time delivery rate</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span> ISO 9001 & TAPA A certified</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span> Net-zero target by 2035</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span> 24/7 real-time tracking</div>
+    </div>
+  </div>
+
+  <!-- ── NAVBAR ── -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=200&h=80&output=webp&q=80&fit=inside"
+             alt="LogiFlow by Stackly" width="160" height="44" />
+      </a>
+      <nav class="nav-links">
+        <a href="index.html" class="active">Home</a>
+        <a href="services.html">Services</a>
+        <a href="tracking.html">Tracking</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <a href="404.html" class="btn-primary nav-cta">Get a Quote →</a>
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══ MOBILE MENU PANEL ═══ -->
+  <div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Navigation menu">
+    <div class="mobile-menu-panel">
+      <div class="menu-panel-header">
+        <a href="index.html" class="menu-panel-logo">
+          <img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=200&h=80&output=webp&q=80&fit=inside" alt="LogiFlow" width="130" height="36" />
+        </a>
+        <button class="menu-close-btn" aria-label="Close menu">✕</button>
+      </div>
+      <nav class="menu-nav-links">
+        <a href="index.html" class="active">Home <span class="menu-arrow">→</span></a>
+        <a href="services.html">Services <span class="menu-arrow">→</span></a>
+        <a href="tracking.html">Tracking <span class="menu-arrow">→</span></a>
+        <a href="about.html">About <span class="menu-arrow">→</span></a>
+        <a href="contact.html">Contact <span class="menu-arrow">→</span></a>
+      </nav>
+      <div class="menu-panel-footer">
+        <a href="contact.html" class="btn-primary mobile-cta-btn">Get a Free Quote →</a>
+        <div class="menu-contact-info">
+          <div class="menu-contact-item"><span>📞</span><span>+91 22 4000 1234</span></div>
+          <div class="menu-contact-item"><span>✉️</span><span>info@logiflow.com</span></div>
+        </div>
+        <div class="mobile-socials">
+          <a href="404.html">in</a><a href="404.html">𝕏</a><a href="404.html">f</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-slider-wrap">
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1400&q=60&fm=webp')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1400&q=60&fm=webp')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=1400&q=60&fm=webp')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=1400&q=60&fm=webp')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1615460549969-36fa19521a4f?w=1400&q=60&fm=webp')"></div>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+      <div class="hero-eyebrow"><span class="dot-live"></span> Live Fleet Tracking Active</div>
+      <h1 class="hero-title">
+        <span class="line-1">Move Cargo.</span>
+        <span class="line-2">Move <em class="hero-accent">Smarter.</em></span>
+      </h1>
+      <p class="hero-desc">End-to-end logistics connecting your supply chain — from first-mile pickup to last-mile delivery, across 180+ countries with real-time visibility.</p>
+      <div class="hero-actions">
+        <a href="contact.html" class="btn-primary">Request a Shipment →</a>
+        <a href="tracking.html" class="btn-hero-ghost">Track Your Cargo</a>
+      </div>
+      <div class="hero-badges">
+        <div class="hbadge"><div class="hb-icon">✓</div> ISO 9001 Certified</div>
+        <div class="hbadge"><div class="hb-icon">✓</div> 24/7 Support</div>
+        <div class="hbadge"><div class="hb-icon">✓</div> Real-time Updates</div>
+        <div class="hbadge"><div class="hb-icon">✓</div> 99% On-time Delivery</div>
+      </div>
+    </div>
+    <div class="slider-dots"></div>
+    <div class="hero-scroll-cue"><span>Scroll</span><div class="scroll-line"></div></div>
+  </section>
+
+  <!-- ── STATS BAR ── -->
+  <div class="stats-bar">
+    <div class="container stats-inner">
+      <div class="stat-item">
+        <div class="stat-num"><span data-count="48000" data-suffix="+">0</span></div>
+        <div class="stat-label">Shipments / Month</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-num"><span data-count="180" data-suffix="+">0</span></div>
+        <div class="stat-label">Countries Served</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-num"><span data-count="2400" data-suffix="+">0</span></div>
+        <div class="stat-label">Fleet Vehicles</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-num"><span data-count="99" data-suffix="%">0</span></div>
+        <div class="stat-label">On-time Delivery</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MARQUEE ── -->
+  <div class="marquee-strip">
+    <div class="marquee-track">
+      <div class="marquee-item"><span class="m-dot">●</span> Road Freight</div>
+      <div class="marquee-item"><span class="m-dot">●</span> Air Freight</div>
+      <div class="marquee-item"><span class="m-dot">●</span> Ocean Freight</div>
+      <div class="marquee-item"><span class="m-dot">●</span> Warehousing</div>
+      <div class="marquee-item"><span class="m-dot">●</span> Customs Clearance</div>
+      <div class="marquee-item"><span class="m-dot">●</span> Last Mile Delivery</div>
+      <div class="marquee-item"><span class="m-dot">●</span> Cold Chain Logistics</div>
+      <div class="marquee-item"><span class="m-dot">●</span> Project Cargo</div>
+      <div class="marquee-item"><span class="m-dot">●</span> Road Freight</div>
+      <div class="marquee-item"><span class="m-dot">●</span> Air Freight</div>
+      <div class="marquee-item"><span class="m-dot">●</span> Ocean Freight</div>
+      <div class="marquee-item"><span class="m-dot">●</span> Warehousing</div>
+      <div class="marquee-item"><span class="m-dot">●</span> Customs Clearance</div>
+      <div class="marquee-item"><span class="m-dot">●</span> Last Mile Delivery</div>
+      <div class="marquee-item"><span class="m-dot">●</span> Cold Chain Logistics</div>
+      <div class="marquee-item"><span class="m-dot">●</span> Project Cargo</div>
+    </div>
+  </div>
+
+  <!-- ── SERVICES GRID ── -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head" data-aos>
+        <span class="section-label">What We Do</span>
+        <h2 class="section-title">Complete Logistics Solutions<br>Under One Roof</h2>
+        <p class="section-subtitle">Whether you're moving pallets, full containers, or time-critical freight — our network handles every mile with precision.</p>
+      </div>
+      <div class="services-grid">
+        <a href="services.html" class="service-card" data-aos data-aos-delay="0">
+          <div class="sc-icon-wrap sc-blue"><svg viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/></svg></div>
+          <h3>Road Freight</h3>
+          <p>Full truckload, LTL, and express road transport across 85 countries with GPS-tracked fleet of 2,400+ vehicles.</p>
+          <span class="btn-ghost">Learn more →</span>
+        </a>
+        <a href="services.html" class="service-card" data-aos data-aos-delay="100">
+          <div class="sc-icon-wrap sc-orange"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg></div>
+          <h3>Air Freight</h3>
+          <p>Priority air cargo with door-to-door service, customs clearance, and real-time tracking across 340+ airports.</p>
+          <span class="btn-ghost">Learn more →</span>
+        </a>
+        <a href="services.html" class="service-card" data-aos data-aos-delay="200">
+          <div class="sc-icon-wrap sc-teal"><svg viewBox="0 0 24 24"><path d="M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.65 2.62.99 4 .99h2v-2h-2z"/></svg></div>
+          <h3>Ocean Freight</h3>
+          <p>FCL & LCL ocean shipping with competitive rates, port-to-port and multimodal solutions for bulk cargo globally.</p>
+          <span class="btn-ghost">Learn more →</span>
+        </a>
+        <a href="services.html" class="service-card" data-aos data-aos-delay="300">
+          <div class="sc-icon-wrap sc-amber"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg></div>
+          <h3>Warehousing</h3>
+          <p>9.2M sq ft of smart fulfilment space across 38 locations with direct integrations to Shopify, SAP, and Oracle.</p>
+          <span class="btn-ghost">Learn more →</span>
+        </a>
+      </div>
+
+      <div class="cat-grid">
+        <a href="services.html" class="cat-card cat-big">
+          <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=900&q=70&fm=webp" alt="Road Freight" loading="lazy" />
+          <div class="cat-overlay"></div>
+          <div class="cat-label"><h4>Road Freight</h4><span>85 countries · 2,400 vehicles</span></div>
+          <div class="cat-arrow">→</div>
+        </a>
+        <a href="services.html" class="cat-card cat-small">
+          <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&q=70&fm=webp" alt="Air Freight" loading="lazy" />
+          <div class="cat-overlay"></div>
+          <div class="cat-label"><h4>Air Freight</h4><span>340+ airports</span></div>
+          <div class="cat-arrow">→</div>
+        </a>
+        <a href="services.html" class="cat-card cat-small">
+          <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&q=70&fm=webp" alt="Ocean Freight" loading="lazy" />
+          <div class="cat-overlay"></div>
+          <div class="cat-label"><h4>Ocean Freight</h4><span>FCL & LCL · AIS tracking</span></div>
+          <div class="cat-arrow">→</div>
+        </a>
+        <a href="services.html" class="cat-card cat-small">
+          <img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=600&q=70&fm=webp" alt="Warehousing" loading="lazy" />
+          <div class="cat-overlay"></div>
+          <div class="cat-label"><h4>Warehousing</h4><span>38 locations · 9.2M sq ft</span></div>
+          <div class="cat-arrow">→</div>
+        </a>
+        <a href="services.html" class="cat-card cat-small">
+          <img src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=600&q=70&fm=webp" alt="Cold Chain" loading="lazy" />
+          <div class="cat-overlay"></div>
+          <div class="cat-label"><h4>Cold Chain</h4><span>IoT temperature monitoring</span></div>
+          <div class="cat-arrow">→</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WHO WE ARE ── -->
+  <section class="section section-alt">
+    <div class="container who-inner">
+      <div class="who-img-wrap" data-aos="fade-right">
+        <div class="who-img-main">
+          <img src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=800&q=60&fm=webp" alt="LogiFlow team" loading="lazy" />
+        </div>
+        <div class="who-img-badge">
+          <span class="badge-num">17+</span>
+          <span class="badge-txt">Years</span>
+        </div>
+      </div>
+      <div data-aos="fade-left">
+        <span class="section-label">Who We Are</span>
+        <h2 class="section-title">A Network Built on <em style="font-style:italic;color:var(--orange)">Trust</em></h2>
+        <p style="color:var(--mid-gray);font-size:16px;line-height:1.8;margin:18px 0 28px">LogiFlow started as a regional road transport operator in 2008. Today we're a global supply chain partner — but our precision, our dedication to on-time delivery, and our 24-hour commitment to every client has never changed.</p>
+        <div class="who-feats">
+          <div class="who-feat"><div class="wf-emoji">🛰️</div><strong>Live Fleet Tracking</strong><p>Every vehicle visible in real time on our portal</p></div>
+          <div class="who-feat"><div class="wf-emoji">🧑‍💼</div><strong>Expert Ops Team</strong><p>Specialists in road, air, ocean and last-mile</p></div>
+          <div class="who-feat"><div class="wf-emoji">🌙</div><strong>24/7 Operations</strong><p>Around-the-clock support across all time zones</p></div>
+          <div class="who-feat"><div class="wf-emoji">🌿</div><strong>Net-Zero by 2035</strong><p>Carbon offsets, EV fleet, green warehouse programme</p></div>
+        </div>
+        <a href="about.html" class="btn-primary">Read Our Story →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURED SOLUTIONS ── -->
+  <section class="section">
+    <div class="container">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:48px;flex-wrap:wrap;gap:20px" data-aos>
+        <div>
+          <span class="section-label">This Week's Picks</span>
+          <h2 class="section-title">Popular <em style="font-style:italic">Solutions</em></h2>
+        </div>
+        <a href="services.html" class="btn-secondary">View All Services</a>
+      </div>
+      <div class="featured-grid">
+        <div class="feat-track" id="featTrack">
+          <div class="feat-card">
+            <div class="feat-img"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500&q=70&fm=webp" alt="Road Freight" loading="lazy" /><div class="feat-badge">Bestseller</div></div>
+            <div class="feat-body"><div class="feat-service">Land Transport</div><h4>Road Freight FTL</h4><p>Full truckload capacity with GPS tracking, driver app, and digital POD. Door-to-door across India and beyond.</p><div class="feat-footer"><div class="feat-eta">24–48 hrs <span>Avg delivery time</span></div><a href="contact.html" class="feat-add">+</a></div></div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-img"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=500&q=70&fm=webp" alt="Air Freight" loading="lazy" /><div class="feat-badge new-badge">Express</div></div>
+            <div class="feat-body"><div class="feat-service">Air Transport</div><h4>Next-Flight-Out Air</h4><p>Urgent cargo, next available flight. e-AWB processing, real-time customs tracking, door-to-door worldwide.</p><div class="feat-footer"><div class="feat-eta">24–72 hrs <span>International transit</span></div><a href="contact.html" class="feat-add">+</a></div></div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-img"><img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=500&q=70&fm=webp" alt="Ocean Freight" loading="lazy" /></div>
+            <div class="feat-body"><div class="feat-service">Sea Transport</div><h4>Ocean LCL Consolidation</h4><p>Cost-effective less-than-container-load shipping. Weekly sailings on all major trade lanes with AIS vessel tracking.</p><div class="feat-footer"><div class="feat-eta">18–30 days <span>Asia–Europe corridor</span></div><a href="contact.html" class="feat-add">+</a></div></div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-img"><img src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=500&q=70&fm=webp" alt="Cold Chain" loading="lazy" /><div class="feat-badge" style="background:#0694a2">Cold Chain</div></div>
+            <div class="feat-body"><div class="feat-service">Temperature Control</div><h4>Pharma Cold Chain</h4><p>GDP-compliant, WHO GxP pharma corridors. Continuous IoT monitoring with live temperature alerts every 5 minutes.</p><div class="feat-footer"><div class="feat-eta">2–8°C <span>Guaranteed cold chain</span></div><a href="contact.html" class="feat-add">+</a></div></div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-img"><img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=500&q=70&fm=webp" alt="Warehousing" loading="lazy" /><div class="feat-badge" style="background:#d97706">New</div></div>
+            <div class="feat-body"><div class="feat-service">Storage & Fulfilment</div><h4>D2C Fulfilment Hub</h4><p>Seamless Shopify & Amazon integration. Pick-pack-ship from our 38 strategic warehouses with same-day dispatch.</p><div class="feat-footer"><div class="feat-eta">Same day <span>Dispatch cut-off 3pm</span></div><a href="contact.html" class="feat-add">+</a></div></div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-img"><img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&q=70&fm=webp" alt="Project Cargo" loading="lazy" /></div>
+            <div class="feat-body"><div class="feat-service">Heavy Lift</div><h4>Project & OOG Cargo</h4><p>Oversized, overweight, and out-of-gauge cargo. Survey, route planning, permits, and specialist transport — all in-house.</p><div class="feat-footer"><div class="feat-eta">Custom <span>Route survey included</span></div><a href="contact.html" class="feat-add">+</a></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="feat-nav">
+        <button class="feat-btn" id="featPrev">‹</button>
+        <button class="feat-btn" id="featNext">›</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS ── -->
+  <section class="section section-alt">
+    <div class="container">
+      <div style="text-align:center" data-aos>
+        <span class="section-label">Simple Process</span>
+        <h2 class="section-title">How Every Shipment <em style="font-style:italic">Comes to Life</em></h2>
+        <p class="section-subtitle" style="margin:16px auto 0;text-align:center">Six clear steps — each one essential, none ever skipped.</p>
+      </div>
+      <div class="process-steps">
+        <div class="step" data-aos data-aos-delay="0"><div class="step-num">01</div><div class="step-icon">📋</div><h4>Request Quote</h4><p>Fill our quick form or call. Receive an itemised quote within 2 hours during business hours.</p></div>
+        <div class="step-arrow">→</div>
+        <div class="step" data-aos data-aos-delay="80"><div class="step-num">02</div><div class="step-icon">✅</div><h4>Book & Confirm</h4><p>Approve online, schedule pickup, get instant booking confirmation with tracking ID.</p></div>
+        <div class="step-arrow">→</div>
+        <div class="step" data-aos data-aos-delay="160"><div class="step-num">03</div><div class="step-icon">📦</div><h4>Pickup & Pack</h4><p>Our team collects cargo, verifies packaging, and prepares export documentation.</p></div>
+        <div class="step-arrow">→</div>
+        <div class="step" data-aos data-aos-delay="240"><div class="step-num">04</div><div class="step-icon">🛰️</div><h4>Track Live</h4><p>Follow your shipment in real time on our portal via SMS/email milestone alerts.</p></div>
+        <div class="step-arrow">→</div>
+        <div class="step" data-aos data-aos-delay="320"><div class="step-num">05</div><div class="step-icon">🛃</div><h4>Clear Customs</h4><p>In-house customs team handles all documentation, HS codes, and duty payments globally.</p></div>
+        <div class="step-arrow">→</div>
+        <div class="step" data-aos data-aos-delay="400"><div class="step-num">06</div><div class="step-icon">🏁</div><h4>Delivered ✓</h4><p>Digital proof of delivery. Invoice and all shipping docs shared to your inbox instantly.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WHY LOGIFLOW ── -->
+  <section class="section section-alt">
+    <div class="container why-inner">
+      <div class="why-media" data-aos="fade-right">
+        <div class="why-img-main">
+          <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=700&q=60&fm=webp" alt="Logistics operations" loading="lazy" />
+        </div>
+        <div class="why-img-accent">
+          <img src="https://images.unsplash.com/photo-1423592707957-3b212afa6733?w=300&q=60&fm=webp" alt="Fleet" loading="lazy" />
+        </div>
+        <div class="why-float-card">
+          <div class="wfc-num">99<span>%</span></div>
+          <div class="wfc-text">On-Time<br>Delivery Rate</div>
+        </div>
+      </div>
+      <div class="why-text" data-aos="fade-left">
+        <div>
+          <span class="section-label">Why LogiFlow</span>
+          <h2 class="section-title">Technology That Moves With You</h2>
+          <p class="section-subtitle">We combine cutting-edge technology with an experienced ops team so your cargo always arrives on time, every time.</p>
+        </div>
+        <div class="why-features">
+          <div class="wf-item"><div class="wf-icon">🛰️</div><div><strong>GPS Fleet Visibility</strong><p>Every vehicle tracked live — share real-time links with your customers instantly.</p></div></div>
+          <div class="wf-item"><div class="wf-icon">🔒</div><div><strong>Insured & Compliant</strong><p>Cargo insurance, customs brokerage, and full regulatory compliance handled end-to-end.</p></div></div>
+          <div class="wf-item"><div class="wf-icon">🌱</div><div><strong>Green Logistics</strong><p>Carbon offset programmes, EV fleet transition roadmap, and sustainability reporting.</p></div></div>
+          <div class="wf-item"><div class="wf-icon">⚡</div><div><strong>AI-Powered Routing</strong><p>Smart route optimisation reduces delivery times by up to 22% and cuts fuel costs significantly.</p></div></div>
+        </div>
+        <a href="about.html" class="btn-primary">Our Story →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TESTIMONIALS ── -->
+  <section class="section testimonials">
+    <div class="container">
+      <div style="text-align:center" data-aos>
+        <span class="section-label">What Clients Say</span>
+        <h2 class="section-title">Delivered with <em style="font-style:italic;color:var(--orange)">Trust</em>, Always</h2>
+      </div>
+      <div class="testi-layout">
+        <div class="testi-img-col" data-aos="fade-right">
+          <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=700&q=60&fm=webp" alt="Happy logistics client" loading="lazy" />
+        </div>
+        <div data-aos="fade-left">
+          <div class="testi-slides">
+            <div class="testi-slide active"><div class="testi-stars">★★★★★</div><p class="testi-quote">"LogiFlow reduced our cross-border lead time by 40%. Their tracking portal is genuinely the best in the industry — I recommend it to every supply chain manager I know."</p><div class="testi-author"><div class="ta-avatar" style="background:var(--orange)">S</div><div><span class="ta-name">Sarah K.</span><span class="ta-role">VP Procurement, RetailCo</span></div></div></div>
+            <div class="testi-slide"><div class="testi-stars">★★★★★</div><p class="testi-quote">"We handle 6,000 monthly shipments through LogiFlow. Zero SLA breaches in two years — truly remarkable performance from their entire operations team."</p><div class="testi-author"><div class="ta-avatar" style="background:var(--steel)">M</div><div><span class="ta-name">Marco T.</span><span class="ta-role">Head of Logistics, AutoParts Ltd</span></div></div></div>
+            <div class="testi-slide"><div class="testi-stars">★★★★★</div><p class="testi-quote">"Pharma-grade cold chain with real-time temperature alerts every 5 minutes. LogiFlow is now our sole global logistics partner for all sensitive cargo movements."</p><div class="testi-author"><div class="ta-avatar" style="background:#7c3aed">D</div><div><span class="ta-name">Dr. Raj M.</span><span class="ta-role">Supply Chain Director, MedGlobal</span></div></div></div>
+            <div class="testi-slide"><div class="testi-stars">★★★★★</div><p class="testi-quote">"The warehousing and last-mile solution transformed our e-commerce fulfilment. Same-day delivery is now possible in 12 cities thanks to their hub network."</p><div class="testi-author"><div class="ta-avatar" style="background:#d97706">P</div><div><span class="ta-name">Prerna S.</span><span class="ta-role">CEO, StyleHub India</span></div></div></div>
+          </div>
+          <div class="testi-controls" id="testiDots"></div>
+          <div class="testi-arrows">
+            <button class="testi-btn" id="testiPrev">←</button>
+            <button class="testi-btn" id="testiNext">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PARTNERS ── -->
+  <section class="partners-section">
+    <div class="container">
+      <p style="text-align:center;font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--lt-gray);margin-bottom:36px">Trusted by 14,000+ companies worldwide</p>
+      <div class="partners-inner">
+        <div class="partner-logo">TATA Group</div>
+        <div class="partner-logo">Mahindra</div>
+        <div class="partner-logo">Reliance</div>
+        <div class="partner-logo">Amazon IN</div>
+        <div class="partner-logo">Flipkart</div>
+        <div class="partner-logo">Zomato</div>
+        <div class="partner-logo">IKEA</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── GALLERY ── -->
+  <section class="section" style="padding-bottom:90px">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:8px" data-aos>
+        <span class="section-label">Follow Our Operations</span>
+        <h2 class="section-title">From Our <em style="font-style:italic">Fleet</em> to Your Feed</h2>
+      </div>
+      <div class="gallery-grid" style="margin-top:36px">
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&q=70&fm=webp" alt="Fleet" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=400&q=70&fm=webp" alt="Warehouse" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&q=70&fm=webp" alt="Air Cargo" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=400&q=70&fm=webp" alt="Ocean" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&q=70&fm=webp" alt="Operations" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=400&q=70&fm=webp" alt="Cold Chain" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=400&q=70&fm=webp" alt="Delivery" loading="lazy" /><div class="gal-hover">📷</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── NEWSLETTER ── -->
+  <section class="newsletter-section">
+    <div class="container newsletter-inner">
+      <div class="nl-text" data-aos="fade-right">
+        <h2>Stay in the Know.<br><em>Exclusive</em> Logistics Insights.</h2>
+        <p>Join 24,000+ supply chain professionals. First to hear about new routes, rate changes, regulatory updates, and industry insights. No spam, ever.</p>
+      </div>
+      <div data-aos="fade-left">
+        <div class="nl-input-row">
+          <input type="email" class="nl-input" placeholder="your@company.com" id="nlEmail" />
+          <button class="btn-primary" onclick="handleNL()" style="white-space:nowrap">Subscribe →</button>
+        </div>
+        <p class="nl-fine">By subscribing you agree to our Privacy Policy. Unsubscribe anytime.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA BANNER ── -->
+  <div class="cta-banner">
+    <div class="container cta-inner">
+      <div data-aos="fade-right">
+        <h2>Ready to Optimise Your Supply Chain?</h2>
+        <p>Get a custom quote in under 2 minutes — no commitment required.</p>
+      </div>
+      <div class="cta-actions" data-aos="fade-left">
+        <a href="contact.html" class="btn-primary" style="background:#fff;color:var(--orange-dk)">Get Free Quote →</a>
+        <a href="tracking.html" class="btn-secondary" style="color:#fff;border-color:rgba(255,255,255,0.45)">Track Shipment</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo"><a href="index.html"><img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=200&h=80&output=webp&q=80&fit=inside" alt="Stackly LogiFlow" width="140" /></a></div>
+          <p>An end-to-end logistics platform rooted in technology, driven by precision. Every shipment, every mile — handled with care since 2008.</p>
+          <div class="footer-social"><a href="404.html">in</a><a href="404.html">𝕏</a><a href="404.html">f</a><a href="404.html">▶</a></div>
+        </div>
+        <div class="footer-col"><h4>Explore</h4><ul><li><a href="index.html">Home</a></li><li><a href="services.html">Our Services</a></li><li><a href="tracking.html">Track Shipment</a></li><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+        <div class="footer-col"><h4>Services</h4><ul><li><a href="services.html">Road Freight</a></li><li><a href="services.html">Air Freight</a></li><li><a href="services.html">Ocean Freight</a></li><li><a href="services.html">Warehousing</a></li><li><a href="services.html">Cold Chain</a></li></ul></div>
+        <div class="footer-col"><h4>Contact Us</h4><ul><li><a href="404.html">Level 12, One BKC Tower, Mumbai</a></li><li><a href="404.html">+91 22 4000 1234</a></li><li><a href="404.html">info@logiflow.com</a></li><li><a href="404.html">Mon–Fri: 8am – 8pm IST</a></li><li><a href="404.html">24/7 Emergency Line</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Stackly Logistics — Powered by Stackly. All rights reserved.</p>
+        <div class="footer-bottom-logo"><img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=200&h=80&output=webp&q=80&fit=inside" alt="Stackly" width="80" /></div>
+        <p>Privacy Policy · Terms of Service · Cookie Settings</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    /* ── Featured Card Slider ── */
+    (function() {
+      const track = document.getElementById('featTrack');
+      const prevBtn = document.getElementById('featPrev');
+      const nextBtn = document.getElementById('featNext');
+      if (!track || !prevBtn || !nextBtn) return;
+      let idx = 0;
+      const cards = track.querySelectorAll('.feat-card');
+      const visibleCount = () => window.innerWidth <= 600 ? 1 : window.innerWidth <= 900 ? 2 : 3;
+      const maxIdx = () => Math.max(0, cards.length - visibleCount());
+      function update() {
+        idx = Math.min(idx, maxIdx());
+        const gap = 24;
+        const w = cards[0].offsetWidth + gap;
+        track.style.transform = `translateX(-${idx * w}px)`;
+      }
+      prevBtn.addEventListener('click', () => { idx = Math.max(0, idx - 1); update(); });
+      nextBtn.addEventListener('click', () => { idx = Math.min(maxIdx(), idx + 1); update(); });
+      window.addEventListener('resize', update, { passive: true });
+
+      /* Swipe on mobile */
+      let startX = 0;
+      track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+      track.addEventListener('touchend', e => {
+        const diff = startX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) { diff > 0 ? nextBtn.click() : prevBtn.click(); }
+      }, { passive: true });
+    })();
+
+    /* ── Testimonials ── */
+    (function() {
+      const slides = document.querySelectorAll('.testi-slide');
+      const dotsWrap = document.getElementById('testiDots');
+      const prevBtn = document.getElementById('testiPrev');
+      const nextBtn = document.getElementById('testiNext');
+      if (!slides.length) return;
+      let cur = 0, timer;
+      let dots = [];
+      slides.forEach((_, i) => {
+        const d = document.createElement('button');
+        d.className = 'testi-dot-btn' + (i === 0 ? ' active' : '');
+        d.setAttribute('aria-label', `Testimonial ${i + 1}`);
+        d.addEventListener('click', () => goTo(i));
+        dotsWrap.appendChild(d);
+        dots.push(d);
+      });
+      function goTo(i) {
+        slides[cur].classList.remove('active');
+        dots[cur].classList.remove('active');
+        cur = (i + slides.length) % slides.length;
+        slides[cur].classList.add('active');
+        dots[cur].classList.add('active');
+      }
+      if (prevBtn) prevBtn.addEventListener('click', () => goTo(cur - 1));
+      if (nextBtn) nextBtn.addEventListener('click', () => goTo(cur + 1));
+      timer = setInterval(() => goTo(cur + 1), 5500);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact & Quote — Stackly Transport</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/contact.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=200&h=80&output=webp&q=80&fit=inside"
+             alt="LogiFlow by Stackly" width="160" height="44" />
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="tracking.html">Tracking</a>
+        <a href="about.html">About</a>
+        <a href="contact.html" class="active">Contact</a>
+      </nav>
+      <a href="404.html" class="btn-primary nav-cta">Get a Quote</a>
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+    <!-- ═══ MOBILE MENU PANEL ═══ -->
+  <div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Navigation menu">
+    <div class="mobile-menu-panel">
+      <div class="menu-panel-header">
+        <a href="index.html" class="menu-panel-logo">
+          <img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=200&h=80&output=webp&q=80&fit=inside" alt="LogiFlow" width="130" height="36" />
+        </a>
+        <button class="menu-close-btn" aria-label="Close menu">✕</button>
+      </div>
+      <nav class="menu-nav-links">
+        <a href="index.html">Home <span class="menu-arrow">→</span></a>
+        <a href="services.html">Services <span class="menu-arrow">→</span></a>
+        <a href="tracking.html">Tracking <span class="menu-arrow">→</span></a>
+        <a href="about.html">About <span class="menu-arrow">→</span></a>
+        <a href="contact.html" class="active">Contact <span class="menu-arrow">→</span></a>
+      </nav>
+      <div class="menu-panel-footer">
+        <a href="contact.html" class="btn-primary mobile-cta-btn">Get a Free Quote →</a>
+        <div class="menu-contact-info">
+          <div class="menu-contact-item"><span>📞</span><span>+91 22 4000 1234</span></div>
+          <div class="menu-contact-item"><span>✉️</span><span>info@logiflow.com</span></div>
+        </div>
+        <div class="mobile-socials">
+          <a href="404.html">in</a><a href="404.html">𝕏</a><a href="404.html">f</a>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="mobile-socials"><a href="#">LinkedIn</a><a href="#">Twitter</a><a href="#">Facebook</a></div>
+  </div>
+
+  <!-- HERO — contact split -->
+  <section class="contact-hero">
+    <div class="hero-slider-wrap">
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1600&fm=webp')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&fm=webp')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1600&fm=webp')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1542744095-291d1f67b221?w=1600&fm=webp')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1530099486328-e021101a494a?w=1600&fm=webp')"></div>
+    </div>
+    <div class="contact-overlay"></div>
+    <div class="container contact-hero-content">
+      <span class="section-label" style="color:var(--orange-lt)">Get In Touch</span>
+      <h1 class="contact-title">Let's Move Your<br>Cargo Together.</h1>
+      <p>Our team responds within 2 business hours. Fill in the form or call us directly.</p>
+      <div class="slider-dots"></div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTACT SECTION -->
+  <section class="section contact-section">
+    <div class="container contact-grid">
+
+      <!-- FORM -->
+      <div class="contact-form-wrap">
+        <div class="form-header">
+          <h2>Request a Quote</h2>
+          <p>Tell us about your shipment and we'll build a custom solution for you.</p>
+        </div>
+
+        <form class="contact-form" id="contactForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fname">First Name *</label>
+              <input type="text" id="fname" name="fname" placeholder="John" required />
+            </div>
+            <div class="form-group">
+              <label for="lname">Last Name *</label>
+              <input type="text" id="lname" name="lname" placeholder="Doe" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Email Address *</label>
+              <input type="email" id="email" name="email" placeholder="john@company.com" required />
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" name="phone" placeholder="+91 98765 43210" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="company">Company Name</label>
+            <input type="text" id="company" name="company" placeholder="Acme Corporation" />
+          </div>
+
+          <div class="form-group">
+            <label>Service Required *</label>
+            <div class="service-chips">
+              <label class="chip-label"><input type="radio" name="service" value="road" /> Road Freight</label>
+              <label class="chip-label"><input type="radio" name="service" value="air" /> Air Freight</label>
+              <label class="chip-label"><input type="radio" name="service" value="ocean" /> Ocean Freight</label>
+              <label class="chip-label"><input type="radio" name="service" value="warehouse" /> Warehousing</label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="origin">Origin City / Country *</label>
+              <input type="text" id="origin" name="origin" placeholder="Mumbai, India" required />
+            </div>
+            <div class="form-group">
+              <label for="dest">Destination City / Country *</label>
+              <input type="text" id="dest" name="dest" placeholder="Frankfurt, Germany" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="weight">Cargo Weight (kg)</label>
+              <input type="number" id="weight" name="weight" placeholder="5000" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="shipdate">Desired Ship Date</label>
+              <input type="date" id="shipdate" name="shipdate" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Additional Details</label>
+            <textarea id="message" name="message" rows="4" placeholder="Hazardous goods, special handling, temperature requirements, etc."></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary submit-btn" id="submitBtn">
+            <span id="submitText">Submit Quote Request →</span>
+          </button>
+        </form>
+
+        <!-- Success message -->
+        <div class="form-success" id="formSuccess">
+          <div class="success-icon">✓</div>
+          <h3>Request Submitted!</h3>
+          <p>Thank you! Our logistics team will contact you within 2 business hours with a personalised quote.</p>
+          <a href="index.html" class="btn-secondary" style="margin-top:20px">Back to Home</a>
+        </div>
+      </div>
+
+      <!-- CONTACT INFO -->
+      <div class="contact-info">
+        <h3>Reach Us Directly</h3>
+
+        <div class="ci-cards">
+          <div class="ci-card">
+            <div class="ci-icon">📞</div>
+            <div><strong>Phone</strong><p>+91 22 4000 1234</p><small>Mon–Fri 8am–8pm IST</small></div>
+          </div>
+          <div class="ci-card">
+            <div class="ci-icon">✉️</div>
+            <div><strong>Email</strong><p>info@logiflow.com</p><small>Response within 2 hours</small></div>
+          </div>
+          <div class="ci-card">
+            <div class="ci-icon">💬</div>
+            <div><strong>Live Chat</strong><p>Available 24 / 7</p><small>Average wait: &lt; 2 mins</small></div>
+          </div>
+          <div class="ci-card">
+            <div class="ci-icon">📍</div>
+            <div><strong>Headquarters</strong><p>Level 12, One BKC Tower,<br>Bandra Kurla Complex, Mumbai — 400 051</p></div>
+          </div>
+        </div>
+
+        <div class="offices">
+          <h4>Regional Offices</h4>
+          <div class="office-list">
+            <div class="office-item"><span class="flag">🇦🇪</span><div><strong>Dubai</strong><small>+971 4 123 4567</small></div></div>
+            <div class="office-item"><span class="flag">🇸🇬</span><div><strong>Singapore</strong><small>+65 6123 4567</small></div></div>
+            <div class="office-item"><span class="flag">🇩🇪</span><div><strong>Frankfurt</strong><small>+49 69 1234 5678</small></div></div>
+            <div class="office-item"><span class="flag">🇺🇸</span><div><strong>Los Angeles</strong><small>+1 213 456 7890</small></div></div>
+            <div class="office-item"><span class="flag">🇨🇳</span><div><strong>Shanghai</strong><small>+86 21 1234 5678</small></div></div>
+            <div class="office-item"><span class="flag">🇧🇷</span><div><strong>São Paulo</strong><small>+55 11 1234 5678</small></div></div>
+          </div>
+        </div>
+
+        <div class="contact-img-wrap">
+          <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&fm=webp" alt="Office" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section section-alt">
+    <div class="container faq-wrap">
+      <div style="text-align:center;margin-bottom:48px">
+        <span class="section-label">Common Questions</span>
+        <h2 class="section-title">FAQs</h2>
+      </div>
+      <div class="faq-list" id="faqList">
+        <div class="faq-item">
+          <button class="faq-q">How quickly can I get a quote? <span class="faq-arrow">↓</span></button>
+          <div class="faq-a"><p>For standard shipments, you'll receive a quote within 2 hours during business hours. For complex or project cargo, we aim for 24 hours.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Do you handle customs clearance? <span class="faq-arrow">↓</span></button>
+          <div class="faq-a"><p>Yes — our in-house customs brokerage team manages all documentation, duty calculations, and clearance at origin and destination ports.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Is cargo insurance included? <span class="faq-arrow">↓</span></button>
+          <div class="faq-a"><p>Basic liability is included with all shipments. We also offer comprehensive all-risk insurance — ask your account manager for details.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">What's the minimum shipment size? <span class="faq-arrow">↓</span></button>
+          <div class="faq-a"><p>There's no minimum for LTL road freight. Air freight starts from 10 kg. Ocean LCL can be used for as little as 1 CBM.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+   <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo"><a href="index.html"><img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=200&h=80&output=webp&q=80&fit=inside" alt="Stackly LogiFlow" width="140" /></a></div>
+          <p>An end-to-end logistics platform rooted in technology, driven by precision. Every shipment, every mile — handled with care since 2008.</p>
+          <div class="footer-social"><a href="404.html">in</a><a href="404.html">𝕏</a><a href="404.html">f</a><a href="404.html">▶</a></div>
+        </div>
+        <div class="footer-col"><h4>Explore</h4><ul><li><a href="index.html">Home</a></li><li><a href="services.html">Our Services</a></li><li><a href="tracking.html">Track Shipment</a></li><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+        <div class="footer-col"><h4>Services</h4><ul><li><a href="services.html">Road Freight</a></li><li><a href="services.html">Air Freight</a></li><li><a href="services.html">Ocean Freight</a></li><li><a href="services.html">Warehousing</a></li><li><a href="services.html">Cold Chain</a></li></ul></div>
+        <div class="footer-col"><h4>Contact Us</h4><ul><li><a href="404.html">Level 12, One BKC Tower, Mumbai</a></li><li><a href="404.html">+91 22 4000 1234</a></li><li><a href="404.html">info@logiflow.com</a></li><li><a href="404.html">Mon–Fri: 8am – 8pm IST</a></li><li><a href="404.html">24/7 Emergency Line</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Stackly Logistics — Powered by Stackly. All rights reserved.</p>
+        <div class="footer-bottom-logo"><img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=200&h=80&output=webp&q=80&fit=inside" alt="Stackly" width="80" /></div>
+        <p>Privacy Policy · Terms of Service · Cookie Settings</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/contact.js"></script>
+</body>
+</html>
