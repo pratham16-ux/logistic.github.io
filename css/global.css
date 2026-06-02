@@ -279,6 +279,20 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 .menu-close-btn:hover { background: var(--orange); color: #fff; transform: rotate(90deg); }
 
+.nav-logo img {
+      filter: brightness(0) saturate(100%) invert(42%) sepia(85%) saturate(600%) hue-rotate(10deg) brightness(95%) contrast(105%);
+    }
+    .nav-logo:hover img {
+      filter: brightness(0) saturate(100%) invert(35%) sepia(85%) saturate(700%) hue-rotate(5deg) brightness(85%) contrast(110%);
+    }
+    .footer-brand .footer-logo img {
+      filter: brightness(0) invert(1) opacity(0.85);
+    }
+    .footer-bottom-logo img {
+      filter: brightness(0) invert(1) opacity(0.4);
+    }
+
+
 /* Nav Links */
 .menu-nav-links {
   padding: 20px 0;
@@ -641,7 +655,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(44px,6.5vw,88px);
+  font-size: clamp(25px,6.5vw,88px);
   font-weight: 800; line-height: 1.03;
   letter-spacing: -0.03em; color: #fff; margin-bottom: 24px;
   animation: slideUp 0.9s ease 0.4s both;

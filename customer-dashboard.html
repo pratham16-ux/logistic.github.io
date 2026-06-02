@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Dashboard — Stackly LogiFlow</title>
+  <!-- Shared stylesheet (document 3) -->
+  <link rel="stylesheet" href="/css/dashboard.css" />
+  <!-- Page-specific overrides only -->
+  <style>
+    /* ── Quick-Track timeline (reuses .timeline classes from shared CSS) ── */
+    .timeline { display: flex; flex-direction: column; }
+    .timeline-item {
+      display: flex; gap: 16px; padding: 14px 0;
+      position: relative;
+    }
+    .timeline-item:not(:last-child)::after {
+      content: ''; position: absolute;
+      left: 9px; top: 36px; bottom: -14px;
+      width: 2px; background: var(--warm-tan);
+    }
+    .tl-dot {
+      width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+      margin-top: 3px; display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800; color: #fff; position: relative; z-index: 1;
+    }
+    .tl-dot.done    { background: var(--success); border: 2px solid var(--success); }
+    .tl-dot.active  { background: var(--orange);  border: 2px solid var(--orange);
+                      box-shadow: 0 0 0 4px rgba(232,99,26,0.18);
+                      animation: dotPulse 1.6s ease infinite; }
+    .tl-dot.pending { background: var(--cream);   border: 2px solid var(--warm-tan); }
+    .tl-title { font-family: var(--font-display); font-size: 13px; font-weight: 800;
+                color: var(--charcoal); }
+    .tl-sub   { font-size: 12px; color: var(--mid-gray); margin-top: 2px; }
+    .tl-time  { font-size: 11px; color: var(--lt-gray);  margin-top: 3px;
+                font-family: var(--font-display); }
+    .timeline-item.pending .tl-title,
+    .timeline-item.pending .tl-sub { color: var(--lt-gray); }
+
+    /* ── Quick-action grid ── */
+    .quick-action-btn {
+      padding: 18px; border: 2px solid var(--warm-tan);
+      border-radius: var(--radius-md); background: var(--cream);
+      cursor: pointer; transition: var(--transition);
+      text-align: center; font-family: var(--font-display);
+      font-size: 13px; font-weight: 700; color: var(--charcoal);
+    }
+    .quick-action-btn:hover {
+      border-color: var(--orange); color: var(--orange);
+      transform: translateY(-2px); box-shadow: var(--shadow-sm);
+    }
+    .quick-action-btn .qa-icon { font-size: 24px; margin-bottom: 6px; }
+
+    /* ── Invoice row ── */
+    .invoice-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 24px; border-bottom: 1px solid var(--ivory);
+    }
+    .invoice-row:last-child { border-bottom: none; }
+    .inv-icon {
+      width: 36px; height: 36px; border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+      flex-shrink: 0;
+    }
+    .inv-icon.green  { background: rgba(16,185,129,0.1); }
+    .inv-icon.amber  { background: rgba(245,158,11,0.1); }
+    .inv-icon.danger { background: rgba(239,68,68,0.1);  }
+
+    /* ── Rate cards ── */
+    .rate-card {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 14px; border-radius: var(--radius-md);
+      border: 1px solid var(--warm-tan); background: var(--cream);
+    }
+    .rate-card.featured {
+      background: linear-gradient(90deg, rgba(232,99,26,0.05), transparent);
+      border-color: rgba(232,99,26,0.2);
+    }
+    .rate-card .rate-val { font-family: var(--font-display); font-size: 15px; font-weight: 800; }
+    .rate-card.featured .rate-val { color: var(--orange); }
+
+    /* ── Map pins for live-tracking page ── */
+    .map-overlay-pin { font-weight: 800; }
+
+    /* ── Settings toggles ── */
+    .toggle-wrap {
+      position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer;
+    }
+    .toggle-wrap input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute; inset: 0; border-radius: 12px; background: var(--warm-tan);
+      transition: background var(--transition);
+    }
+    .toggle-wrap input:checked ~ .toggle-track { background: var(--orange); }
+    .toggle-thumb {
+      position: absolute; top: 2px; left: 2px;
+      width: 20px; height: 20px; background: #fff; border-radius: 50%;
+      transition: transform var(--transition); pointer-events: none;
+    }
+    .toggle-wrap input:checked ~ .toggle-thumb { transform: translateX(20px); }
+
+    /* ── Shipment form labels ── */
+    .form-label {
+      display: block; font-size: 11px; font-weight: 800;
+      font-family: var(--font-display); text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--charcoal); margin-bottom: 6px;
+    }
+    .form-control {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid var(--warm-tan); border-radius: var(--radius-md);
+      font-size: 14px; background: var(--cream); color: var(--charcoal);
+      font-family: var(--font-body); outline: none; transition: var(--transition);
+    }
+    .form-control:focus { border-color: var(--orange); background: #fff; }
+    textarea.form-control { min-height: 80px; resize: vertical; }
+
+    /* ── Chat bubble ── */
+    .chat-bubble {
+      position: fixed; bottom: 28px; right: 28px; z-index: 400;
+    }
+    .chat-btn {
+      width: 52px; height: 52px; border-radius: 50%; border: none;
+      background: linear-gradient(135deg, var(--steel-dk), var(--steel));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; cursor: pointer;
+      box-shadow: 0 6px 24px rgba(43,76,126,0.35);
+      transition: var(--transition);
+    }
+    .chat-btn:hover { transform: scale(1.1); box-shadow: 0 10px 32px rgba(43,76,126,0.45); }
+  </style>
+</head>
+<body>
+<div class="dash-layout">
+
+  <!-- ── SIDEBAR OVERLAY (mobile) ── -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar" id="dashSidebar">
+    <div class="sidebar-logo">
+      <a href="index.html">
+        <img
+          src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=300&h=100&output=webp&q=80&fit=inside"
+          alt="Stackly LogiFlow" />
+      </a>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="su-avatar" id="sidebarAvatar">AV</div>
+      <div class="su-name"  id="sidebarUserName">Amit Verma</div>
+      <div class="su-email" id="sidebarUserEmail">customer@gmail.com</div>
+      <div class="su-role"  id="sidebarRole">📦 Customer</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">My Shipments</div>
+
+      <div class="nav-item active" data-page="overview">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Overview</span>
+      </div>
+      <div class="nav-item" data-page="shipments">
+        <span class="nav-icon">📦</span>
+        <span class="nav-label">My Shipments</span>
+        <span class="nav-badge">5</span>
+      </div>
+      <div class="nav-item" data-page="tracking">
+        <span class="nav-icon">📍</span>
+        <span class="nav-label">Live Tracking</span>
+      </div>
+      <div class="nav-item" data-page="newshipment">
+        <span class="nav-icon">➕</span>
+        <span class="nav-label">New Shipment</span>
+      </div>
+
+      <div class="nav-section-label">Account</div>
+
+      <div class="nav-item" data-page="invoices">
+        <span class="nav-icon">🧾</span>
+        <span class="nav-label">Invoices</span>
+      </div>
+      <div class="nav-item" data-page="documents">
+        <span class="nav-icon">📁</span>
+        <span class="nav-label">Documents</span>
+      </div>
+      <div class="nav-item" data-page="notifications">
+        <span class="nav-icon">🔔</span>
+        <span class="nav-label">Notifications</span>
+        <span class="nav-badge">3</span>
+      </div>
+      <div class="nav-item" data-page="settings">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label">Settings</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="index.html" class="logout-btn">
+        <span>🌐</span><span>Back to Website</span>
+      </a>
+      <button id="logoutBtn" class="logout-btn">
+        <span>🚪</span><span>Sign Out</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN ══ -->
+  <main class="dash-main">
+
+    <!-- ── TOPBAR ── -->
+    <header class="dash-topbar">
+      <button class="topbar-hamburger" id="topbarHamburger" aria-label="Open menu">
+        <span></span>
+      </button>
+
+      <div class="topbar-title" id="topbarPageTitle">
+        Overview <span>Dashboard</span>
+      </div>
+
+      <div class="topbar-search">
+        <span>🔍</span>
+        <input type="text" id="globalSearch" placeholder="Search shipments, invoices…" />
+      </div>
+
+      <div class="topbar-actions">
+        <button class="topbar-icon-btn" title="New Shipment"
+          onclick="navPage('newshipment')">➕</button>
+
+        <button class="topbar-icon-btn" title="Notifications"
+          onclick="navPage('notifications')">
+          🔔<span class="notif-dot"></span>
+        </button>
+
+        <div class="topbar-user" onclick="navPage('settings')" role="button" tabindex="0">
+          <div class="topbar-avatar" id="topbarAvatar">AV</div>
+          <span class="topbar-uname" id="topbarName">Amit</span>
+          <span>▾</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ════════════════════════════════════════
+         PAGE: OVERVIEW
+    ════════════════════════════════════════ -->
+    <section class="dash-content active" data-page="overview">
+      <div class="page-header">
+        <div class="page-label">Customer Dashboard</div>
+        <div class="page-header-row">
+          <div>
+            <h1 class="page-title">
+              Welcome back, <span style="color:var(--orange)" class="user-name-display">Amit</span> 👋
+            </h1>
+            <p class="page-sub">
+              Logged in as <strong class="user-email-display">customer@gmail.com</strong>
+              · Here's your shipment status
+            </p>
+          </div>
+          <button class="btn-primary" onclick="navPage('newshipment')">+ New Shipment</button>
+        </div>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="stat-cards stat-cards-4">
+        <div class="stat-card orange">
+          <div class="sc-icon">📦</div>
+          <div class="sc-label">Active Shipments</div>
+          <div class="sc-val"><span data-count="5">0</span></div>
+          <div class="sc-change up">↑ 2 new this week</div>
+        </div>
+        <div class="stat-card green">
+          <div class="sc-icon">✅</div>
+          <div class="sc-label">Delivered This Month</div>
+          <div class="sc-val"><span data-count="12">0</span></div>
+          <div class="sc-change up">↑ 3 more than last month</div>
+        </div>
+        <div class="stat-card steel">
+          <div class="sc-icon">💰</div>
+          <div class="sc-label">Total Spend (This Month)</div>
+          <div class="sc-val">₹<span data-count="2.4" data-suffix="L">0</span></div>
+          <div class="sc-change flat">→ 14 invoices total</div>
+        </div>
+        <div class="stat-card amber">
+          <div class="sc-icon">🕐</div>
+          <div class="sc-label">Pending Delivery</div>
+          <div class="sc-val"><span data-count="3">0</span></div>
+          <div class="sc-change flat">→ On schedule</div>
+        </div>
+      </div>
+
+      <!-- Charts row -->
+      <div class="grid-12" style="margin-bottom:20px">
+
+        <!-- Shipment Activity -->
+        <div class="dash-card">
+          <div class="card-head">
+            <h3>📈 Shipment Activity</h3>
+            <div style="display:flex;gap:10px">
+              <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--mid-gray)">
+                <span style="width:10px;height:10px;background:var(--orange);border-radius:2px;display:inline-block"></span>2025
+              </span>
+              <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--mid-gray)">
+                <span style="width:10px;height:10px;background:var(--steel);border-radius:2px;display:inline-block"></span>2024
+              </span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-area" id="activityChart">
+              <div class="chart-bar"           data-h="40" data-tip="4"  style="height:0"></div>
+              <div class="chart-bar secondary"  data-h="30"              style="height:0"></div>
+              <div class="chart-bar"            data-h="55" data-tip="6"  style="height:0"></div>
+              <div class="chart-bar secondary"  data-h="42"              style="height:0"></div>
+              <div class="chart-bar"            data-h="62" data-tip="7"  style="height:0"></div>
+              <div class="chart-bar secondary"  data-h="48"              style="height:0"></div>
+              <div class="chart-bar"            data-h="75" data-tip="9"  style="height:0"></div>
+              <div class="chart-bar secondary"  data-h="60"              style="height:0"></div>
+              <div class="chart-bar"            data-h="68" data-tip="8"  style="height:0"></div>
+              <div class="chart-bar secondary"  data-h="52"              style="height:0"></div>
+              <div class="chart-bar"            data-h="80" data-tip="10" style="height:0"></div>
+              <div class="chart-bar secondary"  data-h="70"              style="height:0"></div>
+            </div>
+            <div class="chart-labels">
+              <div class="chart-label">Jan</div><div class="chart-label">Feb</div>
+              <div class="chart-label">Mar</div><div class="chart-label">Apr</div>
+              <div class="chart-label">May</div><div class="chart-label">Jun</div>
+              <div class="chart-label">Jul</div><div class="chart-label">Aug</div>
+              <div class="chart-label">Sep</div><div class="chart-label">Oct</div>
+              <div class="chart-label">Nov</div><div class="chart-label">Dec</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Donut: Shipment Status -->
+        <div class="dash-card">
+          <div class="card-head"><h3>🥧 My Shipment Status</h3></div>
+          <div class="card-body">
+            <div class="donut-wrap">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="45" fill="none" stroke="var(--cream)"    stroke-width="22"/>
+                <circle cx="60" cy="60" r="45" fill="none" stroke="var(--orange)"   stroke-width="22"
+                  stroke-dasharray="113 169" stroke-dashoffset="0"    stroke-linecap="butt"/>
+                <circle cx="60" cy="60" r="45" fill="none" stroke="var(--success)"  stroke-width="22"
+                  stroke-dasharray="85 197"  stroke-dashoffset="-113" stroke-linecap="butt"/>
+                <circle cx="60" cy="60" r="45" fill="none" stroke="var(--warning)"  stroke-width="22"
+                  stroke-dasharray="57 225"  stroke-dashoffset="-198" stroke-linecap="butt"/>
+                <text x="60" y="56" text-anchor="middle"
+                  font-family="Syne,sans-serif" font-size="16" font-weight="800" fill="#1C1C1C">17</text>
+                <text x="60" y="70" text-anchor="middle"
+                  font-family="DM Sans,sans-serif" font-size="9" fill="#6B6B6B">TOTAL</text>
+              </svg>
+              <div class="donut-legend">
+                <div class="legend-item">
+                  <div class="legend-dot" style="background:var(--orange)"></div>
+                  <span style="flex:1">In Transit</span><strong>5</strong>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-dot" style="background:var(--success)"></div>
+                  <span style="flex:1">Delivered</span><strong>9</strong>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-dot" style="background:var(--warning)"></div>
+                  <span style="flex:1">Pending</span><strong>3</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Shipments + Quick Track -->
+      <div class="grid-12" style="margin-bottom:20px">
+
+        <div class="dash-card">
+          <div class="card-head">
+            <h3>🚚 Active Shipments</h3>
+            <button class="btn-ghost" onclick="navPage('shipments')">View All →</button>
+          </div>
+          <div class="dash-table-wrap">
+            <table class="dash-table">
+              <thead><tr>
+                <th>ID</th><th>Route</th><th>Status</th><th>ETA</th><th>Action</th>
+              </tr></thead>
+              <tbody>
+                <tr>
+                  <td><div class="td-strong">LF-2025-048291</div><div class="td-sub">Ocean FCL</div></td>
+                  <td>Mumbai → Frankfurt</td>
+                  <td><span class="pill pill-transit">In Transit</span></td>
+                  <td>30 Jan</td>
+                  <td><button class="btn-icon" title="Track"
+                    onclick="navPage('tracking');showToast('Live tracking opened','success')">📍</button></td>
+                </tr>
+                <tr>
+                  <td><div class="td-strong">LF-2025-048289</div><div class="td-sub">Road LTL</div></td>
+                  <td>Chennai → Bangalore</td>
+                  <td><span class="pill pill-pending">Pending</span></td>
+                  <td>22 Jan</td>
+                  <td><button class="btn-icon" title="Details"
+                    onclick="showToast('Dispatch scheduled for tomorrow','warning')">📋</button></td>
+                </tr>
+                <tr>
+                  <td><div class="td-strong">LF-2025-048287</div><div class="td-sub">Ocean LCL</div></td>
+                  <td>Kolkata → Singapore</td>
+                  <td><span class="pill pill-pending">Pending</span></td>
+                  <td>01 Feb</td>
+                  <td><button class="btn-icon" title="Details"
+                    onclick="showToast('Booking confirmed','success')">📋</button></td>
+                </tr>
+                <tr>
+                  <td><div class="td-strong">LF-2025-048285</div><div class="td-sub">Air Freight</div></td>
+                  <td>Bangalore → Tokyo</td>
+                  <td><span class="pill pill-cancelled">Delayed</span></td>
+                  <td>25 Jan</td>
+                  <td><button class="btn-icon" title="Delay info"
+                    onclick="showToast('Delay: customs hold 2 days','warning')">⚠️</button></td>
+                </tr>
+                <tr>
+                  <td><div class="td-strong">LF-2025-048283</div><div class="td-sub">Cold Chain</div></td>
+                  <td>Pune → Hyderabad</td>
+                  <td><span class="pill pill-transit">In Transit</span></td>
+                  <td>21 Jan</td>
+                  <td><button class="btn-icon" title="Temp monitor"
+                    onclick="navPage('tracking');showToast('Temp monitoring active','success')">🌡️</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Quick Track -->
+        <div class="dash-card">
+          <div class="card-head"><h3>📍 Quick Track</h3></div>
+          <div class="card-body">
+            <div style="display:flex;gap:8px;margin-bottom:20px">
+              <input id="quickTrackInput" type="text"
+                class="form-control" placeholder="Enter shipment ID…"
+                style="flex:1" />
+              <button class="btn-primary btn-sm" onclick="quickTrack()">Track →</button>
+            </div>
+
+            <!-- Mini timeline for latest shipment -->
+            <div style="font-family:var(--font-display);font-size:11px;font-weight:800;
+              text-transform:uppercase;letter-spacing:0.1em;color:var(--mid-gray);
+              margin-bottom:12px">
+              LF-2025-048291 · Last Update
+            </div>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="tl-dot done">✓</div>
+                <div>
+                  <div class="tl-title">Picked Up</div>
+                  <div class="tl-sub">Mumbai JNPT Port</div>
+                  <div class="tl-time">15 Jan, 09:00</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="tl-dot done">✓</div>
+                <div>
+                  <div class="tl-title">Customs Cleared</div>
+                  <div class="tl-sub">Export customs done</div>
+                  <div class="tl-time">16 Jan, 14:30</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="tl-dot active"></div>
+                <div>
+                  <div class="tl-title">In Transit · Arabian Sea</div>
+                  <div class="tl-sub">MV Evergreen Progress</div>
+                  <div class="tl-time">Now</div>
+                </div>
+              </div>
+              <div class="timeline-item pending">
+                <div class="tl-dot pending"></div>
+                <div>
+                  <div class="tl-title">Arrival Frankfurt</div>
+                  <div class="tl-sub">Expected ETA</div>
+                  <div class="tl-time">30 Jan, ~18:00</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions + Recent Invoices -->
+      <div class="grid-2">
+        <div class="dash-card">
+          <div class="card-head"><h3>⚡ Quick Actions</h3></div>
+          <div class="card-body"
+            style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <button class="quick-action-btn" onclick="navPage('newshipment')">
+              <div class="qa-icon">📦</div>New Shipment
+            </button>
+            <button class="quick-action-btn" onclick="navPage('tracking')">
+              <div class="qa-icon">📍</div>Live Tracking
+            </button>
+            <button class="quick-action-btn" onclick="navPage('invoices')">
+              <div class="qa-icon">🧾</div>My Invoices
+            </button>
+            <button class="quick-action-btn" onclick="navPage('documents')">
+              <div class="qa-icon">📁</div>Documents
+            </button>
+          </div>
+        </div>
+
+        <div class="dash-card">
+          <div class="card-head">
+            <h3>🧾 Recent Invoices</h3>
+            <button class="btn-ghost" onclick="navPage('invoices')">View All →</button>
+          </div>
+          <div class="invoice-row">
+            <div class="inv-icon green">✅</div>
+            <div style="flex:1">
+              <div class="td-strong">INV-2025-002</div>
+              <div class="td-sub">Acme Corp · Ocean FCL</div>
+            </div>
+            <div style="text-align:right">
+              <div class="td-strong">₹1,85,000</div>
+              <span class="pill pill-delivered" style="font-size:9px">Paid</span>
+            </div>
+          </div>
+          <div class="invoice-row">
+            <div class="inv-icon amber">⏰</div>
+            <div style="flex:1">
+              <div class="td-strong">INV-2025-003</div>
+              <div class="td-sub">BioPharm · Cold Chain</div>
+            </div>
+            <div style="text-align:right">
+              <div class="td-strong">₹95,000</div>
+              <span class="pill pill-pending" style="font-size:9px">Due Soon</span>
+            </div>
+          </div>
+          <div class="invoice-row">
+            <div class="inv-icon green">✅</div>
+            <div style="flex:1">
+              <div class="td-strong">INV-2025-004</div>
+              <div class="td-sub">GreenFoods · Ocean LCL</div>
+            </div>
+            <div style="text-align:right">
+              <div class="td-strong">₹67,500</div>
+              <span class="pill pill-delivered" style="font-size:9px">Paid</span>
+            </div>
+          </div>
+          <div class="invoice-row">
+            <div class="inv-icon danger">⚠️</div>
+            <div style="flex:1">
+              <div class="td-strong">INV-2025-005</div>
+              <div class="td-sub">HiTech · Air Freight</div>
+            </div>
+            <div style="text-align:right">
+              <div class="td-strong">₹38,000</div>
+              <span class="pill pill-cancelled" style="font-size:9px">Overdue</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         PAGE: MY SHIPMENTS
+    ════════════════════════════════════════ -->
+    <section class="dash-content" data-page="shipments">
+      <div class="page-header">
+        <div class="page-label">My Shipments</div>
+        <div class="page-header-row">
+          <div>
+            <h1 class="page-title">Shipments</h1>
+            <p class="page-sub">All your shipments in one place</p>
+          </div>
+          <button class="btn-primary" onclick="navPage('newshipment')">+ New Shipment</button>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <input class="search-input" id="shipSearch" type="text"
+          placeholder="🔍  Search by ID, route…" style="flex:1;max-width:320px" />
+        <select class="filter-select" id="shipStatusFilter">
+          <option value="">All Statuses</option>
+          <option value="transit">In Transit</option>
+          <option value="delivered">Delivered</option>
+          <option value="pending">Pending</option>
+          <option value="delayed">Delayed</option>
+        </select>
+        <select class="filter-select">
+          <option value="">All Services</option>
+          <option>Ocean FCL</option>
+          <option>Ocean LCL</option>
+          <option>Air Freight</option>
+          <option>Road Freight</option>
+          <option>Cold Chain</option>
+        </select>
+        <div class="spacer"></div>
+        <button class="btn-secondary btn-sm"
+          onclick="showToast('Export CSV downloaded','success')">📥 Export CSV</button>
+      </div>
+
+      <div class="dash-card">
+        <div class="dash-table-wrap">
+          <table class="dash-table" id="shipmentsTable">
+            <thead><tr>
+              <th>Shipment ID</th><th>Route</th><th>Service</th>
+              <th>Weight</th><th>Status</th><th>ETA</th><th>Actions</th>
+            </tr></thead>
+            <tbody>
+              <tr>
+                <td><div class="td-strong">LF-2025-048291</div><div class="td-sub">Booking confirmed</div></td>
+                <td>Mumbai → Frankfurt</td><td>Ocean FCL</td><td>12,400 kg</td>
+                <td><span class="pill pill-transit">In Transit</span></td><td>30 Jan</td>
+                <td style="display:flex;gap:6px">
+                  <button class="btn-icon" title="Track"
+                    onclick="navPage('tracking');showToast('Tracking LF-048291','success')">📍</button>
+                  <button class="btn-icon" title="Documents"
+                    onclick="showToast('Documents downloaded','success')">📄</button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="td-strong">LF-2025-048290</div><div class="td-sub">Delivery confirmed</div></td>
+                <td>Delhi → London</td><td>Air Freight</td><td>340 kg</td>
+                <td><span class="pill pill-delivered">Delivered</span></td><td>—</td>
+                <td style="display:flex;gap:6px">
+                  <button class="btn-icon" title="POD"
+                    onclick="showToast('Proof of delivery downloaded','success')">📄</button>
+                  <button class="btn-icon" title="Invoice"
+                    onclick="showToast('Invoice downloaded','success')">🧾</button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="td-strong">LF-2025-048289</div><div class="td-sub">Awaiting pickup</div></td>
+                <td>Chennai → Bangalore</td><td>Road LTL</td><td>2,100 kg</td>
+                <td><span class="pill pill-pending">Pending</span></td><td>22 Jan</td>
+                <td style="display:flex;gap:6px">
+                  <button class="btn-icon" title="Schedule"
+                    onclick="showToast('Pickup scheduled','success')">📋</button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="td-strong">LF-2025-048288</div></td>
+                <td>Pune → Hyderabad</td><td>Cold Chain</td><td>850 kg</td>
+                <td><span class="pill pill-transit">In Transit</span></td><td>21 Jan</td>
+                <td style="display:flex;gap:6px">
+                  <button class="btn-icon" title="Temp"
+                    onclick="showToast('Temp: 4.2°C — Normal','success')">🌡️</button>
+                  <button class="btn-icon" title="Track"
+                    onclick="navPage('tracking')">📍</button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="td-strong">LF-2025-048287</div></td>
+                <td>Kolkata → Singapore</td><td>Ocean LCL</td><td>5,600 kg</td>
+                <td><span class="pill pill-pending">Pending</span></td><td>01 Feb</td>
+                <td style="display:flex;gap:6px">
+                  <button class="btn-icon" title="View"
+                    onclick="showToast('Shipment details viewed','success')">👁</button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="td-strong">LF-2025-048285</div></td>
+                <td>Bangalore → Tokyo</td><td>Air Freight</td><td>180 kg</td>
+                <td><span class="pill pill-cancelled">Delayed</span></td><td>25 Jan</td>
+                <td style="display:flex;gap:6px">
+                  <button class="btn-icon" title="Delay info"
+                    onclick="showToast('⚠️ Delay report: customs hold 2 days','warning')">⚠️</button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="td-strong">LF-2025-048283</div></td>
+                <td>Mumbai → Rotterdam</td><td>Ocean FCL</td><td>8,200 kg</td>
+                <td><span class="pill pill-delivered">Delivered</span></td><td>—</td>
+                <td style="display:flex;gap:6px">
+                  <button class="btn-icon" title="Receipt"
+                    onclick="showToast('Receipt generated','success')">🧾</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <button class="pg-btn" disabled>←</button>
+          <button class="pg-btn active">1</button>
+          <button class="pg-btn" onclick="showToast('Page 2 loaded','success')">2</button>
+          <button class="pg-btn" onclick="showToast('Page 2 loaded','success')">→</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         PAGE: LIVE TRACKING
+    ════════════════════════════════════════ -->
+    <section class="dash-content" data-page="tracking">
+      <div class="page-header">
+        <div class="page-label">Live Tracking</div>
+        <div class="page-header-row">
+          <div>
+            <h1 class="page-title">Track Shipment</h1>
+            <p class="page-sub">Real-time visibility on all your active shipments</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-12" style="margin-bottom:20px">
+        <div class="dash-card">
+          <div class="card-head">
+            <h3>🗺️ Live Map View</h3>
+            <span class="pill pill-active">Live</span>
+          </div>
+          <div class="card-body">
+            <div style="margin-bottom:16px">
+              <select class="filter-select" style="width:100%"
+                onchange="showToast('Tracking: '+this.value,'success')">
+                <option>LF-2025-048291 — Mumbai → Frankfurt</option>
+                <option>LF-2025-048288 — Pune → Hyderabad</option>
+                <option>LF-2025-048289 — Chennai → Bangalore</option>
+              </select>
+            </div>
+            <div class="map-box" style="height:240px;margin-bottom:16px">
+              <img src="https://images.unsplash.com/photo-1569336415962-a4bd9f69c054?w=600&fm=webp&q=60"
+                alt="Live Map" />
+              <div class="map-overlay-pin pin-a">📦 LF-2025-048291</div>
+              <div class="map-overlay-pin pin-b">🌊 Arabian Sea</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+              <div style="background:var(--cream);border-radius:var(--radius-md);
+                padding:14px;border:1px solid var(--warm-tan)">
+                <div style="font-size:11px;color:var(--mid-gray);font-family:var(--font-display);
+                  font-weight:800;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Origin</div>
+                <div class="td-strong">Mumbai, India</div>
+              </div>
+              <div style="background:var(--cream);border-radius:var(--radius-md);
+                padding:14px;border:1px solid var(--warm-tan)">
+                <div style="font-size:11px;color:var(--mid-gray);font-family:var(--font-display);
+                  font-weight:800;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Destination</div>
+                <div class="td-strong">Frankfurt, Germany</div>
+              </div>
+              <div style="background:var(--cream);border-radius:var(--radius-md);
+                padding:14px;border:1px solid var(--warm-tan)">
+                <div style="font-size:11px;color:var(--mid-gray);font-family:var(--font-display);
+                  font-weight:800;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">ETA</div>
+                <div class="td-strong" style="color:var(--orange)">30 Jan 2025</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-card">
+          <div class="card-head"><h3>🚀 Journey Timeline</h3></div>
+          <div class="card-body" style="padding:0">
+            <div class="timeline" style="padding:0 24px">
+              <div class="timeline-item">
+                <div class="tl-dot done">✓</div>
+                <div>
+                  <div class="tl-title">Shipment Booked</div>
+                  <div class="tl-sub">Order confirmed by Stackly</div>
+                  <div class="tl-time">12 Jan, 10:15 AM</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="tl-dot done">✓</div>
+                <div>
+                  <div class="tl-title">Picked Up from Origin</div>
+                  <div class="tl-sub">Mumbai — JNPT Warehouse</div>
+                  <div class="tl-time">15 Jan, 09:00 AM</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="tl-dot done">✓</div>
+                <div>
+                  <div class="tl-title">Export Customs Cleared</div>
+                  <div class="tl-sub">All documents verified</div>
+                  <div class="tl-time">16 Jan, 02:30 PM</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="tl-dot done">✓</div>
+                <div>
+                  <div class="tl-title">Vessel Departed</div>
+                  <div class="tl-sub">MV Evergreen Progress · JNPT</div>
+                  <div class="tl-time">17 Jan, 06:00 AM</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="tl-dot active"></div>
+                <div>
+                  <div class="tl-title">In Transit · Arabian Sea</div>
+                  <div class="tl-sub">Position: 18.2°N 65.4°E · 68% to port</div>
+                  <div class="tl-time">Now · Updated 4 min ago</div>
+                </div>
+              </div>
+              <div class="timeline-item pending">
+                <div class="tl-dot pending"></div>
+                <div>
+                  <div class="tl-title">Arrival at Port Klang</div>
+                  <div class="tl-sub">Transshipment hub</div>
+                  <div class="tl-time">Expected: 24 Jan</div>
+                </div>
+              </div>
+              <div class="timeline-item pending">
+                <div class="tl-dot pending"></div>
+                <div>
+                  <div class="tl-title">Arrival Frankfurt Port</div>
+                  <div class="tl-sub">Import customs + last-mile</div>
+                  <div class="tl-time">Expected: 30 Jan</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         PAGE: NEW SHIPMENT
+    ════════════════════════════════════════ -->
+    <section class="dash-content" data-page="newshipment">
+      <div class="page-header">
+        <div class="page-label">Book Shipment</div>
+        <div class="page-header-row">
+          <div>
+            <h1 class="page-title">New Shipment</h1>
+            <p class="page-sub">Fill in the details to book your shipment</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="align-items:start">
+        <div class="dash-card">
+          <div class="card-head"><h3>📦 Shipment Details</h3></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <div>
+                <label class="form-label">Origin City</label>
+                <input class="form-control" type="text" placeholder="Mumbai, India" />
+              </div>
+              <div>
+                <label class="form-label">Destination City</label>
+                <input class="form-control" type="text" placeholder="Frankfurt, Germany" />
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <div>
+                <label class="form-label">Service Type</label>
+                <select class="form-control">
+                  <option>Ocean FCL</option>
+                  <option>Ocean LCL</option>
+                  <option>Air Freight</option>
+                  <option>Road Freight</option>
+                  <option>Cold Chain</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">Weight (kg)</label>
+                <input class="form-control" type="number" placeholder="5000" />
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <div>
+                <label class="form-label">Commodity</label>
+                <input class="form-control" type="text" placeholder="Electronics, Textiles…" />
+              </div>
+              <div>
+                <label class="form-label">Pickup Date</label>
+                <input class="form-control" type="date" />
+              </div>
+            </div>
+            <div>
+              <label class="form-label">Special Instructions</label>
+              <textarea class="form-control"
+                placeholder="Fragile, temperature requirements, hazardous…"></textarea>
+            </div>
+            <button class="btn-primary" style="justify-content:center;padding:14px"
+              onclick="showToast('Shipment LF-2025-048293 booked! Our team will confirm shortly.','success')">
+              🚀 Book Shipment
+            </button>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div class="dash-card">
+            <div class="card-head"><h3>💡 Estimated Rates</h3></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+              <div class="rate-card featured">
+                <div>
+                  <div class="td-strong">Ocean FCL</div>
+                  <div class="td-sub">18–22 days</div>
+                </div>
+                <div class="rate-val">₹1.8–2.2L</div>
+              </div>
+              <div class="rate-card">
+                <div>
+                  <div class="td-strong">Air Freight</div>
+                  <div class="td-sub">3–5 days</div>
+                </div>
+                <div class="rate-val">₹4.5–6.2L</div>
+              </div>
+              <div class="rate-card">
+                <div>
+                  <div class="td-strong">Road Freight</div>
+                  <div class="td-sub">2–4 days (domestic)</div>
+                </div>
+                <div class="rate-val">₹0.35–0.8L</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dash-card">
+            <div class="card-head"><h3>📞 Need Help?</h3></div>
+            <div class="card-body">
+              <p style="font-size:13px;color:var(--mid-gray);line-height:1.7;margin-bottom:16px">
+                Our logistics experts are available 24/7 to help you plan and book your shipment.
+              </p>
+              <button class="btn-secondary"
+                style="width:100%;justify-content:center;margin-bottom:10px"
+                onclick="showToast('Connecting to support agent…','success')">
+                💬 Chat with Expert
+              </button>
+              <button class="btn-secondary"
+                style="width:100%;justify-content:center"
+                onclick="showToast('Calling +91 22 4000 1234…','success')">
+                📞 Call Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         PAGE: INVOICES
+    ════════════════════════════════════════ -->
+    <section class="dash-content" data-page="invoices">
+      <div class="page-header">
+        <div class="page-label">Finance</div>
+        <div class="page-header-row">
+          <div>
+            <h1 class="page-title">My Invoices</h1>
+            <p class="page-sub">All billing and payment records</p>
+          </div>
+          <button class="btn-secondary btn-sm"
+            onclick="showToast('Invoices exported','success')">📥 Export CSV</button>
+        </div>
+      </div>
+
+      <div class="stat-cards stat-cards-3" style="margin-bottom:24px">
+        <div class="stat-card green">
+          <div class="sc-icon">✅</div>
+          <div class="sc-label">Total Paid</div>
+          <div class="sc-val">₹<span data-count="1.9" data-suffix="L">0</span></div>
+          <div class="sc-change up">↑ 3 invoices cleared</div>
+        </div>
+        <div class="stat-card amber">
+          <div class="sc-icon">⏰</div>
+          <div class="sc-label">Due Soon</div>
+          <div class="sc-val">₹<span data-count="95" data-suffix="K">0</span></div>
+          <div class="sc-change flat">→ Due by 01 Feb</div>
+        </div>
+        <div class="stat-card red">
+          <div class="sc-icon">⚠️</div>
+          <div class="sc-label">Overdue</div>
+          <div class="sc-val">₹<span data-count="38" data-suffix="K">0</span></div>
+          <div class="sc-change down">↓ Pay immediately</div>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div class="card-head"><h3>🧾 Invoice History</h3></div>
+        <div class="dash-table-wrap">
+          <table class="dash-table">
+            <thead><tr>
+              <th>Invoice #</th><th>Shipment</th><th>Service</th>
+              <th>Amount</th><th>Due Date</th><th>Status</th><th>Action</th>
+            </tr></thead>
+            <tbody>
+              <tr>
+                <td><div class="td-strong">INV-2025-001</div></td>
+                <td>LF-2025-048291</td><td>Ocean FCL</td><td>₹2,40,000</td><td>28 Jan</td>
+                <td><span class="pill pill-transit">Pending</span></td>
+                <td><button class="btn-icon" title="Pay Now"
+                  onclick="showToast('Pay Now: UPI / NEFT options opened','success')">💳</button></td>
+              </tr>
+              <tr>
+                <td><div class="td-strong">INV-2025-002</div></td>
+                <td>LF-2025-048290</td><td>Air Freight</td><td>₹1,85,000</td><td>30 Jan</td>
+                <td><span class="pill pill-delivered">Paid</span></td>
+                <td><button class="btn-icon" title="Download Receipt"
+                  onclick="showToast('Receipt downloaded','success')">📄</button></td>
+              </tr>
+              <tr>
+                <td><div class="td-strong">INV-2025-003</div></td>
+                <td>LF-2025-048288</td><td>Cold Chain</td><td>₹95,000</td><td>01 Feb</td>
+                <td><span class="pill pill-pending">Due Soon</span></td>
+                <td><button class="btn-icon" title="Pay"
+                  onclick="showToast('Paying ₹95,000…','success')">💳</button></td>
+              </tr>
+              <tr>
+                <td><div class="td-strong">INV-2025-004</div></td>
+                <td>LF-2025-048287</td><td>Ocean LCL</td><td>₹67,500</td><td>10 Feb</td>
+                <td><span class="pill pill-delivered">Paid</span></td>
+                <td><button class="btn-icon" title="Receipt"
+                  onclick="showToast('Receipt downloaded','success')">📄</button></td>
+              </tr>
+              <tr>
+                <td><div class="td-strong">INV-2025-005</div></td>
+                <td>LF-2025-048285</td><td>Air Freight</td><td>₹38,000</td><td>05 Jan</td>
+                <td><span class="pill pill-cancelled">Overdue</span></td>
+                <td><button class="btn-icon" title="Urgent Pay"
+                  onclick="showToast('⚠️ Urgent: Pay ₹38,000 to avoid service hold','warning')">⚠️</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         PAGE: DOCUMENTS
+    ════════════════════════════════════════ -->
+    <section class="dash-content" data-page="documents">
+      <div class="page-header">
+        <div class="page-label">Documents</div>
+        <div class="page-header-row">
+          <div>
+            <h1 class="page-title">My Documents</h1>
+            <p class="page-sub">Bills of lading, certificates, customs docs</p>
+          </div>
+          <button class="btn-primary"
+            onclick="showToast('Upload document panel opened','success')">📤 Upload Doc</button>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div class="card-head">
+          <h3>📁 Document Library</h3>
+          <input class="search-input" id="docSearch" placeholder="Search documents…"
+            style="width:220px" />
+        </div>
+        <div class="dash-table-wrap">
+          <table class="dash-table" id="docsTable">
+            <thead><tr>
+              <th>Document</th><th>Shipment</th><th>Type</th><th>Date</th><th>Action</th>
+            </tr></thead>
+            <tbody>
+              <tr>
+                <td><div class="td-strong">Bill of Lading — JNPT/FRA</div></td>
+                <td>LF-2025-048291</td>
+                <td><span class="pill" style="background:rgba(43,76,126,0.1);color:var(--steel)">B/L</span></td>
+                <td>17 Jan 2025</td>
+                <td style="display:flex;gap:6px">
+                  <button class="btn-icon" title="Download"
+                    onclick="showToast('B/L downloaded','success')">📥</button>
+                  <button class="btn-icon" title="Email"
+                    onclick="showToast('B/L shared via email','success')">✉️</button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="td-strong">Commercial Invoice #2025-001</div></td>
+                <td>LF-2025-048291</td>
+                <td><span class="pill pill-transit">Invoice</span></td>
+                <td>12 Jan 2025</td>
+                <td><button class="btn-icon" title="Download"
+                  onclick="showToast('Invoice downloaded','success')">📥</button></td>
+              </tr>
+              <tr>
+                <td><div class="td-strong">Packing List</div></td>
+                <td>LF-2025-048291</td>
+                <td><span class="pill pill-pending">Packing</span></td>
+                <td>14 Jan 2025</td>
+                <td><button class="btn-icon" title="Download"
+                  onclick="showToast('Packing list downloaded','success')">📥</button></td>
+              </tr>
+              <tr>
+                <td><div class="td-strong">Airway Bill — BLR/NRT</div></td>
+                <td>LF-2025-048285</td>
+                <td><span class="pill" style="background:rgba(43,76,126,0.1);color:var(--steel)">AWB</span></td>
+                <td>20 Jan 2025</td>
+                <td><button class="btn-icon" title="Download"
+                  onclick="showToast('AWB downloaded','success')">📥</button></td>
+              </tr>
+              <tr>
+                <td><div class="td-strong">Certificate of Origin</div></td>
+                <td>LF-2025-048283</td>
+                <td><span class="pill pill-delivered">COO</span></td>
+                <td>05 Jan 2025</td>
+                <td><button class="btn-icon" title="Download"
+                  onclick="showToast('COO downloaded','success')">📥</button></td>
+              </tr>
+              <tr>
+                <td><div class="td-strong">Delivery Receipt</div></td>
+                <td>LF-2025-048290</td>
+                <td><span class="pill pill-delivered">POD</span></td>
+                <td>16 Jan 2025</td>
+                <td><button class="btn-icon" title="Download"
+                  onclick="showToast('POD downloaded','success')">📥</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         PAGE: NOTIFICATIONS
+    ════════════════════════════════════════ -->
+    <section class="dash-content" data-page="notifications">
+      <div class="page-header">
+        <div class="page-label">Account</div>
+        <div class="page-header-row">
+          <div>
+            <h1 class="page-title">Notifications</h1>
+            <p class="page-sub">3 unread alerts</p>
+          </div>
+          <button class="btn-secondary btn-sm" onclick="markAllRead()">Mark All Read</button>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div class="card-body">
+          <div class="notif-list">
+            <div class="notif-item unread">
+              <div class="notif-icon">⚠️</div>
+              <div class="notif-body">
+                <strong>Shipment LF-2025-048285 Delayed</strong>
+                <p>Your Bangalore → Tokyo air freight is delayed by 2 days due to customs hold at the origin airport.</p>
+                <div class="notif-time">45 mins ago</div>
+              </div>
+              <button class="btn-icon" title="Acknowledge"
+                onclick="ackNotif(this,'Delay acknowledged','warning')">✓</button>
+            </div>
+            <div class="notif-item unread">
+              <div class="notif-icon">🧾</div>
+              <div class="notif-body">
+                <strong>Invoice INV-2025-005 Overdue</strong>
+                <p>Your invoice of ₹38,000 is overdue by 15 days. Please make payment to avoid service interruption.</p>
+                <div class="notif-time">2 hrs ago</div>
+              </div>
+              <button class="btn-icon" title="Pay Now"
+                onclick="ackNotif(this,'Pay invoice now','warning');navPage('invoices')">💳</button>
+            </div>
+            <div class="notif-item unread">
+              <div class="notif-icon">📦</div>
+              <div class="notif-body">
+                <strong>Shipment LF-2025-048291 Update</strong>
+                <p>Your Mumbai → Frankfurt shipment has passed the Suez Canal transit and is on schedule for 30 Jan delivery.</p>
+                <div class="notif-time">5 hrs ago</div>
+              </div>
+              <button class="btn-icon" title="Track"
+                onclick="ackNotif(this,'Tracking opened','success');navPage('tracking')">📍</button>
+            </div>
+            <div class="notif-item">
+              <div class="notif-icon">✅</div>
+              <div class="notif-body">
+                <strong>Shipment LF-2025-048290 Delivered</strong>
+                <p>Your Delhi → London air freight was delivered successfully. Proof of delivery is available in Documents.</p>
+                <div class="notif-time">Yesterday, 6:22 PM</div>
+              </div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-icon">🧾</div>
+              <div class="notif-body">
+                <strong>Invoice INV-2025-004 Paid — Confirmed</strong>
+                <p>Payment of ₹67,500 received and confirmed. Thank you!</p>
+                <div class="notif-time">Yesterday, 11:05 AM</div>
+              </div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-icon">📦</div>
+              <div class="notif-body">
+                <strong>New Shipment Booked — LF-2025-048287</strong>
+                <p>Your Kolkata → Singapore ocean LCL shipment has been confirmed. ETA 01 Feb.</p>
+                <div class="notif-time">2 days ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         PAGE: SETTINGS
+    ════════════════════════════════════════ -->
+    <section class="dash-content" data-page="settings">
+      <div class="page-header">
+        <div class="page-label">Account</div>
+        <h1 class="page-title">Settings</h1>
+      </div>
+
+      <div class="grid-2">
+        <!-- Profile card -->
+        <div class="dash-card">
+          <div class="card-head"><h3>👤 Profile</h3></div>
+          <div class="card-body">
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+              <div style="width:60px;height:60px;border-radius:50%;
+                background:linear-gradient(135deg,var(--orange),var(--orange-lt));
+                display:flex;align-items:center;justify-content:center;
+                font-family:var(--font-display);font-size:22px;font-weight:800;color:#fff"
+                id="settingsAvatar">AV</div>
+              <div>
+                <div style="font-family:var(--font-display);font-size:16px;font-weight:800"
+                  class="user-name-display">Amit Verma</div>
+                <div style="font-size:13px;color:var(--mid-gray)"
+                  class="user-email-display">customer@gmail.com</div>
+                <div style="font-size:11px;color:var(--steel);font-weight:800;margin-top:4px">
+                  📦 Customer Account
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div>
+                <label class="form-label">Display Name</label>
+                <input class="form-control" type="text" value="" />
+              </div>
+              <div>
+                <label class="form-label">Company</label>
+                <input class="form-control" type="text" value="" />
+              </div>
+              <div>
+                <label class="form-label">Phone</label>
+                <input class="form-control" type="tel" value="" />
+              </div>
+              <div>
+                <label class="form-label">GSTIN</label>
+                <input class="form-control" type="text" value="" />
+              </div>
+            </div>
+            <button class="btn-primary"
+              style="margin-top:20px;width:100%;justify-content:center"
+              onclick="showToast('Profile updated successfully!','success')">
+              Save Changes
+            </button>
+          </div>
+        </div>
+
+        <!-- Notifications + Security -->
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div class="dash-card">
+            <div class="card-head"><h3>🔔 Notifications</h3></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:18px">
+              <div style="display:flex;justify-content:space-between;align-items:center;
+                padding-bottom:14px;border-bottom:1px solid var(--warm-tan)">
+                <div>
+                  <div style="font-family:var(--font-display);font-size:14px;font-weight:800">Email Alerts</div>
+                  <div style="font-size:12px;color:var(--mid-gray)">Shipment updates &amp; invoices</div>
+                </div>
+                <label class="toggle-wrap">
+                  <input type="checkbox" checked
+                    onchange="showToast(this.checked?'Email alerts enabled':'Email alerts disabled','success')" />
+                  <span class="toggle-track"></span>
+                  <span class="toggle-thumb"></span>
+                </label>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;
+                padding-bottom:14px;border-bottom:1px solid var(--warm-tan)">
+                <div>
+                  <div style="font-family:var(--font-display);font-size:14px;font-weight:800">SMS Alerts</div>
+                  <div style="font-size:12px;color:var(--mid-gray)">Delivery &amp; delay notifications</div>
+                </div>
+                <label class="toggle-wrap">
+                  <input type="checkbox" checked
+                    onchange="showToast(this.checked?'SMS alerts enabled':'SMS alerts disabled','success')" />
+                  <span class="toggle-track"></span>
+                  <span class="toggle-thumb"></span>
+                </label>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div style="font-family:var(--font-display);font-size:14px;font-weight:800">Weekly Summary</div>
+                  <div style="font-size:12px;color:var(--mid-gray)">Sent every Monday 8am</div>
+                </div>
+                <label class="toggle-wrap">
+                  <input type="checkbox"
+                    onchange="showToast(this.checked?'Weekly summary enabled':'Weekly summary disabled','success')" />
+                  <span class="toggle-track"></span>
+                  <span class="toggle-thumb"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="dash-card">
+            <div class="card-head"><h3>🔐 Security</h3></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+              <button class="btn-secondary" style="width:100%;justify-content:center"
+                onclick="showToast('Password reset email sent to customer@gmail.com','success')">
+                Change Password
+              </button>
+              <button class="btn-secondary"
+                style="width:100%;justify-content:center;color:var(--danger);border-color:var(--danger)"
+                onclick="sessionStorage.clear();window.location.href='index.html'">
+                Sign Out of All Devices
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- /dash-main -->
+</div><!-- /dash-layout -->
+
+<!-- TOAST CONTAINER (shared JS also creates this but having it here avoids FOUC) -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- SUPPORT CHAT BUBBLE -->
+<div class="chat-bubble">
+  <button class="chat-btn" title="Live Support"
+    onclick="showToast('Connecting to support…','success')">💬</button>
+</div>
+
+<!-- ══ Shared JS ══ -->
+<script src="/js/dashboard.js"></script>
+
+<!-- ══ Page-specific JS ══ -->
+<script>
+  /* ─────────────────────────────────────────
+     navPage()  — thin wrapper used by inline
+     onclick handlers throughout this page.
+     The shared initSidebarNav() handles nav
+     clicks; this covers button clicks inside
+     page content.
+  ───────────────────────────────────────── */
+  function navPage(page) {
+    document.querySelectorAll('.nav-item[data-page]').forEach(i => {
+      i.classList.toggle('active', i.dataset.page === page);
+    });
+    document.querySelectorAll('.dash-content').forEach(c => {
+      c.classList.toggle('active', c.dataset.page === page);
+    });
+    const label = document.querySelector(`.nav-item[data-page="${page}"] .nav-label`);
+    const titleEl = document.getElementById('topbarPageTitle');
+    if (titleEl && label) titleEl.textContent = label.textContent + ' Dashboard';
+    closeSidebar();
+    window.scrollTo(0, 0);
+  }
+
+  /* ─────────────────────────────────────────
+     Quick Track
+  ───────────────────────────────────────── */
+  function quickTrack() {
+    const val = document.getElementById('quickTrackInput').value.trim();
+    if (!val) { showToast('Enter a shipment ID', 'warning'); return; }
+    navPage('tracking');
+    showToast('Tracking ' + val, 'success');
+  }
+
+  /* ─────────────────────────────────────────
+     Notifications
+  ───────────────────────────────────────── */
+  function ackNotif(btn, msg, type) {
+    btn.closest('.notif-item').classList.remove('unread');
+    showToast(msg, type);
+  }
+
+  function markAllRead() {
+    document.querySelectorAll('.notif-item.unread').forEach(n => n.classList.remove('unread'));
+    showToast('All marked as read', 'success');
+  }
+
+  /* ─────────────────────────────────────────
+     Global search (Enter → go to Shipments)
+  ───────────────────────────────────────── */
+  document.getElementById('globalSearch').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && this.value.trim()) {
+      navPage('shipments');
+      setTimeout(() => {
+        const si = document.getElementById('shipSearch');
+        if (si) { si.value = this.value; si.dispatchEvent(new Event('input')); }
+      }, 80);
+    }
+  });
+
+  /* ─────────────────────────────────────────
+     Table search & filter wiring
+  ───────────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    // Shipments search
+    initTableSearch('shipSearch', 'shipmentsTable', [0, 1, 2]);
+
+    // Shipments status filter — column 4 contains the pill text
+    initFilterSelect('shipStatusFilter', 'shipmentsTable', 4);
+
+    // Documents search
+    initTableSearch('docSearch', 'docsTable', [0, 1, 2]);
+
+    /* ── Populate user info (avatar in settings page too) ── */
+    const name = sessionStorage.getItem('lf_name')  || 'Amit Verma';
+    const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    const sa = document.getElementById('settingsAvatar');
+    if (sa) sa.textContent = initials;
+  });
+
+  /* ─────────────────────────────────────────
+     Boot — calls shared initDashboard() which
+     handles: auth guard, populateUserInfo,
+     sidebar nav, mobile sidebar, logout,
+     modals, count animations, chart bars,
+     ripple effects.
+
+     NOTE: if no session data exists (dev /
+     direct-open), fall back to demo values so
+     the page still renders correctly without
+     redirecting to login.html.
+  ───────────────────────────────────────── */
+  (function boot() {
+    // Dev / preview fallback: seed session so checkAuth() passes
+    if (!sessionStorage.getItem('lf_role')) {
+      sessionStorage.setItem('lf_role',  'customer');
+      sessionStorage.setItem('lf_email', 'customer@gmail.com');
+      sessionStorage.setItem('lf_name',  'Amit Verma');
+    }
+    initDashboard();
+  })();
+  // BEFORE
+(function boot() {
+  if (!sessionStorage.getItem('lf_role')) {
+    sessionStorage.setItem('lf_role',  'customer');
+    sessionStorage.setItem('lf_email', 'customer@gmail.com');
+    sessionStorage.setItem('lf_name',  'Amit Verma');
+  }
+  initDashboard();
+})();
+</script>
+</body>
+</html>

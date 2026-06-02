@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — Stackly Transport</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+    /* ── LOGIN PAGE ── */
+    body { background: var(--ivory); min-height: 100vh; display: flex; flex-direction: column; }
+
+    .login-page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* ── LEFT PANEL ── */
+    .login-left {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 56px;
+      background: var(--steel-dk);
+    }
+    .login-left-bg {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=1200&fm=webp&q=70');
+      background-size: cover; background-position: center;
+      opacity: 0.35;
+    }
+    .login-left-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, rgba(26,49,86,0.6) 0%, rgba(232,99,26,0.55) 100%);
+    }
+    .login-left-content { position: relative; z-index: 2; color: #fff; }
+    .login-brand { margin-bottom: 48px; }
+    .login-brand img { height: 48px; width: auto; filter: brightness(0) invert(1); }
+    .login-tagline {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 3.5vw, 50px);
+      font-weight: 800; line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 20px;
+    }
+    .login-tagline span { color: var(--orange-lt); }
+    .login-desc { font-size: 15px; color: rgba(255,255,255,0.75); line-height: 1.75; max-width: 380px; margin-bottom: 40px; }
+    .login-stats { display: flex; gap: 32px; }
+    .ls-item { border-left: 3px solid var(--orange-lt); padding-left: 16px; }
+    .ls-num { font-family: var(--font-display); font-size: 26px; font-weight: 800; color: #fff; }
+    .ls-label { font-size: 12px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* ── RIGHT PANEL ── */
+    .login-right {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 32px;
+      background: var(--white);
+    }
+    .login-form-wrap { width: 100%; max-width: 440px; }
+
+    .login-header { text-align: center; margin-bottom: 36px; }
+    .login-header h2 {
+      font-family: var(--font-display); font-size: 30px; font-weight: 800;
+      color: var(--charcoal); letter-spacing: -0.02em; margin-bottom: 8px;
+    }
+    .login-header p { color: var(--mid-gray); font-size: 14px; }
+
+    /* Role Selector */
+    .role-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px; }
+    .role-card {
+      border: 2px solid var(--warm-tan);
+      border-radius: var(--radius-lg); padding: 22px 16px;
+      text-align: center; cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      position: relative; overflow: hidden;
+      background: var(--cream);
+    }
+    .role-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(232,99,26,0.08), rgba(43,76,126,0.05));
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .role-card:hover::before { opacity: 1; }
+    .role-card:hover { border-color: var(--orange); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(232,99,26,0.18); }
+    .role-card.selected {
+      border-color: var(--orange); background: #fff;
+      box-shadow: 0 8px 28px rgba(232,99,26,0.22);
+      transform: translateY(-2px);
+    }
+    .role-card.selected::before { opacity: 1; }
+    .role-card input[type="radio"] { display: none; }
+    .role-icon { font-size: 36px; margin-bottom: 10px; display: block; }
+    .role-title {
+      font-family: var(--font-display); font-size: 16px; font-weight: 800;
+      color: var(--charcoal); margin-bottom: 5px;
+    }
+    .role-desc { font-size: 11px; color: var(--mid-gray); line-height: 1.5; }
+    .role-card.selected .role-title { color: var(--orange); }
+    .role-badge {
+      position: absolute; top: 10px; right: 10px;
+      width: 20px; height: 20px; background: var(--orange);
+      border-radius: 50%; display: none;
+      align-items: center; justify-content: center;
+      font-size: 11px; color: #fff; font-weight: 700;
+    }
+    .role-card.selected .role-badge { display: flex; }
+
+    /* Form Fields */
+    .form-group { margin-bottom: 18px; }
+    .form-group label {
+      display: block; font-size: 11px; font-weight: 800;
+      font-family: var(--font-display); text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--charcoal); margin-bottom: 7px;
+    }
+    .form-group input {
+      width: 100%; padding: 14px 18px;
+      font-size: 15px; font-family: var(--font-body);
+      border: 2px solid var(--warm-tan);
+      border-radius: var(--radius-md);
+      background: var(--cream); color: var(--charcoal);
+      outline: none; transition: var(--transition);
+    }
+    .form-group input:focus { border-color: var(--orange); background: #fff; box-shadow: 0 0 0 4px rgba(232,99,26,0.1); }
+    .form-group input.error { border-color: #ef4444; animation: shakeX 0.4s ease; }
+
+    .password-wrap { position: relative; }
+    .password-wrap input { padding-right: 52px; }
+    .toggle-pw {
+      position: absolute; right: 16px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px; cursor: pointer; opacity: 0.5;
+      transition: opacity 0.2s; user-select: none;
+    }
+    .toggle-pw:hover { opacity: 1; }
+
+    .forgot-link {
+      display: block; text-align: right; font-size: 12px;
+      font-family: var(--font-display); font-weight: 700;
+      color: var(--orange); margin-top: -10px; margin-bottom: 20px;
+      transition: var(--transition);
+    }
+    .forgot-link:hover { color: var(--orange-dk); }
+
+    .login-btn {
+      width: 100%; padding: 16px; font-size: 16px;
+      border-radius: var(--radius-md); justify-content: center;
+      letter-spacing: 0.04em;
+    }
+
+    .login-divider {
+      display: flex; align-items: center; gap: 14px;
+      margin: 22px 0; color: var(--lt-gray); font-size: 12px;
+    }
+    .login-divider::before, .login-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--warm-tan);
+    }
+
+    .demo-logins { display: flex; flex-direction: column; gap: 8px; }
+    .demo-btn {
+      width: 100%; padding: 12px 18px;
+      border: 2px solid var(--warm-tan); border-radius: var(--radius-md);
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--font-display); font-size: 13px; font-weight: 700;
+      color: var(--charcoal); background: var(--cream);
+      transition: var(--transition); cursor: pointer;
+    }
+    .demo-btn:hover { border-color: var(--orange); color: var(--orange); background: #fff; }
+    .demo-btn .demo-icon { font-size: 18px; }
+    .demo-btn .demo-role { margin-left: auto; font-size: 10px; color: var(--mid-gray); }
+
+    .login-footer { text-align: center; margin-top: 24px; font-size: 13px; color: var(--mid-gray); }
+    .login-footer a { color: var(--orange); font-weight: 700; }
+
+    /* Error message */
+    .login-error {
+      background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25);
+      border-radius: var(--radius-md); padding: 12px 16px;
+      font-size: 13px; color: #dc2626;
+      margin-bottom: 18px; display: none; text-align: center;
+    }
+    .login-error.show { display: block; animation: slideUp 0.3s ease; }
+
+    @keyframes slideUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes shakeX {
+      0%,100%{transform:translateX(0)}
+      20%,60%{transform:translateX(-6px)}
+      40%,80%{transform:translateX(6px)}
+    }
+
+    /* Loading spinner */
+    .spin {
+      display: inline-block; width: 18px; height: 18px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .login-page { grid-template-columns: 1fr; }
+      .login-left { display: none; }
+      .login-right { padding: 40px 24px; }
+    }
+    @media (max-width: 480px) {
+      .login-form-wrap { max-width: 100%; }
+      .role-selector { grid-template-columns: 1fr 1fr; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+<div class="login-page">
+
+  <!-- LEFT: Brand Panel -->
+  <div class="login-left">
+    <div class="login-left-bg"></div>
+    <div class="login-left-overlay"></div>
+    <div class="login-left-content">
+      <div class="login-brand">
+        <a href="index.html"><img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=300&h=100&output=webp&q=80&fit=inside" alt="Stackly LogiFlow" /></a>
+      </div>
+      <h1 class="login-tagline">Move Smarter.<br><span>Track Every Mile.</span></h1>
+      <p class="login-desc">Stackly's end-to-end logistics platform gives owners full control and customers complete visibility — all in one place.</p>
+      <div class="login-stats">
+        <div class="ls-item">
+          <div class="ls-num">14K+</div>
+          <div class="ls-label">Enterprise Clients</div>
+        </div>
+        <div class="ls-item">
+          <div class="ls-num">180+</div>
+          <div class="ls-label">Countries</div>
+        </div>
+        <div class="ls-item">
+          <div class="ls-num">99%</div>
+          <div class="ls-label">On-Time Rate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Login Form -->
+  <div class="login-right">
+    <div class="login-form-wrap">
+
+      <div class="login-header">
+        <h2>Welcome Back 👋</h2>
+        <p>Select your role and sign in to your dashboard</p>
+      </div>
+
+      <!-- Role Selection -->
+      <div class="role-selector" id="roleSelector">
+        <label class="role-card" id="ownerCard">
+          <input type="radio" name="role" value="owner" />
+          <span class="role-badge">✓</span>
+          <span class="role-icon">🏢</span>
+          <div class="role-title">Owner</div>
+          <div class="role-desc">Manage shipments, fleet & analytics</div>
+        </label>
+        <label class="role-card" id="customerCard">
+          <input type="radio" name="role" value="customer" />
+          <span class="role-badge">✓</span>
+          <span class="role-icon">📦</span>
+          <div class="role-title">Customer</div>
+          <div class="role-desc">Track orders & manage deliveries</div>
+        </label>
+      </div>
+
+      <!-- Error -->
+      <div class="login-error" id="loginError">Invalid email or password. Please try again.</div>
+
+      <!-- Form -->
+      <div class="form-group">
+        <label for="loginEmail">Email Address</label>
+        <input type="email" id="loginEmail" placeholder="you@company.com" autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <div class="password-wrap">
+          <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password" />
+          <span class="toggle-pw" id="togglePw" title="Show/hide password">👁️</span>
+        </div>
+      </div>
+      <a href="404.html" class="forgot-link">Forgot password?</a>
+
+      <button class="btn-primary login-btn" id="loginBtn" onclick="handleLogin()">
+        <span id="loginBtnText">Sign In →</span>
+      </button>
+
+      
+
+      <div class="login-footer">
+        Don't have an account? <a href="404.html">Request Access →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let selectedRole = null;
+
+  // Map email → display name
+  const EMAIL_NAMES = {
+    'owner@stackly.com':   'Rajesh Nair',
+    'admin@logiflow.com':  'Priya Sharma',
+    'customer@gmail.com':  'Amit Verma',
+    'user@company.com':    'Sarah Johnson',
+  };
+
+  // Role card selection
+  document.querySelectorAll('.role-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedRole = card.querySelector('input[type="radio"]').value;
+    });
+  });
+
+  // Toggle password visibility
+  document.getElementById('togglePw').addEventListener('click', () => {
+    const pw  = document.getElementById('loginPassword');
+    const tog = document.getElementById('togglePw');
+    if (pw.type === 'password') { pw.type = 'text'; tog.textContent = '🙈'; }
+    else { pw.type = 'password'; tog.textContent = '👁️'; }
+  });
+
+  // Login handler
+  function handleLogin() {
+    const email    = document.getElementById('loginEmail').value.trim().toLowerCase();
+    const password = document.getElementById('loginPassword').value;
+    const errEl    = document.getElementById('loginError');
+    const btnText  = document.getElementById('loginBtnText');
+    const btn      = document.getElementById('loginBtn');
+
+    errEl.classList.remove('show');
+    document.getElementById('loginEmail').classList.remove('error');
+    document.getElementById('loginPassword').classList.remove('error');
+
+    // 1. Role selected?
+    if (!selectedRole) {
+      errEl.textContent = 'Please select your role (Owner or Customer).';
+      errEl.classList.add('show');
+      return;
+    }
+    // 2. Email filled?
+    if (!email) {
+      document.getElementById('loginEmail').classList.add('error');
+      errEl.textContent = 'Please enter your email address.';
+      errEl.classList.add('show');
+      return;
+    }
+    // 3. Password filled?
+    if (!password) {
+      document.getElementById('loginPassword').classList.add('error');
+      errEl.textContent = 'Please enter your password.';
+      errEl.classList.add('show');
+      return;
+    }
+
+    // Derive name from email — fall back to capitalised email prefix
+    const knownName = EMAIL_NAMES[email];
+    const fallbackName = email.split('@')[0]
+      .replace(/[._]/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
+    const name = knownName || fallbackName;
+
+    // Save session
+    sessionStorage.setItem('lf_role',  selectedRole);
+    sessionStorage.setItem('lf_email', email);
+    sessionStorage.setItem('lf_name',  name);
+
+    btnText.innerHTML = '<span class="spin"></span> Signing in…';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      window.location.href = selectedRole === 'owner'
+        ? 'owner-dashboard.html'
+        : 'customer-dashboard.html';
+    }, 600);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleLogin();
+  });
+</script>
+</body>
+</html>
