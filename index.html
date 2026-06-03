@@ -3,710 +3,1390 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Smart Logistics & Transport | Powered by Stackly</title>
-  <link rel="stylesheet" href="css/global.css" />
+  <title>LogiFlow — Smart Logistics & Transport | Powered by Stackly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
   <style>
-    /* ─── HOME-SPECIFIC STYLES ─── */
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root {
+  --ivory:     #FAF7F2;
+  --cream:     #F2EDE4;
+  --warm-tan:  #E8DDD0;
+  --orange:    #E8631A;
+  --orange-lt: #F5894A;
+  --orange-dk: #C24E10;
+  --steel:     #2B4C7E;
+  --steel-lt:  #3D6499;
+  --steel-dk:  #1A3156;
+  --charcoal:  #1C1C1C;
+  --mid-gray:  #6B6B6B;
+  --lt-gray:   #B8B8B8;
+  --white:     #FFFFFF;
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-md: 0 6px 24px rgba(0,0,0,0.12);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,0.16);
+  --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+  --nav-h: 76px;
+}
 
-    /* === LOGO COLOR OVERRIDE === */
-    .nav-logo img {
-      filter: brightness(0) saturate(100%) invert(42%) sepia(85%) saturate(600%) hue-rotate(10deg) brightness(95%) contrast(105%);
-    }
-    .nav-logo:hover img {
-      filter: brightness(0) saturate(100%) invert(35%) sepia(85%) saturate(700%) hue-rotate(5deg) brightness(85%) contrast(110%);
-    }
-    .footer-brand .footer-logo img {
-      filter: brightness(0) invert(1) opacity(0.85);
-    }
-    .footer-bottom-logo img {
-      filter: brightness(0) invert(1) opacity(0.4);
-    }
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  background: var(--ivory);
+  color: var(--charcoal);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+img { max-width: 100%; display: block; }
+a   { text-decoration: none; color: inherit; }
+ul  { list-style: none; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
 
-    /* === GLOBAL TEXT LEFT ALIGN & SIZE REDUCTION === */
-    .section-title { font-size: clamp(26px,3.2vw,44px); }
-    .section-subtitle { font-size: 15px; }
-    .section-head { text-align: left; }
-    .hero-title { font-size: clamp(36px,5.5vw,76px); }
-    .hero-desc { font-size: 16px; }
+/* ============================================================
+   UTILITY
+   ============================================================ */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 32px);
+}
+.section { padding: clamp(60px, 10vw, 110px) 0; }
+.section-alt { background: var(--cream); }
 
-    /* ─── CATEGORY / SERVICES IMAGE GRID ─── */
-    .cat-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr;
-      grid-template-rows: auto auto;
-      gap: 16px; margin-top: 56px;
-    }
-    .cat-card {
-      position: relative; border-radius: var(--radius-lg); overflow: hidden;
-      cursor: pointer; display: block; text-decoration: none;
-    }
-    .cat-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s ease; }
-    .cat-card:hover img { transform: scale(1.07); }
-    .cat-big { grid-row: 1 / 3; min-height: 480px; }
-    .cat-small { min-height: 220px; }
-    .cat-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(28,28,28,0.75) 0%, rgba(28,28,28,0.1) 60%, transparent 100%);
-      transition: opacity 0.4s;
-    }
-    .cat-card:hover .cat-overlay { opacity: 0.9; }
-    .cat-label { position: absolute; bottom: 24px; left: 24px; }
-    .cat-label h4 { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px; }
-    .cat-label span { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 600; }
-    .cat-arrow {
-      position: absolute; top: 20px; right: 20px;
-      width: 38px; height: 38px; background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(8px); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px; color: #fff; transition: var(--transition);
-    }
-    .cat-card:hover .cat-arrow { background: var(--orange); transform: rotate(45deg); }
+.section-label {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 12px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 4vw, 52px);
+  font-weight: 800; line-height: 1.06;
+  letter-spacing: -0.025em;
+}
+.section-subtitle {
+  font-size: clamp(14px, 2vw, 17px);
+  color: var(--mid-gray);
+  max-width: 580px; margin-top: 16px; line-height: 1.75;
+}
+.section-head { max-width: 640px; margin-bottom: 56px; }
 
-    /* ─── WHO WE ARE ─── */
-    .who-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
-    .who-img-wrap { position: relative; }
-    .who-img-main { border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg); }
-    .who-img-main img { width: 100%; height: 520px; object-fit: cover; display: block; }
-    .who-img-badge {
-      position: absolute; bottom: -24px; right: -20px;
-      background: var(--orange); color: #fff; border-radius: var(--radius-lg);
-      padding: 22px 28px; box-shadow: var(--shadow-lg);
-    }
-    .who-img-badge .badge-num { font-family: var(--font-display); font-size: 44px; font-weight: 800; line-height: 1; display: block; }
-    .who-img-badge .badge-txt { font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: 0.08em; opacity: 0.88; }
-    .who-feats { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 32px 0 36px; }
-    .who-feat { background: var(--cream); border-radius: var(--radius-md); padding: 20px 18px; transition: var(--transition); }
-    .who-feat:hover { background: rgba(232,99,26,0.07); transform: translateY(-3px); }
-    .who-feat .wf-emoji { font-size: 28px; margin-bottom: 10px; }
-    .who-feat strong { display: block; font-family: var(--font-display); font-size: 13px; font-weight: 800; margin-bottom: 4px; }
-    .who-feat p { font-size: 12px; color: var(--mid-gray); line-height: 1.5; }
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--orange); color: var(--white);
+  padding: 14px 28px; border-radius: var(--radius-xl);
+  font-family: var(--font-display); font-size: 14px; font-weight: 700;
+  letter-spacing: 0.02em; white-space: nowrap;
+  transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: 0 4px 20px rgba(232,99,26,0.35);
+  position: relative; overflow: hidden;
+}
+.btn-primary:hover {
+  background: var(--orange-dk);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(232,99,26,0.5);
+}
+.btn-primary:active { transform: translateY(-1px) scale(1); }
 
-    /* ─── FEATURED SOLUTIONS ─── */
-    .featured-grid { display: flex; gap: 24px; overflow: hidden; position: relative; }
-    .feat-track { display: flex; gap: 24px; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); }
-    .feat-card {
-      flex: 0 0 calc(33.333% - 16px); background: var(--white);
-      border-radius: var(--radius-lg); overflow: hidden;
-      box-shadow: var(--shadow-sm); transition: var(--transition); position: relative;
-    }
-    .feat-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
-    .feat-img { position: relative; overflow: hidden; }
-    .feat-img img { width: 100%; height: 200px; object-fit: cover; transition: transform 0.6s ease; display: block; }
-    .feat-card:hover .feat-img img { transform: scale(1.06); }
-    .feat-badge {
-      position: absolute; top: 14px; left: 14px;
-      background: var(--orange); color: #fff;
-      padding: 5px 12px; border-radius: 100px;
-      font-family: var(--font-display); font-size: 11px; font-weight: 800;
-      letter-spacing: 0.05em; text-transform: uppercase;
-    }
-    .feat-badge.new-badge { background: var(--steel); }
-    .feat-body { padding: 20px 20px 24px; }
-    .feat-service { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange); margin-bottom: 8px; }
-    .feat-body h4 { font-family: var(--font-display); font-size: 16px; font-weight: 800; margin-bottom: 8px; color: var(--charcoal); }
-    .feat-body p { font-size: 13px; color: var(--mid-gray); line-height: 1.6; margin-bottom: 16px; }
-    .feat-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--warm-tan); padding-top: 14px; }
-    .feat-eta { font-family: var(--font-display); font-size: 13px; font-weight: 800; color: var(--charcoal); }
-    .feat-eta span { font-size: 11px; color: var(--mid-gray); font-weight: 400; display: block; }
-    .feat-add {
-      width: 36px; height: 36px; background: var(--orange); color: #fff;
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 20px; font-weight: 300; transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
-      text-decoration: none;
-    }
-    .feat-add:hover { background: var(--orange-dk); transform: scale(1.18) rotate(90deg); }
-    .feat-nav { display: flex; justify-content: flex-start; gap: 12px; margin-top: 36px; }
-    .feat-btn {
-      width: 48px; height: 48px; border-radius: 50%;
-      border: 2px solid var(--warm-tan); background: var(--white);
-      font-size: 18px; color: var(--charcoal); transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .feat-btn:hover { border-color: var(--orange); background: var(--orange); color: #fff; transform: scale(1.1); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: transparent; color: var(--steel);
+  padding: 13px 26px; border-radius: var(--radius-xl);
+  border: 2px solid var(--steel);
+  font-family: var(--font-display); font-size: 14px; font-weight: 700;
+  transition: var(--transition); white-space: nowrap;
+}
+.btn-secondary:hover { background: var(--steel); color: var(--white); transform: translateY(-2px); }
 
-    /* ─── PROCESS STEPS (AUTO SLIDER) ─── */
-    .process-wrap { position: relative; overflow: hidden; margin-top: 64px; }
-    .process-track {
-      display: flex; gap: 24px;
-      transition: transform 0.7s cubic-bezier(0.4,0,0.2,1);
-    }
-    .step {
-      flex: 0 0 calc(25% - 18px); background: var(--white);
-      border-radius: var(--radius-lg); padding: 36px 24px;
-      box-shadow: var(--shadow-sm); text-align: left;
-      transition: all 0.5s cubic-bezier(0.34,1.2,0.64,1);
-      position: relative; overflow: hidden; border-bottom: 3px solid transparent;
-    }
-    .step.active-step {
-      border-color: var(--orange);
-      box-shadow: 0 20px 50px rgba(232,99,26,0.18);
-      transform: translateY(-8px);
-    }
-    .step::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, var(--orange), var(--steel));
-      transform: scaleX(0); transform-origin: left; transition: transform 0.5s ease;
-    }
-    .step.active-step::before { transform: scaleX(1); }
-    .step-num {
-      width: 60px; height: 60px; border-radius: 50%;
-      background: var(--cream); border: 2px solid var(--warm-tan);
-      font-family: var(--font-display); font-size: 20px; font-weight: 800;
-      color: var(--mid-gray); display: flex; align-items: center; justify-content: center;
-      margin-bottom: 20px; transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    .step.active-step .step-num { background: var(--orange); color: #fff; border-color: var(--orange); transform: scale(1.1); }
-    .step-icon { font-size: 26px; margin-bottom: 10px; }
-    .step h4 { font-family: var(--font-display); font-size: 15px; font-weight: 800; margin-bottom: 8px; text-align: left; }
-    .step p { font-size: 12px; color: var(--mid-gray); line-height: 1.6; text-align: left; }
-    .step-conn {
-      position: absolute; top: 30px; right: -12px; z-index: 2;
-      width: 24px; height: 24px; background: var(--orange);
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 11px; color: #fff; font-weight: 800; opacity: 0; transition: opacity 0.3s;
-    }
-    .step.active-step .step-conn { opacity: 1; }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--orange); font-family: var(--font-display);
+  font-size: 13px; font-weight: 700;
+  transition: var(--transition);
+}
+.btn-ghost:hover { gap: 14px; color: var(--orange-dk); }
 
-    /* Progress bar */
-    .process-progress {
-      display: flex; align-items: center; gap: 12px; margin-top: 28px;
-    }
-    .pp-dots { display: flex; gap: 8px; }
-    .pp-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--warm-tan); border: none; cursor: pointer; padding: 0;
-      transition: all 0.3s ease;
-    }
-    .pp-dot.active { background: var(--orange); width: 28px; border-radius: 4px; }
-    .pp-bar-wrap {
-      flex: 1; height: 3px; background: var(--warm-tan);
-      border-radius: 3px; overflow: hidden;
-    }
-    .pp-bar {
-      height: 100%; background: linear-gradient(90deg, var(--orange), var(--steel));
-      border-radius: 3px; width: 0%; transition: width 0.1s linear;
-    }
-    .pp-counter {
-      font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--mid-gray);
-    }
-    .process-nav-btns { display: flex; gap: 10px; }
-    .process-nav-btn {
-      width: 40px; height: 40px; border-radius: 50%;
-      border: 2px solid var(--warm-tan); background: var(--white);
-      font-size: 16px; display: flex; align-items: center; justify-content: center;
-      transition: all 0.3s ease; color: var(--charcoal);
-    }
-    .process-nav-btn:hover { border-color: var(--orange); background: var(--orange); color: #fff; }
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  height: var(--nav-h);
+  background: rgba(250,247,242,0.96);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border-bottom: 1px solid rgba(232,99,26,0.08);
+  transition: box-shadow 0.4s ease;
+}
+.navbar.scrolled { box-shadow: 0 4px 40px rgba(0,0,0,0.1); }
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 100%; gap: 16px;
+}
+.nav-logo {
+  display: flex; align-items: center; flex-shrink: 0;
+  text-decoration: none;
+}
+.nav-logo img {
+  height: 40px; width: auto;
+  filter: brightness(0) saturate(100%) invert(42%) sepia(85%) saturate(600%) hue-rotate(10deg) brightness(95%) contrast(105%);
+  transition: transform var(--transition);
+}
+.nav-logo:hover img { transform: scale(1.04); }
 
-    /* ─── INDUSTRY / TOURS ─── */
-    .industry-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
-    .ind-card { border-radius: var(--radius-lg); overflow: hidden; position: relative; box-shadow: var(--shadow-md); transition: var(--transition); }
-    .ind-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
-    .ind-img { position: relative; }
-    .ind-img img { width: 100%; height: 240px; object-fit: cover; display: block; transition: transform 0.6s ease; }
-    .ind-card:hover .ind-img img { transform: scale(1.05); }
-    .ind-tag { position: absolute; top: 16px; left: 16px; background: var(--orange); color: #fff; padding: 5px 14px; border-radius: 100px; font-family: var(--font-display); font-size: 11px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
-    .ind-body { background: var(--white); padding: 24px 24px 28px; }
-    .ind-meta { font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--mid-gray); letter-spacing: 0.06em; margin-bottom: 10px; }
-    .ind-body h3 { font-family: var(--font-display); font-size: 18px; font-weight: 800; margin-bottom: 10px; }
-    .ind-body p { font-size: 13px; color: var(--mid-gray); line-height: 1.65; margin-bottom: 18px; }
-    .ind-spots { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--orange); margin-bottom: 14px; }
-    .ind-cta { display: flex; align-items: center; justify-content: space-between; }
-    .ind-price { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--charcoal); }
-    .ind-price small { font-size: 12px; color: var(--mid-gray); font-weight: 400; }
+.nav-links {
+  display: flex; align-items: center; gap: 2px;
+  margin: 0 auto;
+}
+.nav-links a {
+  font-family: var(--font-display); font-size: 14px; font-weight: 700;
+  color: var(--mid-gray); padding: 9px 15px;
+  border-radius: var(--radius-xl); transition: var(--transition);
+  letter-spacing: 0.03em; position: relative; white-space: nowrap;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: 4px; left: 15px; right: 15px;
+  height: 2px; background: var(--orange);
+  transform: scaleX(0); transform-origin: center;
+  transition: transform 0.3s ease; border-radius: 2px;
+}
+.nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); }
+.nav-links a:hover, .nav-links a.active { color: var(--orange); background: rgba(232,99,26,0.06); }
 
-    /* ─── TESTIMONIALS ─── */
-    .testimonials { background: var(--cream); }
-    .testi-layout { display: grid; grid-template-columns: 1fr 1.4fr; gap: 56px; align-items: center; margin-top: 56px; }
-    .testi-img-col { border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg); }
-    .testi-img-col img { width: 100%; height: 520px; object-fit: cover; display: block; }
-    .testi-slide { background: var(--white); border-radius: var(--radius-lg); padding: 32px; box-shadow: var(--shadow-sm); display: none; }
-    .testi-slide.active { display: block; animation: fadeInUp 0.5s ease; }
-    @keyframes fadeInUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
-    .testi-stars { color: #f59e0b; font-size: 18px; letter-spacing: 2px; margin-bottom: 16px; }
-    .testi-quote { font-size: 15px; color: var(--charcoal); line-height: 1.75; font-style: italic; margin-bottom: 24px; }
-    .testi-author { display: flex; align-items: center; gap: 14px; }
-    .ta-name { font-family: var(--font-display); font-size: 14px; font-weight: 800; display: block; }
-    .ta-role { font-size: 12px; color: var(--mid-gray); }
-    .testi-controls { display: flex; gap: 10px; margin-top: 24px; }
-    .testi-dot-btn { width: 10px; height: 10px; border-radius: 50%; background: var(--warm-tan); border: none; cursor: pointer; transition: var(--transition); }
-    .testi-dot-btn.active { background: var(--orange); width: 28px; border-radius: 5px; }
-    .testi-arrows { display: flex; gap: 10px; margin-top: 16px; }
+.nav-cta { flex-shrink: 0; }
 
-    /* ─── GALLERY ─── */
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-template-rows: repeat(2, 200px);
-      gap: 10px; margin-top: 20px;
-    }
-    .gal-item { border-radius: var(--radius-md); overflow: hidden; position: relative; cursor: pointer; }
-    .gal-item:nth-child(1) { grid-column: 1; grid-row: 1; }
-    .gal-item:nth-child(2) { grid-column: 2; grid-row: 1 / 3; }
-    .gal-item:nth-child(3) { grid-column: 3; grid-row: 1; }
-    .gal-item:nth-child(4) { grid-column: 4; grid-row: 1; }
-    .gal-item:nth-child(5) { grid-column: 1; grid-row: 2; }
-    .gal-item:nth-child(6) { grid-column: 3; grid-row: 2; }
-    .gal-item:nth-child(7) { grid-column: 4; grid-row: 2; }
-    .gal-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; display: block; }
-    .gal-item:hover img { transform: scale(1.08); }
-    .gal-hover { position: absolute; inset: 0; background: rgba(232,99,26,0.7); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; font-size: 28px; }
-    .gal-item:hover .gal-hover { opacity: 1; }
+/* ============================================================
+   HAMBURGER
+   ============================================================ */
+.hamburger {
+  display: none;
+  width: 44px; height: 44px; border-radius: 50%;
+  align-items: center; justify-content: center; flex-direction: column;
+  gap: 5px; cursor: pointer; flex-shrink: 0;
+  transition: background 0.3s ease; z-index: 1100;
+}
+.hamburger:hover { background: rgba(232,99,26,0.08); }
+.hamburger span {
+  display: block; height: 2.5px; background: var(--charcoal);
+  border-radius: 3px; transition: all 0.4s cubic-bezier(0.23,1,0.32,1);
+  transform-origin: center;
+}
+.hamburger span:nth-child(1) { width: 24px; }
+.hamburger span:nth-child(2) { width: 18px; }
+.hamburger span:nth-child(3) { width: 20px; }
+.hamburger.open span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); background: var(--orange); width: 24px; }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); background: var(--orange); width: 24px; }
 
-    /* ─── NEWSLETTER ─── */
-    .newsletter-section {
-      background: linear-gradient(135deg, var(--steel-dk) 0%, var(--steel) 100%);
-      padding: 90px 0; position: relative; overflow: hidden;
-    }
-    .newsletter-section::before {
-      content: ''; position: absolute; top: -80px; right: -80px;
-      width: 360px; height: 360px; border-radius: 50%;
-      background: rgba(232,99,26,0.12); pointer-events: none;
-    }
-    .newsletter-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
-    .nl-text h2 { font-family: var(--font-display); font-size: clamp(26px,3.2vw,42px); font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: 16px; }
-    .nl-text h2 em { color: var(--orange-lt); font-style: italic; }
-    .nl-text p { color: rgba(255,255,255,0.7); font-size: 15px; line-height: 1.7; }
-    .nl-input-row { display: flex; gap: 10px; }
-    .nl-input { flex: 1; padding: 15px 20px; font-size: 15px; font-family: var(--font-body); border: 2px solid rgba(255,255,255,0.2); border-radius: var(--radius-xl); color: #fff; background: rgba(255,255,255,0.1); outline: none; transition: var(--transition); }
-    .nl-input::placeholder { color: rgba(255,255,255,0.45); }
-    .nl-input:focus { border-color: var(--orange); background: rgba(255,255,255,0.15); }
-    .nl-fine { font-size: 12px; color: rgba(255,255,255,0.45); text-align: left; margin-top: 12px; }
+/* ============================================================
+   MOBILE MENU
+   ============================================================ */
+.mobile-menu {
+  display: none;
+  position: fixed; inset: 0; z-index: 999; pointer-events: none;
+}
+.mobile-menu::before {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(26,49,86,0.55); backdrop-filter: blur(4px);
+  opacity: 0; transition: opacity 0.4s ease;
+}
+.mobile-menu.open::before { opacity: 1; }
+.mobile-menu-panel {
+  position: absolute; top: 0; right: 0; bottom: 0;
+  width: min(360px, 90vw);
+  background: var(--ivory); display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.45s cubic-bezier(0.23,1,0.32,1);
+  box-shadow: -24px 0 80px rgba(0,0,0,0.18);
+  overflow-y: auto;
+}
+.mobile-menu.open .mobile-menu-panel { transform: translateX(0); }
+.menu-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: var(--nav-h);
+  border-bottom: 1px solid var(--warm-tan); flex-shrink: 0;
+}
+.menu-panel-logo img {
+  height: 34px; width: auto;
+  filter: brightness(0) saturate(100%) invert(42%) sepia(85%) saturate(600%) hue-rotate(10deg) brightness(95%) contrast(105%);
+}
+.menu-close-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--cream);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: var(--charcoal); transition: var(--transition);
+}
+.menu-close-btn:hover { background: var(--orange); color: #fff; transform: rotate(90deg); }
+.menu-nav-links { padding: 16px 0; flex: 1; }
+.mobile-menu .menu-nav-links a {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: 58px;
+  font-family: var(--font-display); font-size: 17px; font-weight: 700;
+  color: var(--charcoal); border-left: 3px solid transparent;
+  transition: all 0.3s ease;
+}
+.mobile-menu .menu-nav-links a:hover,
+.mobile-menu .menu-nav-links a.active {
+  color: var(--orange); border-left-color: var(--orange);
+  background: rgba(232,99,26,0.05);
+}
+.menu-arrow {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--cream);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0; transition: all 0.3s ease;
+}
+.mobile-menu .menu-nav-links a:hover .menu-arrow {
+  background: var(--orange); color: #fff; transform: translateX(4px);
+}
+.menu-panel-footer {
+  padding: 20px 24px 36px; border-top: 1px solid var(--warm-tan); flex-shrink: 0;
+}
+.mobile-cta-btn {
+  width: 100%; justify-content: center; font-size: 15px;
+  padding: 15px; border-radius: var(--radius-md); margin-bottom: 18px;
+}
+.menu-contact-info { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.menu-contact-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--mid-gray); }
+.mobile-socials { display: flex; gap: 8px; }
+.mobile-socials a {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--cream); display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: var(--mid-gray);
+  transition: all 0.3s ease; border: none !important;
+  border-left: none !important; padding: 0 !important;
+}
+.mobile-socials a:hover { background: var(--orange); color: #fff; transform: translateY(-3px); }
 
-    /* ══════════════════════════════════════
-       NEW SECTION 1: GLOBAL COVERAGE MAP
-    ══════════════════════════════════════ */
-    .coverage-section { background: var(--steel-dk); padding: 110px 0; position: relative; overflow: hidden; }
-    .coverage-section::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse 80% 60% at 60% 50%, rgba(232,99,26,0.12) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .coverage-inner { display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; align-items: center; }
-    .coverage-text .section-label { color: var(--orange-lt); }
-    .coverage-text .section-title { color: #fff; font-size: clamp(26px,3vw,44px); }
-    .coverage-text p { color: rgba(255,255,255,0.65); font-size: 15px; line-height: 1.8; margin-top: 16px; }
-    .coverage-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 36px 0; }
-    .cov-stat {
-      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
-      border-radius: var(--radius-md); padding: 22px 20px;
-      transition: var(--transition);
-    }
-    .cov-stat:hover { background: rgba(232,99,26,0.12); border-color: rgba(232,99,26,0.3); transform: translateY(-3px); }
-    .cov-stat .cs-num { font-family: var(--font-display); font-size: 32px; font-weight: 800; color: var(--orange-lt); line-height: 1; }
-    .cov-stat .cs-label { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 6px; letter-spacing: 0.06em; }
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  position: relative;
+  height: 100svh; min-height: 600px;
+  display: flex; align-items: center;
+  overflow: hidden; padding-top: var(--nav-h);
+}
+.hero-slider-wrap { position: absolute; inset: 0; }
+.hero-slide {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0; transform: scale(1.06);
+  transition: opacity 1.4s ease, transform 8s ease;
+}
+.hero-slide.active { opacity: 1; transform: scale(1); }
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(110deg, rgba(26,49,86,0.82) 0%, rgba(26,49,86,0.5) 55%, rgba(0,0,0,0.15) 100%);
+  z-index: 1;
+}
+.hero-content { position: relative; z-index: 2; max-width: 720px; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.12); backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.22);
+  color: #fff; font-size: 12px; font-weight: 600;
+  padding: 7px 16px; border-radius: 100px; margin-bottom: 20px;
+  animation: slideIn 0.8s ease 0.2s both;
+}
+.dot-live {
+  display: inline-block; width: 8px; height: 8px;
+  background: #4ade80; border-radius: 50%;
+  animation: pulseDot 1.6s ease infinite;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 6.5vw, 86px);
+  font-weight: 800; line-height: 1.03;
+  letter-spacing: -0.03em; color: #fff; margin-bottom: 20px;
+  animation: slideUp 0.9s ease 0.4s both;
+}
+.hero-title .line-1, .hero-title .line-2 { display: block; }
+.hero-accent { color: var(--orange-lt); }
+.hero-desc {
+  font-size: clamp(15px, 2vw, 18px);
+  line-height: 1.75; color: rgba(255,255,255,0.82);
+  max-width: 520px; margin-bottom: 36px;
+  animation: slideUp 0.9s ease 0.6s both;
+}
+.hero-actions {
+  display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 36px;
+  animation: slideUp 0.9s ease 0.8s both;
+}
+.btn-hero-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: #fff; font-family: var(--font-display);
+  font-size: 14px; font-weight: 700;
+  border-bottom: 2px solid rgba(255,255,255,0.4);
+  padding-bottom: 4px; transition: var(--transition); white-space: nowrap;
+  align-self: center;
+}
+.btn-hero-ghost:hover { border-color: #fff; gap: 14px; }
+.hero-badges {
+  display: flex; gap: 20px; flex-wrap: wrap;
+  animation: fadeIn 1s ease 1s both;
+}
+.hbadge { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 500; }
+.hb-icon {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--orange); color: #fff;
+  font-size: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.slider-dots {
+  position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+  z-index: 5; display: flex; gap: 10px;
+}
+.slider-dots .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,0.35); transition: all 0.4s ease;
+  padding: 0; cursor: pointer; border: none;
+}
+.slider-dots .dot.active { background: var(--orange); width: 28px; border-radius: 4px; }
+.hero-scroll-cue {
+  position: absolute; right: 40px; bottom: 40px; z-index: 5;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  color: rgba(255,255,255,0.55); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; font-family: var(--font-display);
+}
+.scroll-line {
+  width: 1px; height: 48px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.6), transparent);
+  animation: scrollDown 2s ease infinite;
+}
 
-    /* SVG Map container */
-    .map-visual {
-      position: relative; border-radius: var(--radius-xl);
-      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-      padding: 32px; overflow: hidden;
-    }
-    .map-dots-svg { width: 100%; height: auto; }
-    /* Animated route lines */
-    .map-route {
-      stroke: var(--orange); stroke-width: 1.5; fill: none;
-      stroke-dasharray: 300; stroke-dashoffset: 300;
-      animation: drawRoute 3s ease forwards;
-    }
-    .map-route:nth-child(2) { animation-delay: 0.5s; stroke: rgba(232,99,26,0.5); }
-    .map-route:nth-child(3) { animation-delay: 1s; }
-    .map-route:nth-child(4) { animation-delay: 1.5s; stroke: rgba(232,99,26,0.5); }
-    @keyframes drawRoute {
-      to { stroke-dashoffset: 0; }
-    }
-    .map-pin-dot {
-      fill: var(--orange);
-      animation: pingMap 2s ease-in-out infinite;
-    }
-    .map-pin-ring {
-      fill: none; stroke: var(--orange); stroke-width: 1;
-      animation: pingRing 2s ease-in-out infinite; opacity: 0;
-    }
-    @keyframes pingMap {
-      0%,100% { transform: scale(1); } 50% { transform: scale(1.3); }
-    }
-    @keyframes pingRing {
-      0% { r: 4px; opacity: 0.8; }
-      100% { r: 14px; opacity: 0; }
-    }
-    .region-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
-    .region-chip {
-      display: flex; align-items: center; gap: 8px;
-      background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.75);
-      border: 1px solid rgba(255,255,255,0.12); border-radius: 100px;
-      padding: 8px 16px; font-size: 12px; font-weight: 600;
-      font-family: var(--font-display); transition: var(--transition);
-    }
-    .region-chip:hover { background: var(--orange); border-color: var(--orange); color: #fff; }
-    .region-chip .chip-flag { font-size: 16px; }
+/* ============================================================
+   STATS BAR
+   ============================================================ */
+.stats-bar {
+  background: var(--orange); padding: clamp(20px, 4vw, 32px) 0;
+  position: relative; overflow: hidden;
+}
+.stats-bar::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg,rgba(255,255,255,0.04) 0,rgba(255,255,255,0.04) 1px,transparent 1px,transparent 80px);
+}
+.stats-inner {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px; position: relative; align-items: center;
+}
+.stat-item { text-align: center; padding: 8px 0; }
+.stat-num {
+  font-family: var(--font-display); font-size: clamp(24px, 4vw, 38px);
+  font-weight: 800; color: var(--white); line-height: 1;
+}
+.stat-label {
+  font-size: 11px; color: rgba(255,255,255,0.72);
+  margin-top: 6px; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.stat-divider { display: none; }
 
-    /* ══════════════════════════════════════
-       NEW SECTION 2: TECHNOLOGY PLATFORM
-    ══════════════════════════════════════ */
-    .tech-section { background: var(--ivory); padding: 110px 0; position: relative; overflow: hidden; }
-    .tech-section::after {
-      content: ''; position: absolute; top: -120px; right: -120px;
-      width: 500px; height: 500px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(232,99,26,0.06) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .tech-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
-    .tech-cards-col { display: flex; flex-direction: column; gap: 16px; }
-    .tech-card {
-      display: flex; gap: 20px; align-items: flex-start;
-      background: var(--white); border-radius: var(--radius-lg); padding: 24px 22px;
-      box-shadow: var(--shadow-sm); cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.34,1.2,0.64,1);
-      border-left: 3px solid transparent; position: relative; overflow: hidden;
-    }
-    .tech-card.tc-active {
-      border-left-color: var(--orange);
-      box-shadow: 0 12px 40px rgba(232,99,26,0.15);
-      transform: translateX(6px);
-    }
-    .tech-card::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(90deg, rgba(232,99,26,0.04) 0%, transparent 60%);
-      opacity: 0; transition: opacity 0.3s;
-    }
-    .tech-card.tc-active::after { opacity: 1; }
-    .tc-icon-box {
-      width: 52px; height: 52px; border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px; flex-shrink: 0; transition: var(--transition);
-    }
-    .tc-icon-box.bg-orange { background: rgba(232,99,26,0.1); }
-    .tc-icon-box.bg-steel  { background: rgba(43,76,126,0.1); }
-    .tc-icon-box.bg-teal   { background: rgba(6,148,162,0.1); }
-    .tc-icon-box.bg-amber  { background: rgba(217,119,6,0.1); }
-    .tech-card.tc-active .tc-icon-box { background: var(--orange); }
-    .tc-text h4 { font-family: var(--font-display); font-size: 15px; font-weight: 800; margin-bottom: 6px; }
-    .tc-text p { font-size: 13px; color: var(--mid-gray); line-height: 1.6; }
-    .tc-expand { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
-    .tech-card.tc-active .tc-expand { max-height: 80px; }
-    .tc-expand ul { margin-top: 10px; }
-    .tc-expand li { font-size: 12px; color: var(--mid-gray); padding: 3px 0; display: flex; align-items: center; gap: 8px; }
-    .tc-expand li::before { content: '●'; color: var(--orange); font-size: 6px; }
+/* ============================================================
+   MARQUEE
+   ============================================================ */
+.marquee-strip { background: var(--charcoal); padding: 14px 0; overflow: hidden; }
+.marquee-track { display: flex; gap: 0; animation: marquee 22s linear infinite; width: max-content; }
+.marquee-item {
+  display: flex; align-items: center; gap: 14px; padding: 0 36px;
+  white-space: nowrap; font-family: var(--font-display); font-size: 12px;
+  font-weight: 600; color: rgba(255,255,255,0.5); letter-spacing: 0.08em; text-transform: uppercase;
+}
+.m-dot { color: var(--orange); font-size: 16px; }
+.marquee-strip:hover .marquee-track { animation-play-state: paused; }
 
-    /* Phone mockup display */
-    .tech-visual-col { position: relative; display: flex; align-items: center; justify-content: center; }
-    .phone-mockup {
-      width: 260px; position: relative;
-      background: var(--charcoal); border-radius: 40px;
-      padding: 14px; box-shadow: 0 40px 80px rgba(0,0,0,0.25);
-      border: 2px solid rgba(255,255,255,0.1);
-      animation: floatPhone 4s ease-in-out infinite;
-    }
-    @keyframes floatPhone {
-      0%,100% { transform: translateY(0) rotate(-2deg); }
-      50% { transform: translateY(-16px) rotate(0deg); }
-    }
-    .phone-screen {
-      background: var(--steel-dk); border-radius: 28px; overflow: hidden;
-      padding: 20px 16px; min-height: 460px;
-    }
-    .phone-status { display: flex; justify-content: space-between; margin-bottom: 18px; }
-    .phone-status span { font-size: 10px; color: rgba(255,255,255,0.5); font-family: var(--font-display); font-weight: 700; }
-    .phone-header { margin-bottom: 20px; }
-    .phone-header h5 { font-family: var(--font-display); font-size: 16px; font-weight: 800; color: #fff; }
-    .phone-header p { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; }
-    .phone-track-bar { background: rgba(255,255,255,0.06); border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; }
-    .ptb-id { font-family: var(--font-display); font-size: 12px; font-weight: 800; color: var(--orange-lt); }
-    .ptb-status { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
-    .ptb-dot { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; animation: pulseDot 1.5s ease infinite; }
-    .ptb-status span { font-size: 11px; color: rgba(255,255,255,0.7); }
-    .phone-map-mini {
-      background: rgba(43,76,126,0.4); border-radius: 12px; height: 120px;
-      margin-bottom: 14px; position: relative; overflow: hidden;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .pmm-label { font-size: 10px; color: rgba(255,255,255,0.5); font-family: var(--font-display); font-weight: 700; }
-    .phone-route-dots { display: flex; flex-direction: column; gap: 8px; }
-    .prd-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: rgba(255,255,255,0.04); border-radius: 8px; }
-    .prd-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .prd-dot.done { background: var(--orange); }
-    .prd-dot.current { background: #4ade80; animation: pulseDot 1.5s infinite; }
-    .prd-dot.pending { background: rgba(255,255,255,0.2); }
-    .prd-text { font-size: 10px; color: rgba(255,255,255,0.6); }
-    .prd-text strong { display: block; font-family: var(--font-display); font-size: 11px; color: rgba(255,255,255,0.85); }
+/* ============================================================
+   SERVICES GRID
+   ============================================================ */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.service-card {
+  background: var(--white); border-radius: var(--radius-lg); padding: clamp(24px, 3vw, 36px) clamp(20px, 2.5vw, 28px);
+  box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.04);
+  transition: all 0.4s cubic-bezier(0.34,1.2,0.64,1);
+  display: flex; flex-direction: column; gap: 12px;
+  position: relative; overflow: hidden;
+}
+.service-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 3px; background: var(--orange);
+  transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease;
+}
+.service-card:hover::before { transform: scaleX(1); }
+.service-card:hover { transform: translateY(-10px); box-shadow: 0 24px 56px rgba(0,0,0,0.14); }
+.service-card h3 { font-family: var(--font-display); font-size: 18px; font-weight: 800; }
+.service-card p  { font-size: 13px; color: var(--mid-gray); line-height: 1.65; flex: 1; }
+.sc-icon-wrap {
+  width: 52px; height: 52px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+.sc-icon-wrap svg { width: 26px; height: 26px; }
+.sc-blue   { background: rgba(43,76,126,0.1); } .sc-blue   svg { fill: var(--steel); }
+.sc-orange { background: rgba(232,99,26,0.1); } .sc-orange svg { fill: var(--orange); }
+.sc-teal   { background: rgba(6,148,162,0.1); } .sc-teal   svg { fill: #0694a2; }
+.sc-amber  { background: rgba(217,119,6,0.1); } .sc-amber  svg { fill: #d97706; }
 
-    .tech-float-badge {
-      position: absolute; top: 40px; right: -20px;
-      background: var(--orange); color: #fff;
-      padding: 14px 18px; border-radius: var(--radius-md);
-      box-shadow: 0 12px 36px rgba(232,99,26,0.4);
-      font-family: var(--font-display); font-size: 12px; font-weight: 800;
-      animation: floatCard 3.5s ease-in-out 0.5s infinite;
-      white-space: nowrap;
-    }
-    .tech-float-badge2 {
-      position: absolute; bottom: 40px; left: -24px;
-      background: var(--white); color: var(--charcoal);
-      padding: 14px 18px; border-radius: var(--radius-md);
-      box-shadow: var(--shadow-lg);
-      font-family: var(--font-display); font-size: 12px; font-weight: 800;
-      animation: floatCard 3.5s ease-in-out 1s infinite;
-      white-space: nowrap; border-left: 3px solid var(--orange);
-    }
+/* ============================================================
+   IMAGE CATEGORY GRID
+   ============================================================ */
+.cat-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 14px; margin-top: 48px; height: 480px;
+}
+.cat-card {
+  position: relative; border-radius: var(--radius-lg); overflow: hidden;
+  cursor: pointer; display: block;
+}
+.cat-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+.cat-card:hover img { transform: scale(1.07); }
+.cat-big { grid-row: 1 / 3; }
+.cat-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(28,28,28,0.75) 0%, rgba(28,28,28,0.05) 60%, transparent 100%);
+  transition: opacity 0.4s;
+}
+.cat-card:hover .cat-overlay { opacity: 0.85; }
+.cat-label { position: absolute; bottom: 20px; left: 20px; }
+.cat-label h4 { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 3px; }
+.cat-label span { font-size: 11px; color: rgba(255,255,255,0.7); }
+.cat-arrow {
+  position: absolute; top: 16px; right: 16px;
+  width: 36px; height: 36px; background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: #fff; transition: var(--transition);
+}
+.cat-card:hover .cat-arrow { background: var(--orange); transform: rotate(45deg); }
 
-    /* ══════════════════════════════════════
-       NEW SECTION 3: SUSTAINABILITY PLEDGE
-    ══════════════════════════════════════ */
-    .sustain-section { position: relative; overflow: hidden; padding: 110px 0; background: var(--cream); }
-    .sustain-bg-circle {
-      position: absolute; width: 600px; height: 600px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%);
-      top: -150px; right: -150px; pointer-events: none;
-    }
-    .sustain-inner { display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: center; }
-    .sustain-visual { position: relative; }
-    .sustain-ring-wrap {
-      width: 320px; height: 320px; position: relative;
-      margin: 0 auto;
-    }
-    .sustain-ring-svg { width: 100%; height: 100%; }
-    /* Animated ring */
-    .ring-track { fill: none; stroke: var(--warm-tan); stroke-width: 8; }
-    .ring-progress {
-      fill: none; stroke-width: 8; stroke-linecap: round;
-      stroke-dasharray: 850;
-      stroke-dashoffset: 850;
-      transition: stroke-dashoffset 2.5s cubic-bezier(0.4,0,0.2,1);
-    }
-    .ring-progress.animated { stroke-dashoffset: 213; }
-    .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .ring-pct { font-family: var(--font-display); font-size: 52px; font-weight: 800; color: var(--charcoal); line-height: 1; }
-    .ring-label { font-size: 13px; color: var(--mid-gray); margin-top: 6px; text-align: center; }
+/* ============================================================
+   WHO WE ARE
+   ============================================================ */
+.who-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 6vw, 72px); align-items: center;
+}
+.who-img-wrap { position: relative; }
+.who-img-main { border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg); }
+.who-img-main img { width: 100%; height: clamp(300px, 40vw, 520px); object-fit: cover; display: block; }
+.who-img-badge {
+  position: absolute; bottom: -20px; right: -16px;
+  background: var(--orange); color: #fff;
+  border-radius: var(--radius-lg); padding: 18px 24px; box-shadow: var(--shadow-lg);
+}
+.who-img-badge .badge-num { font-family: var(--font-display); font-size: 40px; font-weight: 800; line-height: 1; display: block; }
+.who-img-badge .badge-txt { font-family: var(--font-display); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; opacity: 0.88; }
+.who-feats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 14px; margin: 28px 0 32px;
+}
+.who-feat {
+  background: var(--cream); border-radius: var(--radius-md); padding: 18px 16px;
+  transition: var(--transition);
+}
+.who-feat:hover { background: rgba(232,99,26,0.07); transform: translateY(-3px); }
+.who-feat .wf-emoji { font-size: 26px; margin-bottom: 8px; }
+.who-feat strong { display: block; font-family: var(--font-display); font-size: 13px; font-weight: 800; margin-bottom: 3px; }
+.who-feat p { font-size: 12px; color: var(--mid-gray); line-height: 1.5; }
 
-    .sustain-pillars { display: flex; flex-direction: column; gap: 16px; margin-top: 28px; }
-    .sustain-pillar {
-      display: flex; gap: 14px; align-items: flex-start;
-      background: var(--white); border-radius: var(--radius-md); padding: 18px 20px;
-      box-shadow: var(--shadow-sm); transition: var(--transition);
-      border-left: 3px solid transparent;
-    }
-    .sustain-pillar:hover { border-left-color: #22c55e; transform: translateX(5px); }
-    .sp-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(34,197,94,0.1); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-    .sp-text h5 { font-family: var(--font-display); font-size: 14px; font-weight: 800; margin-bottom: 4px; }
-    .sp-text p { font-size: 12px; color: var(--mid-gray); line-height: 1.5; }
-    .sp-pct { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: #22c55e; margin-left: auto; flex-shrink: 0; padding-top: 2px; }
+/* ============================================================
+   FEATURED SOLUTIONS
+   ============================================================ */
+.featured-grid { overflow: hidden; position: relative; }
+.feat-track {
+  display: flex; gap: 20px;
+  transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+.feat-card {
+  flex: 0 0 calc(33.333% - 14px);
+  background: var(--white); border-radius: var(--radius-lg);
+  overflow: hidden; box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+.feat-card:hover { transform: translateY(-7px); box-shadow: var(--shadow-lg); }
+.feat-img { position: relative; overflow: hidden; }
+.feat-img img { width: 100%; height: 190px; object-fit: cover; transition: transform 0.6s ease; display: block; }
+.feat-card:hover .feat-img img { transform: scale(1.06); }
+.feat-badge {
+  position: absolute; top: 12px; left: 12px;
+  background: var(--orange); color: #fff;
+  padding: 4px 11px; border-radius: 100px;
+  font-family: var(--font-display); font-size: 10px; font-weight: 800;
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+.feat-badge.new-badge { background: var(--steel); }
+.feat-body { padding: 18px 18px 22px; }
+.feat-service { font-family: var(--font-display); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange); margin-bottom: 7px; }
+.feat-body h4 { font-family: var(--font-display); font-size: 15px; font-weight: 800; margin-bottom: 7px; }
+.feat-body p { font-size: 13px; color: var(--mid-gray); line-height: 1.6; margin-bottom: 14px; }
+.feat-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--warm-tan); padding-top: 12px; }
+.feat-eta { font-family: var(--font-display); font-size: 13px; font-weight: 800; }
+.feat-eta span { font-size: 11px; color: var(--mid-gray); font-weight: 400; display: block; }
+.feat-add {
+  width: 34px; height: 34px; background: var(--orange); color: #fff;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+.feat-add:hover { background: var(--orange-dk); transform: scale(1.18) rotate(90deg); }
+.feat-nav { display: flex; gap: 10px; margin-top: 28px; }
+.feat-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 2px solid var(--warm-tan); background: var(--white);
+  font-size: 18px; display: flex; align-items: center; justify-content: center;
+  transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+.feat-btn:hover { border-color: var(--orange); background: var(--orange); color: #fff; transform: scale(1.1); }
 
-    .sustain-text .section-title { font-size: clamp(26px,3vw,44px); }
-    .sustain-text p { font-size: 15px; color: var(--mid-gray); line-height: 1.8; margin-top: 16px; margin-bottom: 32px; }
-    .sustain-milestones { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px; }
-    .sm-item {
-      background: var(--white); border-radius: var(--radius-md); padding: 18px 16px;
-      box-shadow: var(--shadow-sm); transition: var(--transition); text-align: left;
-    }
-    .sm-item:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
-    .sm-year { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--orange); }
-    .sm-item p { font-size: 12px; color: var(--mid-gray); margin-top: 4px; line-height: 1.5; }
+/* ============================================================
+   PROCESS SLIDER
+   ============================================================ */
+.process-wrap { overflow: hidden; margin-top: 56px; }
+.process-track {
+  display: flex; gap: 20px;
+  transition: transform 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+.step {
+  flex: 0 0 calc(25% - 15px);
+  background: var(--white); border-radius: var(--radius-lg); padding: clamp(24px, 3vw, 36px) clamp(18px, 2vw, 24px);
+  box-shadow: var(--shadow-sm); transition: all 0.5s cubic-bezier(0.34,1.2,0.64,1);
+  position: relative; overflow: hidden; border-bottom: 3px solid transparent;
+}
+.step.active-step {
+  border-color: var(--orange);
+  box-shadow: 0 20px 50px rgba(232,99,26,0.18);
+  transform: translateY(-8px);
+}
+.step::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--orange), var(--steel));
+  transform: scaleX(0); transform-origin: left; transition: transform 0.5s ease;
+}
+.step.active-step::before { transform: scaleX(1); }
+.step-num {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--cream); border: 2px solid var(--warm-tan);
+  font-family: var(--font-display); font-size: 18px; font-weight: 800;
+  color: var(--mid-gray); display: flex; align-items: center; justify-content: center;
+  margin-bottom: 18px; transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.step.active-step .step-num { background: var(--orange); color: #fff; border-color: var(--orange); transform: scale(1.1); }
+.step-icon { font-size: 24px; margin-bottom: 8px; }
+.step h4 { font-family: var(--font-display); font-size: 14px; font-weight: 800; margin-bottom: 6px; }
+.step p { font-size: 12px; color: var(--mid-gray); line-height: 1.6; }
+.process-progress { display: flex; align-items: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+.pp-dots { display: flex; gap: 7px; }
+.pp-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--warm-tan); border: none; cursor: pointer;
+  transition: all 0.3s ease; padding: 0;
+}
+.pp-dot.active { background: var(--orange); width: 26px; border-radius: 4px; }
+.pp-bar-wrap { flex: 1; height: 3px; background: var(--warm-tan); border-radius: 3px; overflow: hidden; min-width: 60px; }
+.pp-bar { height: 100%; background: linear-gradient(90deg, var(--orange), var(--steel)); border-radius: 3px; width: 0%; transition: width 0.1s linear; }
+.pp-counter { font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--mid-gray); }
+.process-nav-btns { display: flex; gap: 8px; }
+.process-nav-btn {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 2px solid var(--warm-tan); background: var(--white);
+  font-size: 15px; display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s ease;
+}
+.process-nav-btn:hover { border-color: var(--orange); background: var(--orange); color: #fff; }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 1024px) {
-      .cat-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto auto; }
-      .cat-big { grid-row: 1; min-height: 300px; grid-column: 1 / 3; }
-      .who-inner { grid-template-columns: 1fr; gap: 40px; }
-      .who-img-badge { bottom: 16px; right: 16px; }
-      .testi-layout { grid-template-columns: 1fr; gap: 40px; }
-      .testi-img-col img { height: 320px; }
-      .industry-grid { grid-template-columns: 1fr 1fr; }
-      .newsletter-inner { grid-template-columns: 1fr; }
-      .gallery-grid { grid-template-columns: repeat(3,1fr); grid-template-rows: repeat(3,160px); }
-      .gal-item:nth-child(2) { grid-column: auto; grid-row: auto; }
-      .coverage-inner { grid-template-columns: 1fr; gap: 40px; }
-      .tech-inner { grid-template-columns: 1fr; gap: 40px; }
-      .phone-mockup { width: 220px; }
-      .sustain-inner { grid-template-columns: 1fr; gap: 40px; }
-      .sustain-ring-wrap { width: 260px; height: 260px; }
-    }
-    @media (max-width: 768px) {
-      .who-inner { grid-template-columns: 1fr; }
-      .who-img-main img { height: 320px; }
-      .who-feats { grid-template-columns: 1fr; }
-      .industry-grid { grid-template-columns: 1fr; }
-      .feat-card { flex: 0 0 85vw; }
-      .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(4,140px); }
-      .gal-item { grid-column: auto !important; grid-row: auto !important; }
-      .cat-grid { grid-template-columns: 1fr; }
-      .cat-big { grid-column: 1; grid-row: auto; min-height: 260px; }
-      .cat-small { min-height: 180px; }
-      .step { flex: 0 0 calc(85vw - 28px); }
-      .coverage-stats { grid-template-columns: 1fr 1fr; }
-      .tech-visual-col { display: none; }
-      .sustain-milestones { grid-template-columns: 1fr 1fr; }
-      .region-chips { gap: 8px; }
-    }
-    @media (max-width: 480px) {
-      .nl-input-row { flex-direction: column; }
-      .gallery-grid { grid-template-columns: 1fr; grid-template-rows: none; }
-      .gal-item { height: 200px; }
-      .coverage-stats { grid-template-columns: 1fr 1fr; }
-      .sustain-milestones { grid-template-columns: 1fr; }
-      .process-nav-btns { display: none; }
-    }
+/* ============================================================
+   WHY LOGIFLOW
+   ============================================================ */
+.why-inner { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 72px); align-items: center; }
+.why-media { position: relative; }
+.why-img-main { border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg); }
+.why-img-main img { width: 100%; height: clamp(280px, 38vw, 460px); object-fit: cover; }
+.why-img-accent {
+  position: absolute; bottom: -24px; right: -24px;
+  width: 190px; border-radius: var(--radius-md); overflow: hidden;
+  box-shadow: var(--shadow-md); border: 5px solid var(--cream);
+  animation: floatImg 4s ease-in-out infinite;
+}
+.why-img-accent img { width: 100%; height: 130px; object-fit: cover; }
+.why-float-card {
+  position: absolute; top: 24px; left: -24px;
+  background: var(--orange); color: #fff;
+  padding: 18px 22px; border-radius: var(--radius-md);
+  box-shadow: 0 12px 36px rgba(232,99,26,0.4); text-align: center;
+  animation: floatCard 3.5s ease-in-out 0.5s infinite;
+}
+.wfc-num { font-family: var(--font-display); font-size: 36px; font-weight: 800; line-height: 1; }
+.wfc-num span { font-size: 20px; }
+.wfc-text { font-size: 11px; opacity: 0.85; margin-top: 5px; line-height: 1.4; }
+.why-text { display: flex; flex-direction: column; gap: 22px; }
+.why-features { display: flex; flex-direction: column; gap: 14px; }
+.wf-item {
+  display: flex; gap: 16px; align-items: flex-start;
+  background: var(--white); padding: 18px 20px;
+  border-radius: var(--radius-md); box-shadow: var(--shadow-sm); transition: var(--transition);
+}
+.wf-item:hover { transform: translateX(7px); box-shadow: var(--shadow-md); }
+.wf-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+.wf-item strong { font-family: var(--font-display); font-size: 14px; display: block; margin-bottom: 4px; }
+.wf-item p { font-size: 13px; color: var(--mid-gray); }
+
+/* ============================================================
+   GLOBAL COVERAGE
+   ============================================================ */
+.coverage-section {
+  background: var(--steel-dk); padding: clamp(60px, 10vw, 110px) 0;
+  position: relative; overflow: hidden;
+}
+.coverage-section::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 60% 50%, rgba(232,99,26,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.coverage-inner {
+  display: grid; grid-template-columns: 1fr 1.15fr;
+  gap: clamp(32px, 6vw, 64px); align-items: center;
+}
+.coverage-text .section-label { color: var(--orange-lt); }
+.coverage-text .section-title { color: #fff; }
+.coverage-text p { color: rgba(255,255,255,0.65); font-size: 15px; line-height: 1.8; margin-top: 14px; }
+.coverage-stats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 14px; margin: 32px 0;
+}
+.cov-stat {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-md); padding: 20px 18px; transition: var(--transition);
+}
+.cov-stat:hover { background: rgba(232,99,26,0.12); border-color: rgba(232,99,26,0.3); transform: translateY(-3px); }
+.cs-num { font-family: var(--font-display); font-size: 28px; font-weight: 800; color: var(--orange-lt); line-height: 1; }
+.cs-label { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 5px; letter-spacing: 0.06em; }
+.map-visual {
+  position: relative; border-radius: var(--radius-xl);
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  padding: 28px; overflow: hidden;
+}
+.map-dots-svg { width: 100%; height: auto; }
+.map-route {
+  stroke: var(--orange); stroke-width: 1.5; fill: none;
+  stroke-dasharray: 300; stroke-dashoffset: 300;
+  animation: drawRoute 3s ease forwards;
+}
+.map-route:nth-child(2) { animation-delay: 0.5s; stroke: rgba(232,99,26,0.5); }
+.map-route:nth-child(3) { animation-delay: 1s; }
+.map-route:nth-child(4) { animation-delay: 1.5s; stroke: rgba(232,99,26,0.5); }
+.map-pin-dot { fill: var(--orange); animation: pingMap 2s ease-in-out infinite; }
+.map-pin-ring { fill: none; stroke: var(--orange); stroke-width: 1; animation: pingRing 2s ease-in-out infinite; opacity: 0; }
+.region-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.region-chip {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.75);
+  border: 1px solid rgba(255,255,255,0.12); border-radius: 100px;
+  padding: 7px 14px; font-size: 12px; font-weight: 600;
+  font-family: var(--font-display); transition: var(--transition);
+}
+.region-chip:hover { background: var(--orange); border-color: var(--orange); color: #fff; }
+.chip-flag { font-size: 15px; }
+
+/* ============================================================
+   TECH PLATFORM
+   ============================================================ */
+.tech-section { background: var(--ivory); padding: clamp(60px, 10vw, 110px) 0; position: relative; overflow: hidden; }
+.tech-inner { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 72px); align-items: center; }
+.tech-cards-col { display: flex; flex-direction: column; gap: 14px; }
+.tech-card {
+  display: flex; gap: 18px; align-items: flex-start;
+  background: var(--white); border-radius: var(--radius-lg); padding: 22px 20px;
+  box-shadow: var(--shadow-sm); cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.34,1.2,0.64,1);
+  border-left: 3px solid transparent;
+}
+.tech-card.tc-active {
+  border-left-color: var(--orange);
+  box-shadow: 0 12px 40px rgba(232,99,26,0.15);
+  transform: translateX(5px);
+}
+.tc-icon-box {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0; transition: var(--transition);
+}
+.bg-orange { background: rgba(232,99,26,0.1); }
+.bg-steel  { background: rgba(43,76,126,0.1); }
+.bg-teal   { background: rgba(6,148,162,0.1); }
+.bg-amber  { background: rgba(217,119,6,0.1); }
+.tech-card.tc-active .tc-icon-box { background: var(--orange); }
+.tc-text h4 { font-family: var(--font-display); font-size: 14px; font-weight: 800; margin-bottom: 5px; }
+.tc-text p { font-size: 13px; color: var(--mid-gray); line-height: 1.6; }
+.tc-expand { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+.tech-card.tc-active .tc-expand { max-height: 80px; }
+.tc-expand li { font-size: 12px; color: var(--mid-gray); padding: 3px 0; display: flex; align-items: center; gap: 7px; }
+.tc-expand li::before { content: '●'; color: var(--orange); font-size: 6px; flex-shrink: 0; }
+
+/* Phone mockup */
+.tech-visual-col { display: flex; align-items: center; justify-content: center; position: relative; }
+.phone-mockup {
+  width: 240px; background: var(--charcoal); border-radius: 36px;
+  padding: 12px; box-shadow: 0 40px 80px rgba(0,0,0,0.25);
+  border: 2px solid rgba(255,255,255,0.1);
+  animation: floatPhone 4s ease-in-out infinite;
+}
+.phone-screen { background: var(--steel-dk); border-radius: 26px; overflow: hidden; padding: 18px 14px; }
+.phone-status { display: flex; justify-content: space-between; margin-bottom: 14px; }
+.phone-status span { font-size: 9px; color: rgba(255,255,255,0.5); font-family: var(--font-display); font-weight: 700; }
+.phone-header { margin-bottom: 16px; }
+.phone-header h5 { font-family: var(--font-display); font-size: 14px; font-weight: 800; color: #fff; }
+.phone-header p { font-size: 10px; color: rgba(255,255,255,0.5); }
+.phone-track-bar { background: rgba(255,255,255,0.06); border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
+.ptb-id { font-family: var(--font-display); font-size: 11px; font-weight: 800; color: var(--orange-lt); }
+.ptb-status { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+.ptb-dot { width: 7px; height: 7px; background: #4ade80; border-radius: 50%; animation: pulseDot 1.5s infinite; }
+.ptb-status span { font-size: 10px; color: rgba(255,255,255,0.7); }
+.phone-map-mini {
+  background: rgba(43,76,126,0.4); border-radius: 10px; height: 100px;
+  margin-bottom: 12px; display: flex; align-items: center; justify-content: center;
+}
+.pmm-label { font-size: 10px; color: rgba(255,255,255,0.5); font-family: var(--font-display); font-weight: 700; }
+.phone-route-dots { display: flex; flex-direction: column; gap: 6px; }
+.prd-item { display: flex; align-items: center; gap: 9px; padding: 7px 9px; background: rgba(255,255,255,0.04); border-radius: 7px; }
+.prd-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.prd-dot.done { background: var(--orange); }
+.prd-dot.current { background: #4ade80; animation: pulseDot 1.5s infinite; }
+.prd-dot.pending { background: rgba(255,255,255,0.2); }
+.prd-text { font-size: 9px; color: rgba(255,255,255,0.6); }
+.prd-text strong { display: block; font-family: var(--font-display); font-size: 10px; color: rgba(255,255,255,0.85); }
+.tech-float-badge {
+  position: absolute; top: 32px; right: -16px;
+  background: var(--orange); color: #fff;
+  padding: 12px 16px; border-radius: var(--radius-md);
+  box-shadow: 0 12px 36px rgba(232,99,26,0.4);
+  font-family: var(--font-display); font-size: 11px; font-weight: 800;
+  animation: floatCard 3.5s ease-in-out 0.5s infinite;
+  white-space: nowrap;
+}
+.tech-float-badge2 {
+  position: absolute; bottom: 32px; left: -20px;
+  background: var(--white); color: var(--charcoal);
+  padding: 12px 16px; border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font-display); font-size: 11px; font-weight: 800;
+  animation: floatCard 3.5s ease-in-out 1s infinite;
+  white-space: nowrap; border-left: 3px solid var(--orange);
+}
+
+/* ============================================================
+   TESTIMONIALS
+   ============================================================ */
+.testimonials { background: var(--cream); }
+.testi-layout {
+  display: grid; grid-template-columns: 1fr 1.4fr;
+  gap: clamp(28px, 5vw, 56px); align-items: center; margin-top: 48px;
+}
+.testi-img-col { border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg); }
+.testi-img-col img { width: 100%; height: clamp(260px, 40vw, 520px); object-fit: cover; display: block; }
+.testi-slide { background: var(--white); border-radius: var(--radius-lg); padding: clamp(22px, 3vw, 32px); box-shadow: var(--shadow-sm); display: none; }
+.testi-slide.active { display: block; animation: fadeInUp 0.5s ease; }
+.testi-stars { color: #f59e0b; font-size: 16px; letter-spacing: 2px; margin-bottom: 14px; }
+.testi-quote { font-size: 15px; color: var(--charcoal); line-height: 1.75; font-style: italic; margin-bottom: 20px; }
+.testi-author { display: flex; align-items: center; gap: 12px; }
+.ta-avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-family: var(--font-display); font-size: 16px; font-weight: 800; flex-shrink: 0;
+}
+.ta-name { font-family: var(--font-display); font-size: 14px; font-weight: 800; display: block; }
+.ta-role { font-size: 12px; color: var(--mid-gray); }
+.testi-controls { display: flex; gap: 8px; margin-top: 20px; }
+.testi-dot-btn { width: 9px; height: 9px; border-radius: 50%; background: var(--warm-tan); border: none; cursor: pointer; transition: var(--transition); padding: 0; }
+.testi-dot-btn.active { background: var(--orange); width: 26px; border-radius: 5px; }
+.testi-arrows { display: flex; gap: 8px; margin-top: 14px; }
+.testi-btn {
+  width: 42px; height: 42px; border-radius: 50%;
+  border: 2px solid var(--warm-tan); font-size: 16px; transition: var(--transition);
+  display: flex; align-items: center; justify-content: center;
+}
+.testi-btn:hover { background: var(--orange); border-color: var(--orange); color: #fff; }
+
+/* ============================================================
+   PARTNERS
+   ============================================================ */
+.partners-section { padding: 56px 0; border-top: 1px solid var(--warm-tan); border-bottom: 1px solid var(--warm-tan); }
+.partners-inner { display: flex; align-items: center; gap: clamp(24px, 4vw, 48px); flex-wrap: wrap; justify-content: center; }
+.partner-logo {
+  font-family: var(--font-display); font-size: 20px; font-weight: 800;
+  color: var(--lt-gray); letter-spacing: -0.02em; transition: var(--transition);
+  filter: grayscale(1); opacity: 0.5;
+}
+.partner-logo:hover { color: var(--charcoal); opacity: 1; filter: none; }
+
+/* ============================================================
+   TICKER
+   ============================================================ */
+.ticker-bar {
+  background: var(--steel-dk); color: #fff; overflow: hidden;
+  padding: 10px 0; position: relative; z-index: 10;
+}
+.ticker-track { display: flex; white-space: nowrap; animation: ticker 28s linear infinite; }
+.ticker-item {
+  display: inline-flex; align-items: center; gap: 10px; padding: 0 36px;
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.ticker-dot { color: var(--orange); font-size: 9px; }
+.ticker-bar:hover .ticker-track { animation-play-state: paused; }
+
+/* ============================================================
+   SUSTAINABILITY
+   ============================================================ */
+.sustain-section { position: relative; overflow: hidden; padding: clamp(60px, 10vw, 110px) 0; background: var(--cream); }
+.sustain-bg-circle {
+  position: absolute; width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%);
+  top: -150px; right: -150px; pointer-events: none;
+}
+.sustain-inner { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(32px, 6vw, 64px); align-items: center; }
+.sustain-ring-wrap { width: clamp(200px, 30vw, 300px); height: clamp(200px, 30vw, 300px); position: relative; margin: 0 auto; }
+.sustain-ring-svg { width: 100%; height: 100%; }
+.ring-track { fill: none; stroke: var(--warm-tan); stroke-width: 8; }
+.ring-progress {
+  fill: none; stroke-width: 8; stroke-linecap: round;
+  stroke-dasharray: 850; stroke-dashoffset: 850;
+  transition: stroke-dashoffset 2.5s cubic-bezier(0.4,0,0.2,1);
+}
+.ring-progress.animated { stroke-dashoffset: 213; }
+.ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ring-pct { font-family: var(--font-display); font-size: clamp(36px, 6vw, 52px); font-weight: 800; color: var(--charcoal); line-height: 1; }
+.ring-label { font-size: 12px; color: var(--mid-gray); margin-top: 5px; text-align: center; }
+.sustain-pillars { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+.sustain-pillar {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: var(--white); border-radius: var(--radius-md); padding: 16px 18px;
+  box-shadow: var(--shadow-sm); transition: var(--transition); border-left: 3px solid transparent;
+}
+.sustain-pillar:hover { border-left-color: #22c55e; transform: translateX(5px); }
+.sp-icon { width: 38px; height: 38px; border-radius: 10px; background: rgba(34,197,94,0.1); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.sp-text h5 { font-family: var(--font-display); font-size: 13px; font-weight: 800; margin-bottom: 3px; }
+.sp-text p { font-size: 12px; color: var(--mid-gray); line-height: 1.5; }
+.sp-pct { font-family: var(--font-display); font-size: 16px; font-weight: 800; color: #22c55e; margin-left: auto; flex-shrink: 0; padding-top: 1px; }
+.sustain-text p { font-size: 15px; color: var(--mid-gray); line-height: 1.8; margin-top: 14px; margin-bottom: 28px; }
+.sustain-milestones { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 28px; }
+.sm-item { background: var(--white); border-radius: var(--radius-md); padding: 16px 14px; box-shadow: var(--shadow-sm); transition: var(--transition); }
+.sm-item:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.sm-year { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: var(--orange); }
+.sm-item p { font-size: 12px; color: var(--mid-gray); margin-top: 3px; line-height: 1.5; }
+
+/* ============================================================
+   GALLERY
+   ============================================================ */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 190px);
+  gap: 10px; margin-top: 32px;
+}
+.gal-item { border-radius: var(--radius-md); overflow: hidden; position: relative; cursor: pointer; }
+.gal-item:nth-child(1) { grid-column: 1; grid-row: 1; }
+.gal-item:nth-child(2) { grid-column: 2; grid-row: 1 / 3; }
+.gal-item:nth-child(3) { grid-column: 3; grid-row: 1; }
+.gal-item:nth-child(4) { grid-column: 4; grid-row: 1; }
+.gal-item:nth-child(5) { grid-column: 1; grid-row: 2; }
+.gal-item:nth-child(6) { grid-column: 3; grid-row: 2; }
+.gal-item:nth-child(7) { grid-column: 4; grid-row: 2; }
+.gal-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; display: block; }
+.gal-item:hover img { transform: scale(1.07); }
+.gal-hover {
+  position: absolute; inset: 0; background: rgba(232,99,26,0.65);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.3s; font-size: 26px;
+}
+.gal-item:hover .gal-hover { opacity: 1; }
+
+/* ============================================================
+   NEWSLETTER
+   ============================================================ */
+.newsletter-section {
+  background: linear-gradient(135deg, var(--steel-dk) 0%, var(--steel) 100%);
+  padding: clamp(60px, 10vw, 90px) 0; position: relative; overflow: hidden;
+}
+.newsletter-section::before {
+  content: ''; position: absolute; top: -80px; right: -80px;
+  width: 360px; height: 360px; border-radius: 50%;
+  background: rgba(232,99,26,0.12); pointer-events: none;
+}
+.newsletter-inner { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 56px); align-items: center; }
+.nl-text h2 { font-family: var(--font-display); font-size: clamp(22px, 3vw, 40px); font-weight: 800; color: #fff; line-height: 1.12; margin-bottom: 14px; }
+.nl-text h2 em { color: var(--orange-lt); font-style: italic; }
+.nl-text p { color: rgba(255,255,255,0.7); font-size: 15px; line-height: 1.7; }
+.nl-input-row { display: flex; gap: 10px; }
+.nl-input {
+  flex: 1; padding: 14px 18px; font-size: 14px; font-family: var(--font-body);
+  border: 2px solid rgba(255,255,255,0.2); border-radius: var(--radius-xl);
+  color: #fff; background: rgba(255,255,255,0.1); outline: none; transition: var(--transition);
+  min-width: 0;
+}
+.nl-input::placeholder { color: rgba(255,255,255,0.45); }
+.nl-input:focus { border-color: var(--orange); background: rgba(255,255,255,0.15); }
+.nl-fine { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 10px; }
+
+/* ============================================================
+   CTA BANNER
+   ============================================================ */
+.cta-banner {
+  background: linear-gradient(135deg, var(--steel-dk) 0%, var(--steel) 60%, #2d5a9e 100%);
+  padding: clamp(56px, 8vw, 80px) 0; position: relative; overflow: hidden;
+}
+.cta-banner::before {
+  content: ''; position: absolute; top: -100px; right: -100px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(232,99,26,0.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-inner { display: flex; align-items: center; justify-content: space-between; gap: 36px; flex-wrap: wrap; position: relative; }
+.cta-inner h2 { font-family: var(--font-display); font-size: clamp(22px, 3.5vw, 36px); font-weight: 800; color: #fff; line-height: 1.15; }
+.cta-inner p { color: rgba(255,255,255,0.65); margin-top: 8px; font-size: 15px; }
+.cta-actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer { background: var(--steel-dk); color: var(--white); padding: clamp(56px, 8vw, 80px) 0 36px; position: relative; overflow: hidden; }
+.footer::before {
+  content: ''; position: absolute; top: -60px; right: -60px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(232,99,26,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.footer-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: clamp(24px, 4vw, 48px); margin-bottom: 48px;
+}
+.footer-brand .footer-logo { margin-bottom: 18px; }
+.footer-brand .footer-logo img { height: 40px; width: auto; filter: brightness(0) invert(1); opacity: 0.9; }
+.footer-brand p { font-size: 14px; line-height: 1.8; color: rgba(255,255,255,0.55); max-width: 260px; }
+.footer-social { display: flex; gap: 10px; margin-top: 18px; }
+.footer-social a {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+.footer-social a:hover { background: var(--orange); transform: translateY(-4px) scale(1.1); }
+.footer-col h4 {
+  font-family: var(--font-display); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--orange-lt); margin-bottom: 20px;
+}
+.footer-col ul li + li { margin-top: 10px; }
+.footer-col ul li a { font-size: 14px; color: rgba(255,255,255,0.55); transition: var(--transition); display: inline-flex; align-items: center; gap: 0; }
+.footer-col ul li a::before { content: '→'; font-size: 11px; opacity: 0; transform: translateX(-8px); transition: var(--transition); margin-right: 0; }
+.footer-col ul li a:hover { color: var(--white); }
+.footer-col ul li a:hover::before { opacity: 1; transform: translateX(0); margin-right: 5px; }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.08); padding-top: 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+}
+.footer-bottom p { font-size: 12px; color: rgba(255,255,255,0.35); }
+.footer-bottom-logo img { height: 26px; width: auto; filter: brightness(0) invert(1); opacity: 0.4; }
+
+/* ============================================================
+   AOS
+   ============================================================ */
+[data-aos] {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+[data-aos].aos-animate { opacity: 1; transform: none; }
+[data-aos="fade-left"]  { transform: translateX(-28px); }
+[data-aos="fade-left"].aos-animate  { transform: none; }
+[data-aos="fade-right"] { transform: translateX(28px); }
+[data-aos="fade-right"].aos-animate { transform: none; }
+
+/* ============================================================
+   KEYFRAMES
+   ============================================================ */
+@keyframes slideUp  { from { opacity:0; transform:translateY(32px); } to { opacity:1; transform:none; } }
+@keyframes slideIn  { from { opacity:0; transform:translateX(-28px); } to { opacity:1; transform:none; } }
+@keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
+@keyframes fadeInUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+@keyframes floatImg  { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
+@keyframes floatCard { 0%,100% { transform:translateY(0) rotate(-1deg); } 50% { transform:translateY(-10px) rotate(0deg); } }
+@keyframes floatPhone { 0%,100% { transform:translateY(0) rotate(-2deg); } 50% { transform:translateY(-14px) rotate(0deg); } }
+@keyframes pulseDot  { 0%,100% { box-shadow:0 0 0 0 rgba(74,222,128,0.6); } 50% { box-shadow:0 0 0 6px rgba(74,222,128,0); } }
+@keyframes scrollDown { 0% { transform:scaleY(0); transform-origin:top; } 50% { transform:scaleY(1); transform-origin:top; } 50.01% { transform-origin:bottom; } 100% { transform:scaleY(0); transform-origin:bottom; } }
+@keyframes marquee  { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+@keyframes ticker   { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+@keyframes drawRoute { to { stroke-dashoffset: 0; } }
+@keyframes pingMap  { 0%,100% { transform:scale(1); } 50% { transform:scale(1.3); } }
+@keyframes pingRing { 0% { r:4px; opacity:0.8; } 100% { r:14px; opacity:0; } }
+@keyframes rippleAnim { to { transform:scale(1); opacity:0; } }
+@keyframes shakeX { 0%,100% { transform:translateX(0); } 20%,60% { transform:translateX(-6px); } 40%,80% { transform:translateX(6px); } }
+
+/* ============================================================
+   RESPONSIVE — TABLET: ≤1100px
+   ============================================================ */
+@media (max-width: 1100px) {
+  .services-grid  { grid-template-columns: repeat(2, 1fr); }
+  .why-inner      { grid-template-columns: 1fr; }
+  .why-media      { max-width: 520px; margin: 0 auto; }
+  .footer-grid    { grid-template-columns: 1fr 1fr; }
+  .coverage-inner { grid-template-columns: 1fr; gap: 40px; }
+  .tech-inner     { grid-template-columns: 1fr; gap: 40px; }
+  .phone-mockup   { width: 220px; }
+  .sustain-inner  { grid-template-columns: 1fr; gap: 40px; }
+  .testi-layout   { grid-template-columns: 1fr; gap: 36px; }
+  .testi-img-col img { height: 300px; }
+  .newsletter-inner { grid-template-columns: 1fr; gap: 32px; }
+}
+
+/* ============================================================
+   RESPONSIVE — MOBILE: ≤768px
+   ============================================================ */
+@media (max-width: 768px) {
+  :root { --nav-h: 64px; }
+
+  /* Navbar */
+  .nav-links, .nav-cta { display: none; }
+  .hamburger { display: flex; }
+  .mobile-menu { display: block; }
+
+  /* Section spacing */
+  .section { padding: clamp(48px, 8vw, 72px) 0; }
+
+  /* Hero */
+  .hero { min-height: 100svh; }
+  .hero-title { font-size: clamp(28px, 8vw, 48px); }
+  .hero-desc { font-size: 14px; max-width: 100%; }
+  .hero-actions { gap: 12px; }
+  .hero-badges { gap: 12px; }
+  .hero-scroll-cue { display: none; }
+
+  /* Stats */
+  .stats-inner {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .stat-num { font-size: clamp(22px, 5vw, 32px); }
+
+  /* Services grid */
+  .services-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  /* Category image grid */
+  .cat-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 200px 130px 130px;
+    height: auto;
+  }
+  .cat-big { grid-column: 1 / 3; grid-row: 1; }
+  .cat-card:nth-child(2) { grid-column: 1; grid-row: 2; }
+  .cat-card:nth-child(3) { grid-column: 2; grid-row: 2; }
+  .cat-card:nth-child(4) { grid-column: 1; grid-row: 3; }
+  .cat-card:nth-child(5) { grid-column: 2; grid-row: 3; }
+
+  /* Who we are */
+  .who-inner { grid-template-columns: 1fr; gap: 32px; }
+  .who-img-badge { bottom: 14px; right: 14px; }
+  .who-img-badge .badge-num { font-size: 32px; }
+  .who-feats { grid-template-columns: 1fr 1fr; }
+
+  /* Featured cards */
+  .feat-card { flex: 0 0 calc(85vw - 32px); }
+
+  /* Process */
+  .step { flex: 0 0 calc(90vw - 32px); }
+  .process-nav-btns { display: flex; }
+
+  /* Why */
+  .why-inner { grid-template-columns: 1fr; }
+  .why-img-accent { display: none; }
+  .why-float-card { left: 12px; top: 12px; padding: 14px 16px; }
+  .wfc-num { font-size: 28px; }
+
+  /* Gallery */
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 150px);
+    gap: 8px;
+  }
+  .gal-item { grid-column: auto !important; grid-row: auto !important; }
+
+  /* Coverage */
+  .coverage-stats { grid-template-columns: 1fr 1fr; }
+  .region-chips { gap: 7px; }
+
+  /* Tech */
+  .tech-visual-col { display: none; }
+
+  /* Testimonials */
+  .testi-layout { grid-template-columns: 1fr; }
+  .testi-img-col { display: none; }
+
+  /* Sustain */
+  .sustain-inner { grid-template-columns: 1fr; }
+  .sustain-milestones { grid-template-columns: 1fr 1fr; }
+
+  /* Newsletter */
+  .newsletter-inner { grid-template-columns: 1fr; gap: 24px; }
+
+  /* CTA */
+  .cta-inner { text-align: center; justify-content: center; }
+  .cta-actions { justify-content: center; }
+
+  /* Footer */
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .footer-bottom-logo { display: none; }
+}
+
+/* ============================================================
+   RESPONSIVE — SMALL MOBILE: ≤540px
+   ============================================================ */
+@media (max-width: 540px) {
+  :root { --nav-h: 60px; }
+
+  /* Hero actions — stack vertically */
+  .hero-actions { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .hero-badges { flex-direction: column; gap: 8px; }
+
+  /* Stats — 2x2 */
+  .stats-inner { grid-template-columns: 1fr 1fr; }
+
+  /* Services full-width on very small */
+  .services-grid { grid-template-columns: 1fr; gap: 12px; }
+
+  /* Cat grid simplified */
+  .cat-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: 200px 140px 140px 140px 140px;
+  }
+  .cat-big { grid-column: 1; grid-row: 1; }
+  .cat-card:nth-child(2),
+  .cat-card:nth-child(3),
+  .cat-card:nth-child(4),
+  .cat-card:nth-child(5) { grid-column: 1; }
+
+  /* Who feats: single column */
+  .who-feats { grid-template-columns: 1fr; }
+
+  /* Gallery: single col */
+  .gallery-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+  }
+  .gal-item { height: 180px; grid-column: 1 !important; grid-row: auto !important; }
+
+  /* Newsletter: stacked input */
+  .nl-input-row { flex-direction: column; }
+  .nl-input-row .btn-primary { width: 100%; justify-content: center; }
+
+  /* CTA full-width buttons */
+  .cta-actions { flex-direction: column; width: 100%; }
+  .cta-actions .btn-primary,
+  .cta-actions .btn-secondary { width: 100%; justify-content: center; }
+
+  /* Footer */
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+
+  /* Sustain */
+  .sustain-milestones { grid-template-columns: 1fr; }
+
+  /* Coverage stats */
+  .coverage-stats { grid-template-columns: 1fr 1fr; }
+
+  /* Mobile menu full width */
+  .mobile-menu-panel { width: 100%; }
+
+  /* Section title */
+  .section-title { font-size: clamp(22px, 7vw, 30px); }
+}
+
+/* ============================================================
+   RESPONSIVE — 400px and below
+   ============================================================ */
+@media (max-width: 400px) {
+  .container { padding: 0 14px; }
+  .hero-title { font-size: clamp(26px, 9vw, 36px); }
+  .stats-inner { grid-template-columns: 1fr 1fr; }
+  .stat-num { font-size: 22px; }
+}
   </style>
 </head>
 <body>
 
-  <!-- ── NAVBAR ── -->
-  <header class="navbar">
+  <!-- ══════════════════════════════════════════
+       NAVBAR
+  ══════════════════════════════════════════ -->
+  <header class="navbar" id="navbar">
     <div class="container nav-inner">
-      <a href="index.html" class="nav-logo">
-        <img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=200&h=80&output=webp&q=80&fit=inside"
-             alt="LogiFlow by Stackly" width="200" height="94" />
+      <a href="#" class="nav-logo">
+        <img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=260&h=104&output=webp&q=80&fit=inside"
+             alt="LogiFlow by Stackly" width="180" height="72" />
       </a>
       <nav class="nav-links">
-        <a href="index.html" class="active">Home</a>
-        <a href="services.html">Services</a>
-        <a href="tracking.html">Tracking</a>
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
+        <a href="#" class="active">Home</a>
+        <a href="#">Services</a>
+        <a href="#">Tracking</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
       </nav>
-      <a href="login.html" class="btn-primary nav-cta">Sign in</a>
-      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileMenu">
+      <a href="#" class="btn-primary nav-cta">Sign in</a>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
   </header>
 
-  <!-- ── MOBILE MENU ── -->
-  <div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Navigation menu">
+  <!-- ══════════════════════════════════════════
+       MOBILE MENU
+  ══════════════════════════════════════════ -->
+  <div class="mobile-menu" id="mobileMenu">
     <div class="mobile-menu-panel">
       <div class="menu-panel-header">
-        <a href="index.html" class="menu-panel-logo">
-          <img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=200&h=80&output=webp&q=80&fit=inside" alt="LogiFlow" width="130" height="36" style="filter: brightness(0) saturate(100%) invert(42%) sepia(85%) saturate(600%) hue-rotate(10deg) brightness(95%) contrast(105%);" />
+        <a href="#" class="menu-panel-logo">
+          <img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=200&h=80&output=webp&q=80&fit=inside"
+               alt="LogiFlow" width="120" height="48" />
         </a>
-        <button class="menu-close-btn" aria-label="Close menu">✕</button>
+        <button class="menu-close-btn" id="menuClose" aria-label="Close menu">✕</button>
       </div>
       <nav class="menu-nav-links">
-        <a href="index.html" class="active">Home <span class="menu-arrow">→</span></a>
-        <a href="services.html">Services <span class="menu-arrow">→</span></a>
-        <a href="tracking.html">Tracking <span class="menu-arrow">→</span></a>
-        <a href="about.html">About <span class="menu-arrow">→</span></a>
-        <a href="contact.html">Contact <span class="menu-arrow">→</span></a>
+        <a href="#" class="active">Home <span class="menu-arrow">→</span></a>
+        <a href="#">Services <span class="menu-arrow">→</span></a>
+        <a href="#">Tracking <span class="menu-arrow">→</span></a>
+        <a href="#">About <span class="menu-arrow">→</span></a>
+        <a href="#">Contact <span class="menu-arrow">→</span></a>
       </nav>
       <div class="menu-panel-footer">
-        <a href="login.html" class="btn-primary mobile-cta-btn">Sign in</a>
+        <a href="#" class="btn-primary mobile-cta-btn">Sign in</a>
         <div class="menu-contact-info">
           <div class="menu-contact-item"><span>📞</span><span>+91 22 4000 1234</span></div>
           <div class="menu-contact-item"><span>✉️</span><span>info@logiflow.com</span></div>
         </div>
         <div class="mobile-socials">
-          <a href="404.html">in</a><a href="404.html">𝕏</a><a href="404.html">f</a>
+          <a href="#">in</a>
+          <a href="#">𝕏</a>
+          <a href="#">f</a>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── HERO ── -->
+  <!-- ══════════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════ -->
   <section class="hero">
-    <div class="hero-slider-wrap">
-      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1400&q=60&fm=webp')"></div>
-      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1400&q=60&fm=webp')"></div>
-      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=1400&q=60&fm=webp')"></div>
-      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=1400&q=60&fm=webp')"></div>
-      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1615460549969-36fa19521a4f?w=1400&q=60&fm=webp')"></div>
+    <div class="hero-slider-wrap" id="heroSlider">
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1400&q=55&fm=webp&fit=crop&crop=center')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1400&q=55&fm=webp&fit=crop&crop=center')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=1400&q=55&fm=webp&fit=crop&crop=center')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=1400&q=55&fm=webp&fit=crop&crop=center')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1553413077-190dd305871c?w=1400&q=55&fm=webp&fit=crop&crop=center')"></div>
     </div>
     <div class="hero-overlay"></div>
     <div class="container hero-content">
-      <div class="hero-eyebrow"><span class="dot-live"></span> Live Fleet Tracking Active</div>
+      <div class="hero-eyebrow"><span class="dot-live"></span> Live Tracking Now Active</div>
       <h1 class="hero-title">
         <span class="line-1">Move Cargo.</span>
         <span class="line-2">Move <em class="hero-accent">Smarter.</em></span>
       </h1>
       <p class="hero-desc">End-to-end logistics connecting your supply chain — from first-mile pickup to last-mile delivery, across 180+ countries with real-time visibility.</p>
       <div class="hero-actions">
-        <a href="contact.html" class="btn-primary">Request a Shipment →</a>
-        <a href="tracking.html" class="btn-hero-ghost">Track Your Cargo</a>
+        <a href="#" class="btn-primary">Request a Shipment →</a>
+        <a href="#" class="btn-hero-ghost">Track Your Cargo</a>
       </div>
       <div class="hero-badges">
-        <div class="hbadge"><div class="hb-icon">✓</div> ISO 9001 Certified</div>
-        <div class="hbadge"><div class="hb-icon">✓</div> 24/7 Support</div>
-        <div class="hbadge"><div class="hb-icon">✓</div> Real-time Updates</div>
-        <div class="hbadge"><div class="hb-icon">✓</div> 99% On-time Delivery</div>
+        <div class="hbadge"><div class="hb-icon">✓</div>ISO 9001 Certified</div>
+        <div class="hbadge"><div class="hb-icon">✓</div>24/7 Support</div>
+        <div class="hbadge"><div class="hb-icon">✓</div>Real-time Updates</div>
+        <div class="hbadge"><div class="hb-icon">✓</div>99% On-time Delivery</div>
       </div>
     </div>
-    <div class="slider-dots"></div>
+    <div class="slider-dots" id="sliderDots"></div>
     <div class="hero-scroll-cue"><span>Scroll</span><div class="scroll-line"></div></div>
   </section>
 
-  <!-- ── STATS BAR ── -->
+  <!-- ══════════════════════════════════════════
+       STATS BAR
+  ══════════════════════════════════════════ -->
   <div class="stats-bar">
     <div class="container stats-inner">
-      <div class="stat-item">
-        <div class="stat-num"><span data-count="48000" data-suffix="+">0</span></div>
-        <div class="stat-label">Shipments / Month</div>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-item">
-        <div class="stat-num"><span data-count="180" data-suffix="+">0</span></div>
-        <div class="stat-label">Countries Served</div>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-item">
-        <div class="stat-num"><span data-count="2400" data-suffix="+">0</span></div>
-        <div class="stat-label">Fleet Vehicles</div>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-item">
-        <div class="stat-num"><span data-count="99" data-suffix="%">0</span></div>
-        <div class="stat-label">On-time Delivery</div>
-      </div>
+      <div class="stat-item"><div class="stat-num"><span data-count="48000" data-suffix="+">0</span></div><div class="stat-label">Shipments / Month</div></div>
+      <div class="stat-item"><div class="stat-num"><span data-count="180" data-suffix="+">0</span></div><div class="stat-label">Countries Served</div></div>
+      <div class="stat-item"><div class="stat-num"><span data-count="2400" data-suffix="+">0</span></div><div class="stat-label">Fleet Vehicles</div></div>
+      <div class="stat-item"><div class="stat-num"><span data-count="99" data-suffix="%">0</span></div><div class="stat-label">On-time Delivery</div></div>
     </div>
   </div>
 
-  <!-- ── MARQUEE ── -->
+  <!-- MARQUEE -->
   <div class="marquee-strip">
     <div class="marquee-track">
-      <div class="marquee-item"><span class="m-dot">●</span> Road Freight</div>
-      <div class="marquee-item"><span class="m-dot">●</span> Air Freight</div>
-      <div class="marquee-item"><span class="m-dot">●</span> Ocean Freight</div>
-      <div class="marquee-item"><span class="m-dot">●</span> Warehousing</div>
-      <div class="marquee-item"><span class="m-dot">●</span> Customs Clearance</div>
-      <div class="marquee-item"><span class="m-dot">●</span> Last Mile Delivery</div>
-      <div class="marquee-item"><span class="m-dot">●</span> Cold Chain Logistics</div>
-      <div class="marquee-item"><span class="m-dot">●</span> Project Cargo</div>
-      <div class="marquee-item"><span class="m-dot">●</span> Road Freight</div>
-      <div class="marquee-item"><span class="m-dot">●</span> Air Freight</div>
-      <div class="marquee-item"><span class="m-dot">●</span> Ocean Freight</div>
-      <div class="marquee-item"><span class="m-dot">●</span> Warehousing</div>
-      <div class="marquee-item"><span class="m-dot">●</span> Customs Clearance</div>
-      <div class="marquee-item"><span class="m-dot">●</span> Last Mile Delivery</div>
-      <div class="marquee-item"><span class="m-dot">●</span> Cold Chain Logistics</div>
-      <div class="marquee-item"><span class="m-dot">●</span> Project Cargo</div>
+      <div class="marquee-item"><span class="m-dot">●</span>Road Freight</div>
+      <div class="marquee-item"><span class="m-dot">●</span>Air Freight</div>
+      <div class="marquee-item"><span class="m-dot">●</span>Ocean Freight</div>
+      <div class="marquee-item"><span class="m-dot">●</span>Warehousing</div>
+      <div class="marquee-item"><span class="m-dot">●</span>Customs Clearance</div>
+      <div class="marquee-item"><span class="m-dot">●</span>Last Mile Delivery</div>
+      <div class="marquee-item"><span class="m-dot">●</span>Cold Chain Logistics</div>
+      <div class="marquee-item"><span class="m-dot">●</span>Project Cargo</div>
+      <div class="marquee-item"><span class="m-dot">●</span>Road Freight</div>
+      <div class="marquee-item"><span class="m-dot">●</span>Air Freight</div>
+      <div class="marquee-item"><span class="m-dot">●</span>Ocean Freight</div>
+      <div class="marquee-item"><span class="m-dot">●</span>Warehousing</div>
+      <div class="marquee-item"><span class="m-dot">●</span>Customs Clearance</div>
+      <div class="marquee-item"><span class="m-dot">●</span>Last Mile Delivery</div>
+      <div class="marquee-item"><span class="m-dot">●</span>Cold Chain Logistics</div>
+      <div class="marquee-item"><span class="m-dot">●</span>Project Cargo</div>
     </div>
   </div>
 
-  <!-- ── SERVICES GRID ── -->
+  <!-- ══════════════════════════════════════════
+       SERVICES GRID
+  ══════════════════════════════════════════ -->
   <section class="section">
     <div class="container">
       <div class="section-head" data-aos>
         <span class="section-label">What We Do</span>
-        <h2 class="section-title">Complete Logistics Solutions<br>Under One Roof</h2>
+        <h2 class="section-title">Complete Logistics Solutions Under One Roof</h2>
         <p class="section-subtitle">Whether you're moving pallets, full containers, or time-critical freight — our network handles every mile with precision.</p>
       </div>
       <div class="services-grid">
-        <a href="services.html" class="service-card" data-aos data-aos-delay="0">
+        <a href="#" class="service-card" data-aos data-aos-delay="0">
           <div class="sc-icon-wrap sc-blue"><svg viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/></svg></div>
           <h3>Road Freight</h3>
           <p>Full truckload, LTL, and express road transport across 85 countries with GPS-tracked fleet of 2,400+ vehicles.</p>
           <span class="btn-ghost">Learn more →</span>
         </a>
-        <a href="services.html" class="service-card" data-aos data-aos-delay="100">
+        <a href="#" class="service-card" data-aos data-aos-delay="100">
           <div class="sc-icon-wrap sc-orange"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg></div>
           <h3>Air Freight</h3>
           <p>Priority air cargo with door-to-door service, customs clearance, and real-time tracking across 340+ airports.</p>
           <span class="btn-ghost">Learn more →</span>
         </a>
-        <a href="services.html" class="service-card" data-aos data-aos-delay="200">
+        <a href="#" class="service-card" data-aos data-aos-delay="200">
           <div class="sc-icon-wrap sc-teal"><svg viewBox="0 0 24 24"><path d="M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.65 2.62.99 4 .99h2v-2h-2z"/></svg></div>
           <h3>Ocean Freight</h3>
           <p>FCL & LCL ocean shipping with competitive rates, port-to-port and multimodal solutions for bulk cargo globally.</p>
           <span class="btn-ghost">Learn more →</span>
         </a>
-        <a href="services.html" class="service-card" data-aos data-aos-delay="300">
+        <a href="#" class="service-card" data-aos data-aos-delay="300">
           <div class="sc-icon-wrap sc-amber"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg></div>
           <h3>Warehousing</h3>
           <p>9.2M sq ft of smart fulfilment space across 38 locations with direct integrations to Shopify, SAP, and Oracle.</p>
@@ -714,33 +1394,34 @@
         </a>
       </div>
 
+      <!-- Category Image Grid -->
       <div class="cat-grid">
-        <a href="services.html" class="cat-card cat-big">
-          <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=900&q=70&fm=webp" alt="Road Freight" loading="lazy" />
+        <a href="#" class="cat-card cat-big">
+          <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=72&fm=webp&fit=crop&crop=center" alt="Road Freight" loading="lazy" />
           <div class="cat-overlay"></div>
           <div class="cat-label"><h4>Road Freight</h4><span>85 countries · 2,400 vehicles</span></div>
           <div class="cat-arrow">→</div>
         </a>
-        <a href="services.html" class="cat-card cat-small">
-          <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&q=70&fm=webp" alt="Air Freight" loading="lazy" />
+        <a href="#" class="cat-card">
+          <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Air Freight" loading="lazy" />
           <div class="cat-overlay"></div>
           <div class="cat-label"><h4>Air Freight</h4><span>340+ airports</span></div>
           <div class="cat-arrow">→</div>
         </a>
-        <a href="services.html" class="cat-card cat-small">
-          <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&q=70&fm=webp" alt="Ocean Freight" loading="lazy" />
+        <a href="#" class="cat-card">
+          <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Ocean Freight" loading="lazy" />
           <div class="cat-overlay"></div>
           <div class="cat-label"><h4>Ocean Freight</h4><span>FCL & LCL · AIS tracking</span></div>
           <div class="cat-arrow">→</div>
         </a>
-        <a href="services.html" class="cat-card cat-small">
-          <img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=600&q=70&fm=webp" alt="Warehousing" loading="lazy" />
+        <a href="#" class="cat-card">
+          <img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Warehousing" loading="lazy" />
           <div class="cat-overlay"></div>
           <div class="cat-label"><h4>Warehousing</h4><span>38 locations · 9.2M sq ft</span></div>
           <div class="cat-arrow">→</div>
         </a>
-        <a href="services.html" class="cat-card cat-small">
-          <img src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=600&q=70&fm=webp" alt="Cold Chain" loading="lazy" />
+        <a href="#" class="cat-card">
+          <img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Cold Chain" loading="lazy" />
           <div class="cat-overlay"></div>
           <div class="cat-label"><h4>Cold Chain</h4><span>IoT temperature monitoring</span></div>
           <div class="cat-arrow">→</div>
@@ -749,12 +1430,14 @@
     </div>
   </section>
 
-  <!-- ── WHO WE ARE ── -->
+  <!-- ══════════════════════════════════════════
+       WHO WE ARE
+  ══════════════════════════════════════════ -->
   <section class="section section-alt">
     <div class="container who-inner">
       <div class="who-img-wrap" data-aos="fade-right">
         <div class="who-img-main">
-          <img src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=800&q=60&fm=webp" alt="LogiFlow team" loading="lazy" />
+          <img src="https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=900&q=72&fm=webp&fit=crop&crop=center" alt="Aerial view of transport network" loading="lazy" />
         </div>
         <div class="who-img-badge">
           <span class="badge-num">17+</span>
@@ -764,53 +1447,55 @@
       <div data-aos="fade-left">
         <span class="section-label">Who We Are</span>
         <h2 class="section-title">A Network Built on <em style="font-style:italic;color:var(--orange)">Trust</em></h2>
-        <p style="color:var(--mid-gray);font-size:15px;line-height:1.8;margin:18px 0 28px">LogiFlow started as a regional road transport operator in 2008. Today we're a global supply chain partner — but our precision, our dedication to on-time delivery, and our 24-hour commitment to every client has never changed.</p>
+        <p style="color:var(--mid-gray);font-size:15px;line-height:1.8;margin:16px 0 24px">LogiFlow started as a regional road transport operator in 2008. Today we're a global supply chain partner — but our precision, our dedication to on-time delivery, and our 24-hour commitment to every client has never changed.</p>
         <div class="who-feats">
           <div class="who-feat"><div class="wf-emoji">🛰️</div><strong>Live Fleet Tracking</strong><p>Every vehicle visible in real time on our portal</p></div>
           <div class="who-feat"><div class="wf-emoji">🧑‍💼</div><strong>Expert Ops Team</strong><p>Specialists in road, air, ocean and last-mile</p></div>
           <div class="who-feat"><div class="wf-emoji">🌙</div><strong>24/7 Operations</strong><p>Around-the-clock support across all time zones</p></div>
           <div class="who-feat"><div class="wf-emoji">🌿</div><strong>Net-Zero by 2035</strong><p>Carbon offsets, EV fleet, green warehouse programme</p></div>
         </div>
-        <a href="about.html" class="btn-primary">Read Our Story →</a>
+        <a href="#" class="btn-primary">Read Our Story →</a>
       </div>
     </div>
   </section>
 
-  <!-- ── FEATURED SOLUTIONS ── -->
+  <!-- ══════════════════════════════════════════
+       FEATURED SOLUTIONS
+  ══════════════════════════════════════════ -->
   <section class="section">
     <div class="container">
-      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:48px;flex-wrap:wrap;gap:20px" data-aos>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:40px;flex-wrap:wrap;gap:18px;" data-aos>
         <div>
           <span class="section-label">This Week's Picks</span>
           <h2 class="section-title">Popular <em style="font-style:italic">Solutions</em></h2>
         </div>
-        <a href="services.html" class="btn-secondary">View All Services</a>
+        <a href="#" class="btn-secondary">View All Services</a>
       </div>
       <div class="featured-grid">
         <div class="feat-track" id="featTrack">
           <div class="feat-card">
-            <div class="feat-img"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500&q=70&fm=webp" alt="Road Freight" loading="lazy" /><div class="feat-badge">Bestseller</div></div>
-            <div class="feat-body"><div class="feat-service">Land Transport</div><h4>Road Freight FTL</h4><p>Full truckload capacity with GPS tracking, driver app, and digital POD. Door-to-door across India and beyond.</p><div class="feat-footer"><div class="feat-eta">24–48 hrs <span>Avg delivery time</span></div><a href="contact.html" class="feat-add">+</a></div></div>
+            <div class="feat-img"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&q=72&fm=webp&fit=crop&crop=center" alt="Road Freight" loading="lazy" /><div class="feat-badge">Bestseller</div></div>
+            <div class="feat-body"><div class="feat-service">Land Transport</div><h4>Road Freight FTL</h4><p>Full truckload capacity with GPS tracking, driver app, and digital POD.</p><div class="feat-footer"><div class="feat-eta">24–48 hrs<span>Avg delivery time</span></div><a href="#" class="feat-add">+</a></div></div>
           </div>
           <div class="feat-card">
-            <div class="feat-img"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=500&q=70&fm=webp" alt="Air Freight" loading="lazy" /><div class="feat-badge new-badge">Express</div></div>
-            <div class="feat-body"><div class="feat-service">Air Transport</div><h4>Next-Flight-Out Air</h4><p>Urgent cargo, next available flight. e-AWB processing, real-time customs tracking, door-to-door worldwide.</p><div class="feat-footer"><div class="feat-eta">24–72 hrs <span>International transit</span></div><a href="contact.html" class="feat-add">+</a></div></div>
+            <div class="feat-img"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&q=72&fm=webp&fit=crop&crop=center" alt="Air Freight" loading="lazy" /><div class="feat-badge new-badge">Express</div></div>
+            <div class="feat-body"><div class="feat-service">Air Transport</div><h4>Next-Flight-Out Air</h4><p>Urgent cargo, next available flight. e-AWB processing, real-time customs tracking.</p><div class="feat-footer"><div class="feat-eta">24–72 hrs<span>International transit</span></div><a href="#" class="feat-add">+</a></div></div>
           </div>
           <div class="feat-card">
-            <div class="feat-img"><img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=500&q=70&fm=webp" alt="Ocean Freight" loading="lazy" /></div>
-            <div class="feat-body"><div class="feat-service">Sea Transport</div><h4>Ocean LCL Consolidation</h4><p>Cost-effective less-than-container-load shipping. Weekly sailings on all major trade lanes with AIS vessel tracking.</p><div class="feat-footer"><div class="feat-eta">18–30 days <span>Asia–Europe corridor</span></div><a href="contact.html" class="feat-add">+</a></div></div>
+            <div class="feat-img"><img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&q=72&fm=webp&fit=crop&crop=center" alt="Ocean Freight" loading="lazy" /></div>
+            <div class="feat-body"><div class="feat-service">Sea Transport</div><h4>Ocean LCL Consolidation</h4><p>Cost-effective LCL shipping. Weekly sailings on all major trade lanes.</p><div class="feat-footer"><div class="feat-eta">18–30 days<span>Asia–Europe corridor</span></div><a href="#" class="feat-add">+</a></div></div>
           </div>
           <div class="feat-card">
-            <div class="feat-img"><img src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=500&q=70&fm=webp" alt="Cold Chain" loading="lazy" /><div class="feat-badge" style="background:#0694a2">Cold Chain</div></div>
-            <div class="feat-body"><div class="feat-service">Temperature Control</div><h4>Pharma Cold Chain</h4><p>GDP-compliant, WHO GxP pharma corridors. Continuous IoT monitoring with live temperature alerts every 5 minutes.</p><div class="feat-footer"><div class="feat-eta">2–8°C <span>Guaranteed cold chain</span></div><a href="contact.html" class="feat-add">+</a></div></div>
+            <div class="feat-img"><img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=600&q=72&fm=webp&fit=crop&crop=center" alt="Cold Chain" loading="lazy" /><div class="feat-badge" style="background:#0694a2">Cold Chain</div></div>
+            <div class="feat-body"><div class="feat-service">Temperature Control</div><h4>Pharma Cold Chain</h4><p>GDP-compliant, WHO GxP pharma corridors. Continuous IoT monitoring.</p><div class="feat-footer"><div class="feat-eta">2–8°C<span>Guaranteed cold chain</span></div><a href="#" class="feat-add">+</a></div></div>
           </div>
           <div class="feat-card">
-            <div class="feat-img"><img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=500&q=70&fm=webp" alt="Warehousing" loading="lazy" /><div class="feat-badge" style="background:#d97706">New</div></div>
-            <div class="feat-body"><div class="feat-service">Storage & Fulfilment</div><h4>D2C Fulfilment Hub</h4><p>Seamless Shopify & Amazon integration. Pick-pack-ship from our 38 strategic warehouses with same-day dispatch.</p><div class="feat-footer"><div class="feat-eta">Same day <span>Dispatch cut-off 3pm</span></div><a href="contact.html" class="feat-add">+</a></div></div>
+            <div class="feat-img"><img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=600&q=72&fm=webp&fit=crop&crop=center" alt="Warehousing" loading="lazy" /><div class="feat-badge" style="background:#d97706">New</div></div>
+            <div class="feat-body"><div class="feat-service">Storage & Fulfilment</div><h4>D2C Fulfilment Hub</h4><p>Shopify & Amazon integration. Pick-pack-ship from 38 strategic warehouses.</p><div class="feat-footer"><div class="feat-eta">Same day<span>Dispatch cut-off 3pm</span></div><a href="#" class="feat-add">+</a></div></div>
           </div>
           <div class="feat-card">
-            <div class="feat-img"><img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&q=70&fm=webp" alt="Project Cargo" loading="lazy" /></div>
-            <div class="feat-body"><div class="feat-service">Heavy Lift</div><h4>Project & OOG Cargo</h4><p>Oversized, overweight, and out-of-gauge cargo. Survey, route planning, permits, and specialist transport — all in-house.</p><div class="feat-footer"><div class="feat-eta">Custom <span>Route survey included</span></div><a href="contact.html" class="feat-add">+</a></div></div>
+            <div class="feat-img"><img src="https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=600&q=72&fm=webp&fit=crop&crop=center" alt="Project Cargo" loading="lazy" /></div>
+            <div class="feat-body"><div class="feat-service">Heavy Lift</div><h4>Project & OOG Cargo</h4><p>Oversized, overweight, and out-of-gauge cargo. Survey, route planning, permits.</p><div class="feat-footer"><div class="feat-eta">Custom<span>Route survey included</span></div><a href="#" class="feat-add">+</a></div></div>
           </div>
         </div>
       </div>
@@ -821,7 +1506,9 @@
     </div>
   </section>
 
-  <!-- ── HOW IT WORKS (AUTO PROCESS SLIDER) ── -->
+  <!-- ══════════════════════════════════════════
+       HOW IT WORKS
+  ══════════════════════════════════════════ -->
   <section class="section section-alt">
     <div class="container">
       <div data-aos>
@@ -831,45 +1518,14 @@
       </div>
       <div class="process-wrap" data-aos>
         <div class="process-track" id="processTrack">
-          <div class="step active-step">
-            <div class="step-num">01</div>
-            <div class="step-icon">📋</div>
-            <h4>Request Quote</h4>
-            <p>Fill our quick form or call. Receive an itemised quote within 2 hours during business hours.</p>
-          </div>
-          <div class="step">
-            <div class="step-num">02</div>
-            <div class="step-icon">✅</div>
-            <h4>Book & Confirm</h4>
-            <p>Approve online, schedule pickup, get instant booking confirmation with tracking ID.</p>
-          </div>
-          <div class="step">
-            <div class="step-num">03</div>
-            <div class="step-icon">📦</div>
-            <h4>Pickup & Pack</h4>
-            <p>Our team collects cargo, verifies packaging, and prepares export documentation.</p>
-          </div>
-          <div class="step">
-            <div class="step-num">04</div>
-            <div class="step-icon">🛰️</div>
-            <h4>Track Live</h4>
-            <p>Follow your shipment in real time on our portal via SMS/email milestone alerts.</p>
-          </div>
-          <div class="step">
-            <div class="step-num">05</div>
-            <div class="step-icon">🛃</div>
-            <h4>Clear Customs</h4>
-            <p>In-house customs team handles all documentation, HS codes, and duty payments globally.</p>
-          </div>
-          <div class="step">
-            <div class="step-num">06</div>
-            <div class="step-icon">🏁</div>
-            <h4>Delivered ✓</h4>
-            <p>Digital proof of delivery. Invoice and all shipping docs shared to your inbox instantly.</p>
-          </div>
+          <div class="step active-step"><div class="step-num">01</div><div class="step-icon">📋</div><h4>Request Quote</h4><p>Fill our quick form or call. Receive an itemised quote within 2 hours during business hours.</p></div>
+          <div class="step"><div class="step-num">02</div><div class="step-icon">✅</div><h4>Book & Confirm</h4><p>Approve online, schedule pickup, get instant booking confirmation with tracking ID.</p></div>
+          <div class="step"><div class="step-num">03</div><div class="step-icon">📦</div><h4>Pickup & Pack</h4><p>Our team collects cargo, verifies packaging, and prepares export documentation.</p></div>
+          <div class="step"><div class="step-num">04</div><div class="step-icon">🛰️</div><h4>Track Live</h4><p>Follow your shipment in real time on our portal via SMS/email milestone alerts.</p></div>
+          <div class="step"><div class="step-num">05</div><div class="step-icon">🛃</div><h4>Clear Customs</h4><p>In-house customs team handles all documentation, HS codes, and duty payments globally.</p></div>
+          <div class="step"><div class="step-num">06</div><div class="step-icon">🏁</div><h4>Delivered ✓</h4><p>Digital proof of delivery. Invoice and all shipping docs shared to your inbox instantly.</p></div>
         </div>
       </div>
-      <!-- Progress controls -->
       <div class="process-progress" id="processProgress">
         <div class="process-nav-btns">
           <button class="process-nav-btn" id="processPrev">‹</button>
@@ -882,15 +1538,17 @@
     </div>
   </section>
 
-  <!-- ── WHY LOGIFLOW ── -->
+  <!-- ══════════════════════════════════════════
+       WHY LOGIFLOW
+  ══════════════════════════════════════════ -->
   <section class="section section-alt">
     <div class="container why-inner">
       <div class="why-media" data-aos="fade-right">
         <div class="why-img-main">
-          <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=700&q=60&fm=webp" alt="Logistics operations" loading="lazy" />
+          <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=900&q=72&fm=webp&fit=crop&crop=center" alt="Road freight logistics fleet" loading="lazy" />
         </div>
         <div class="why-img-accent">
-          <img src="https://images.unsplash.com/photo-1423592707957-3b212afa6733?w=300&q=60&fm=webp" alt="Fleet" loading="lazy" />
+          <img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=400&q=72&fm=webp&fit=crop&crop=center" alt="Warehouse" loading="lazy" />
         </div>
         <div class="why-float-card">
           <div class="wfc-num">99<span>%</span></div>
@@ -909,236 +1567,96 @@
           <div class="wf-item"><div class="wf-icon">🌱</div><div><strong>Green Logistics</strong><p>Carbon offset programmes, EV fleet transition roadmap, and sustainability reporting.</p></div></div>
           <div class="wf-item"><div class="wf-icon">⚡</div><div><strong>AI-Powered Routing</strong><p>Smart route optimisation reduces delivery times by up to 22% and cuts fuel costs significantly.</p></div></div>
         </div>
-        <a href="about.html" class="btn-primary">Our Story →</a>
+        <a href="#" class="btn-primary">Our Story →</a>
       </div>
     </div>
   </section>
 
   <!-- ══════════════════════════════════════════
-       NEW SECTION 1: GLOBAL COVERAGE
+       GLOBAL COVERAGE
   ══════════════════════════════════════════ -->
   <section class="coverage-section">
     <div class="container">
       <div class="coverage-inner">
         <div class="coverage-text" data-aos="fade-right">
           <span class="section-label">Global Reach</span>
-          <h2 class="section-title" style="color:#fff;">Shipping to <em style="font-style:italic;color:var(--orange-lt)">Every Corner</em> of the World</h2>
-          <p>Our network spans six continents — with direct partnerships in 180+ countries, 340 airport gateways, and 92 seaport connections. Wherever business takes you, LogiFlow is already there.</p>
+          <h2 class="section-title">Shipping to <em style="font-style:italic;color:var(--orange-lt)">Every Corner</em> of the World</h2>
+          <p>Our network spans six continents — with direct partnerships in 180+ countries, 340 airport gateways, and 92 seaport connections.</p>
           <div class="coverage-stats">
-            <div class="cov-stat">
-              <div class="cs-num">180+</div>
-              <div class="cs-label">Countries Served</div>
-            </div>
-            <div class="cov-stat">
-              <div class="cs-num">340</div>
-              <div class="cs-label">Airport Gateways</div>
-            </div>
-            <div class="cov-stat">
-              <div class="cs-num">92</div>
-              <div class="cs-label">Seaport Links</div>
-            </div>
-            <div class="cov-stat">
-              <div class="cs-num">24/7</div>
-              <div class="cs-label">Global Operations</div>
-            </div>
+            <div class="cov-stat"><div class="cs-num">180+</div><div class="cs-label">Countries Served</div></div>
+            <div class="cov-stat"><div class="cs-num">340</div><div class="cs-label">Airport Gateways</div></div>
+            <div class="cov-stat"><div class="cs-num">92</div><div class="cs-label">Seaport Links</div></div>
+            <div class="cov-stat"><div class="cs-num">24/7</div><div class="cs-label">Global Operations</div></div>
           </div>
           <div class="region-chips">
-            <span class="region-chip"><span class="chip-flag">🌏</span> Asia Pacific</span>
-            <span class="region-chip"><span class="chip-flag">🌍</span> Europe & Africa</span>
-            <span class="region-chip"><span class="chip-flag">🌎</span> Americas</span>
-            <span class="region-chip"><span class="chip-flag">🕌</span> Middle East</span>
-            <span class="region-chip"><span class="chip-flag">🇮🇳</span> India Domestic</span>
+            <span class="region-chip"><span class="chip-flag">🌏</span>Asia Pacific</span>
+            <span class="region-chip"><span class="chip-flag">🌍</span>Europe & Africa</span>
+            <span class="region-chip"><span class="chip-flag">🌎</span>Americas</span>
+            <span class="region-chip"><span class="chip-flag">🕌</span>Middle East</span>
+            <span class="region-chip"><span class="chip-flag">🇮🇳</span>India Domestic</span>
           </div>
-          <a href="contact.html" class="btn-primary" style="margin-top:32px;display:inline-flex;">Get a Global Quote →</a>
+          <a href="#" class="btn-primary" style="margin-top:28px;display:inline-flex;">Get a Global Quote →</a>
         </div>
-
-        <!-- Animated SVG "map" -->
+        <!-- Animated SVG Map -->
         <div class="map-visual" data-aos="fade-left">
           <svg class="map-dots-svg" viewBox="0 0 460 280" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-              </filter>
-            </defs>
-            <!-- Grid lines -->
+            <defs><filter id="glow"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
             <line x1="0" y1="70" x2="460" y2="70" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
             <line x1="0" y1="140" x2="460" y2="140" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
             <line x1="0" y1="210" x2="460" y2="210" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
             <line x1="115" y1="0" x2="115" y2="280" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
             <line x1="230" y1="0" x2="230" y2="280" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
             <line x1="345" y1="0" x2="345" y2="280" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-
-            <!-- Curved route lines -->
             <path class="map-route" d="M 60 120 Q 180 60 310 90"/>
             <path class="map-route" d="M 310 90 Q 390 80 430 100"/>
             <path class="map-route" d="M 60 120 Q 130 180 200 200"/>
             <path class="map-route" d="M 200 200 Q 290 210 360 170"/>
-            <path class="map-route" d="M 150 80 Q 220 140 310 90" stroke="rgba(255,255,255,0.15)"/>
-
-            <!-- City dots with pulse rings — Mumbai -->
-            <g transform="translate(200,155)" filter="url(#glow)">
-              <circle class="map-pin-ring" r="4" cx="0" cy="0" style="animation-delay:0s"/>
-              <circle class="map-pin-dot" r="5" cx="0" cy="0"/>
-              <text x="8" y="4" font-size="9" fill="rgba(255,255,255,0.7)" font-family="sans-serif">Mumbai</text>
-            </g>
-            <!-- Shanghai -->
-            <g transform="translate(360,95)" filter="url(#glow)">
-              <circle class="map-pin-ring" r="4" cx="0" cy="0" style="animation-delay:0.6s"/>
-              <circle class="map-pin-dot" r="5" cx="0" cy="0" style="animation-delay:0.3s"/>
-              <text x="8" y="4" font-size="9" fill="rgba(255,255,255,0.7)" font-family="sans-serif">Shanghai</text>
-            </g>
-            <!-- Dubai -->
-            <g transform="translate(280,130)" filter="url(#glow)">
-              <circle class="map-pin-ring" r="4" cx="0" cy="0" style="animation-delay:1s"/>
-              <circle class="map-pin-dot" r="5" cx="0" cy="0" style="animation-delay:0.5s"/>
-              <text x="8" y="4" font-size="9" fill="rgba(255,255,255,0.7)" font-family="sans-serif">Dubai</text>
-            </g>
-            <!-- Frankfurt -->
-            <g transform="translate(190,80)" filter="url(#glow)">
-              <circle class="map-pin-ring" r="4" cx="0" cy="0" style="animation-delay:1.4s"/>
-              <circle class="map-pin-dot" r="5" cx="0" cy="0" style="animation-delay:0.8s"/>
-              <text x="8" y="4" font-size="9" fill="rgba(255,255,255,0.7)" font-family="sans-serif">Frankfurt</text>
-            </g>
-            <!-- New York -->
-            <g transform="translate(60,100)" filter="url(#glow)">
-              <circle class="map-pin-ring" r="4" cx="0" cy="0" style="animation-delay:1.8s"/>
-              <circle class="map-pin-dot" r="5" cx="0" cy="0" style="animation-delay:1.2s"/>
-              <text x="8" y="4" font-size="9" fill="rgba(255,255,255,0.7)" font-family="sans-serif">New York</text>
-            </g>
-            <!-- Singapore -->
-            <g transform="translate(370,170)" filter="url(#glow)">
-              <circle class="map-pin-ring" r="4" cx="0" cy="0" style="animation-delay:2.2s"/>
-              <circle class="map-pin-dot" r="5" cx="0" cy="0" style="animation-delay:1.5s"/>
-              <text x="8" y="4" font-size="9" fill="rgba(255,255,255,0.7)" font-family="sans-serif">Singapore</text>
-            </g>
-
-            <!-- Small decorative dots (background cities) -->
+            <g transform="translate(200,155)" filter="url(#glow)"><circle class="map-pin-ring" r="4" cx="0" cy="0"/><circle class="map-pin-dot" r="5" cx="0" cy="0"/><text x="8" y="4" font-size="9" fill="rgba(255,255,255,0.7)" font-family="sans-serif">Mumbai</text></g>
+            <g transform="translate(360,95)" filter="url(#glow)"><circle class="map-pin-ring" r="4" cx="0" cy="0" style="animation-delay:0.6s"/><circle class="map-pin-dot" r="5" cx="0" cy="0" style="animation-delay:0.3s"/><text x="8" y="4" font-size="9" fill="rgba(255,255,255,0.7)" font-family="sans-serif">Shanghai</text></g>
+            <g transform="translate(280,130)" filter="url(#glow)"><circle class="map-pin-ring" r="4" cx="0" cy="0" style="animation-delay:1s"/><circle class="map-pin-dot" r="5" cx="0" cy="0" style="animation-delay:0.5s"/><text x="8" y="4" font-size="9" fill="rgba(255,255,255,0.7)" font-family="sans-serif">Dubai</text></g>
+            <g transform="translate(190,80)" filter="url(#glow)"><circle class="map-pin-ring" r="4" cx="0" cy="0" style="animation-delay:1.4s"/><circle class="map-pin-dot" r="5" cx="0" cy="0" style="animation-delay:0.8s"/><text x="8" y="4" font-size="9" fill="rgba(255,255,255,0.7)" font-family="sans-serif">Frankfurt</text></g>
+            <g transform="translate(60,100)" filter="url(#glow)"><circle class="map-pin-ring" r="4" cx="0" cy="0" style="animation-delay:1.8s"/><circle class="map-pin-dot" r="5" cx="0" cy="0" style="animation-delay:1.2s"/><text x="8" y="4" font-size="9" fill="rgba(255,255,255,0.7)" font-family="sans-serif">New York</text></g>
+            <g transform="translate(370,170)" filter="url(#glow)"><circle class="map-pin-ring" r="4" cx="0" cy="0" style="animation-delay:2.2s"/><circle class="map-pin-dot" r="5" cx="0" cy="0" style="animation-delay:1.5s"/><text x="8" y="4" font-size="9" fill="rgba(255,255,255,0.7)" font-family="sans-serif">Singapore</text></g>
             <circle cx="90" cy="140" r="2.5" fill="rgba(255,255,255,0.15)"/>
             <circle cx="140" cy="60" r="2" fill="rgba(255,255,255,0.15)"/>
             <circle cx="320" cy="50" r="2" fill="rgba(255,255,255,0.15)"/>
             <circle cx="410" cy="130" r="2.5" fill="rgba(255,255,255,0.15)"/>
-            <circle cx="240" cy="220" r="2" fill="rgba(255,255,255,0.15)"/>
-            <circle cx="110" cy="190" r="2" fill="rgba(255,255,255,0.15)"/>
-            <circle cx="430" cy="200" r="2.5" fill="rgba(255,255,255,0.15)"/>
           </svg>
-          <div style="text-align:center;margin-top:16px;">
-            <p style="font-size:11px;color:rgba(255,255,255,0.3);font-family:var(--font-display);letter-spacing:0.1em;text-transform:uppercase;">Live Network Coverage</p>
-          </div>
+          <p style="text-align:center;margin-top:14px;font-size:10px;color:rgba(255,255,255,0.3);font-family:var(--font-display);letter-spacing:0.1em;text-transform:uppercase;">Live Network Coverage</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ══════════════════════════════════════════
-       NEW SECTION 2: TECHNOLOGY PLATFORM
+       TECHNOLOGY PLATFORM
   ══════════════════════════════════════════ -->
   <section class="tech-section">
     <div class="container">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;" class="tech-inner">
+      <div class="tech-inner">
         <div data-aos="fade-right">
           <span class="section-label">Our Platform</span>
           <h2 class="section-title">Built on <em style="font-style:italic;color:var(--orange)">Intelligent</em> Technology</h2>
-          <p style="font-size:15px;color:var(--mid-gray);line-height:1.8;margin:16px 0 32px;">Every shipment is powered by our proprietary TechStack — an integrated platform combining AI route optimisation, IoT sensors, and real-time data to give you total control.</p>
+          <p style="font-size:15px;color:var(--mid-gray);line-height:1.8;margin:14px 0 28px">Every shipment is powered by our proprietary TechStack — combining AI route optimisation, IoT sensors, and real-time data.</p>
           <div class="tech-cards-col">
-            <div class="tech-card tc-active" data-tc="0">
-              <div class="tc-icon-box bg-orange">🛰️</div>
-              <div class="tc-text">
-                <h4>Real-Time GPS & IoT Tracking</h4>
-                <p>Live updates every 90 seconds from our fleet of 2,400+ GPS-enabled vehicles and IoT sensors.</p>
-                <div class="tc-expand">
-                  <ul>
-                    <li>Sub-minute location updates</li>
-                    <li>Shock, tilt & tamper sensors</li>
-                    <li>Temperature logging for cold chain</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="tech-card" data-tc="1">
-              <div class="tc-icon-box bg-steel">🤖</div>
-              <div class="tc-text">
-                <h4>AI-Powered Route Optimisation</h4>
-                <p>Machine learning reduces delivery times by 22% and cuts fuel costs by predicting optimal paths.</p>
-                <div class="tc-expand">
-                  <ul>
-                    <li>Traffic pattern prediction</li>
-                    <li>Weather-adjusted routing</li>
-                    <li>Dynamic re-routing in real time</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="tech-card" data-tc="2">
-              <div class="tc-icon-box bg-teal">📊</div>
-              <div class="tc-text">
-                <h4>Analytics & Intelligence Dashboard</h4>
-                <p>Deep operational insights: SLA performance, cost analysis, carbon footprint, carrier benchmarking.</p>
-                <div class="tc-expand">
-                  <ul>
-                    <li>Custom KPI dashboards</li>
-                    <li>Predictive delay alerts</li>
-                    <li>API access for ERP integration</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="tech-card" data-tc="3">
-              <div class="tc-icon-box bg-amber">🔗</div>
-              <div class="tc-text">
-                <h4>Seamless ERP Integration</h4>
-                <p>Native connectors for SAP, Oracle, Salesforce, Shopify and 60+ enterprise platforms.</p>
-                <div class="tc-expand">
-                  <ul>
-                    <li>REST API & webhooks</li>
-                    <li>EDI 204/214 support</li>
-                    <li>Auto invoice reconciliation</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+            <div class="tech-card tc-active" data-tc="0"><div class="tc-icon-box bg-orange">🛰️</div><div class="tc-text"><h4>Real-Time GPS & IoT Tracking</h4><p>Live updates every 90 seconds from our fleet of 2,400+ GPS-enabled vehicles.</p><div class="tc-expand"><ul><li>Sub-minute location updates</li><li>Shock, tilt & tamper sensors</li><li>Temperature logging for cold chain</li></ul></div></div></div>
+            <div class="tech-card" data-tc="1"><div class="tc-icon-box bg-steel">🤖</div><div class="tc-text"><h4>AI-Powered Route Optimisation</h4><p>Machine learning reduces delivery times by 22% and cuts fuel costs.</p><div class="tc-expand"><ul><li>Traffic pattern prediction</li><li>Weather-adjusted routing</li><li>Dynamic re-routing in real time</li></ul></div></div></div>
+            <div class="tech-card" data-tc="2"><div class="tc-icon-box bg-teal">📊</div><div class="tc-text"><h4>Analytics & Intelligence Dashboard</h4><p>Deep operational insights: SLA performance, cost analysis, carbon footprint.</p><div class="tc-expand"><ul><li>Custom KPI dashboards</li><li>Predictive delay alerts</li><li>API access for ERP integration</li></ul></div></div></div>
+            <div class="tech-card" data-tc="3"><div class="tc-icon-box bg-amber">🔗</div><div class="tc-text"><h4>Seamless ERP Integration</h4><p>Native connectors for SAP, Oracle, Salesforce, Shopify and 60+ enterprise platforms.</p><div class="tc-expand"><ul><li>REST API & webhooks</li><li>EDI 204/214 support</li><li>Auto invoice reconciliation</li></ul></div></div></div>
           </div>
         </div>
-
-        <!-- Phone mockup -->
         <div class="tech-visual-col" data-aos="fade-left">
           <div class="phone-mockup">
             <div class="phone-screen">
-              <div class="phone-status">
-                <span>9:41 AM</span>
-                <span>●●●●</span>
-              </div>
-              <div class="phone-header">
-                <h5>LogiFlow Track</h5>
-                <p>3 active shipments</p>
-              </div>
-              <div class="phone-track-bar">
-                <div class="ptb-id">LF-2025-048291</div>
-                <div class="ptb-status">
-                  <div class="ptb-dot"></div>
-                  <span>In Transit — Mumbai → Dubai</span>
-                </div>
-              </div>
-              <div class="phone-map-mini">
-                <span class="pmm-label">📍 Live Map</span>
-              </div>
+              <div class="phone-status"><span>9:41 AM</span><span>●●●●</span></div>
+              <div class="phone-header"><h5>LogiFlow Track</h5><p>3 active shipments</p></div>
+              <div class="phone-track-bar"><div class="ptb-id">LF-2025-048291</div><div class="ptb-status"><div class="ptb-dot"></div><span>In Transit — Mumbai → Dubai</span></div></div>
+              <div class="phone-map-mini"><span class="pmm-label">📍 Live Map</span></div>
               <div class="phone-route-dots">
-                <div class="prd-item">
-                  <div class="prd-dot done"></div>
-                  <div class="prd-text"><strong>Picked Up</strong>Mumbai Hub, 08:30</div>
-                </div>
-                <div class="prd-item">
-                  <div class="prd-dot done"></div>
-                  <div class="prd-text"><strong>Customs Cleared</strong>JNPT, 11:15</div>
-                </div>
-                <div class="prd-item">
-                  <div class="prd-dot current"></div>
-                  <div class="prd-text"><strong>In Transit</strong>ETA Dubai — 2 days</div>
-                </div>
-                <div class="prd-item">
-                  <div class="prd-dot pending"></div>
-                  <div class="prd-text"><strong>Last Mile</strong>Scheduled</div>
-                </div>
+                <div class="prd-item"><div class="prd-dot done"></div><div class="prd-text"><strong>Picked Up</strong>Mumbai Hub, 08:30</div></div>
+                <div class="prd-item"><div class="prd-dot done"></div><div class="prd-text"><strong>Customs Cleared</strong>JNPT, 11:15</div></div>
+                <div class="prd-item"><div class="prd-dot current"></div><div class="prd-text"><strong>In Transit</strong>ETA Dubai — 2 days</div></div>
+                <div class="prd-item"><div class="prd-dot pending"></div><div class="prd-text"><strong>Last Mile</strong>Scheduled</div></div>
               </div>
             </div>
           </div>
@@ -1149,7 +1667,9 @@
     </div>
   </section>
 
-  <!-- ── TESTIMONIALS ── -->
+  <!-- ══════════════════════════════════════════
+       TESTIMONIALS
+  ══════════════════════════════════════════ -->
   <section class="section testimonials">
     <div class="container">
       <div data-aos>
@@ -1158,7 +1678,7 @@
       </div>
       <div class="testi-layout">
         <div class="testi-img-col" data-aos="fade-right">
-          <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=700&q=60&fm=webp" alt="Happy logistics client" loading="lazy" />
+          <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=840&q=72&fm=webp&fit=crop&crop=center" alt="Container ship at port" loading="lazy" />
         </div>
         <div data-aos="fade-left">
           <div class="testi-slides">
@@ -1177,10 +1697,10 @@
     </div>
   </section>
 
-  <!-- ── PARTNERS ── -->
+  <!-- PARTNERS -->
   <section class="partners-section">
     <div class="container">
-      <p style="text-align:left;font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--lt-gray);margin-bottom:36px">Trusted by 14,000+ companies worldwide</p>
+      <p style="font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--lt-gray);margin-bottom:32px">Trusted by 14,000+ companies worldwide</p>
       <div class="partners-inner">
         <div class="partner-logo">TATA Group</div>
         <div class="partner-logo">Mahindra</div>
@@ -1193,44 +1713,38 @@
     </div>
   </section>
 
-  <!-- ── TICKER ── -->
+  <!-- TICKER -->
   <div class="ticker-bar">
     <div class="ticker-track">
-      <div class="ticker-item"><span class="ticker-dot">●</span> 48,000+ shipments this month</div>
-      <div class="ticker-item"><span class="ticker-dot">●</span> 180+ countries served</div>
-      <div class="ticker-item"><span class="ticker-dot">●</span> 99% on-time delivery rate</div>
-      <div class="ticker-item"><span class="ticker-dot">●</span> ISO 9001 & TAPA A certified</div>
-      <div class="ticker-item"><span class="ticker-dot">●</span> Net-zero target by 2035</div>
-      <div class="ticker-item"><span class="ticker-dot">●</span> 24/7 real-time tracking</div>
-      <div class="ticker-item"><span class="ticker-dot">●</span> 48,000+ shipments this month</div>
-      <div class="ticker-item"><span class="ticker-dot">●</span> 180+ countries served</div>
-      <div class="ticker-item"><span class="ticker-dot">●</span> 99% on-time delivery rate</div>
-      <div class="ticker-item"><span class="ticker-dot">●</span> ISO 9001 & TAPA A certified</div>
-      <div class="ticker-item"><span class="ticker-dot">●</span> Net-zero target by 2035</div>
-      <div class="ticker-item"><span class="ticker-dot">●</span> 24/7 real-time tracking</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span>48,000+ shipments this month</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span>180+ countries served</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span>99% on-time delivery rate</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span>ISO 9001 & TAPA A certified</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span>Net-zero target by 2035</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span>24/7 real-time tracking</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span>48,000+ shipments this month</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span>180+ countries served</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span>99% on-time delivery rate</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span>ISO 9001 & TAPA A certified</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span>Net-zero target by 2035</div>
+      <div class="ticker-item"><span class="ticker-dot">●</span>24/7 real-time tracking</div>
     </div>
   </div>
 
   <!-- ══════════════════════════════════════════
-       NEW SECTION 3: SUSTAINABILITY PLEDGE
+       SUSTAINABILITY
   ══════════════════════════════════════════ -->
   <section class="sustain-section">
     <div class="sustain-bg-circle"></div>
     <div class="container">
       <div class="sustain-inner">
-        <!-- Left: Ring + Pillars -->
         <div class="sustain-visual" data-aos="fade-right">
           <div class="sustain-ring-wrap">
             <svg class="sustain-ring-svg" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
               <circle class="ring-track" cx="160" cy="160" r="135"/>
               <circle class="ring-progress" id="sustainRing" cx="160" cy="160" r="135"
                 stroke="url(#sustainGrad)" transform="rotate(-90 160 160)"/>
-              <defs>
-                <linearGradient id="sustainGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stop-color="#22c55e"/>
-                  <stop offset="100%" stop-color="#16a34a"/>
-                </linearGradient>
-              </defs>
+              <defs><linearGradient id="sustainGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#22c55e"/><stop offset="100%" stop-color="#16a34a"/></linearGradient></defs>
             </svg>
             <div class="ring-center">
               <div class="ring-pct" id="ringPct">0%</div>
@@ -1238,99 +1752,70 @@
             </div>
           </div>
           <div class="sustain-pillars">
-            <div class="sustain-pillar">
-              <div class="sp-icon">🌱</div>
-              <div class="sp-text">
-                <h5>EV Fleet Transition</h5>
-                <p>460 electric vehicles deployed in urban corridors by end of 2025.</p>
-              </div>
-              <div class="sp-pct">19%</div>
-            </div>
-            <div class="sustain-pillar">
-              <div class="sp-icon">☀️</div>
-              <div class="sp-text">
-                <h5>Solar-Powered Warehouses</h5>
-                <p>14 of our 38 facilities now run on 100% renewable solar energy.</p>
-              </div>
-              <div class="sp-pct">37%</div>
-            </div>
-            <div class="sustain-pillar">
-              <div class="sp-icon">💧</div>
-              <div class="sp-text">
-                <h5>Carbon Offset Programme</h5>
-                <p>Every shipment is offset through verified reforestation and ocean credits.</p>
-              </div>
-              <div class="sp-pct">100%</div>
-            </div>
+            <div class="sustain-pillar"><div class="sp-icon">🌱</div><div class="sp-text"><h5>EV Fleet Transition</h5><p>460 electric vehicles deployed in urban corridors by end of 2025.</p></div><div class="sp-pct">19%</div></div>
+            <div class="sustain-pillar"><div class="sp-icon">☀️</div><div class="sp-text"><h5>Solar-Powered Warehouses</h5><p>14 of our 38 facilities now run on 100% renewable solar energy.</p></div><div class="sp-pct">37%</div></div>
+            <div class="sustain-pillar"><div class="sp-icon">💧</div><div class="sp-text"><h5>Carbon Offset Programme</h5><p>Every shipment is offset through verified reforestation and ocean credits.</p></div><div class="sp-pct">100%</div></div>
           </div>
         </div>
-
-        <!-- Right: Text + Milestones -->
         <div class="sustain-text" data-aos="fade-left">
           <span class="section-label">Our Green Pledge</span>
           <h2 class="section-title">Logistics That <em style="font-style:italic;color:#22c55e">Cares</em> for the Planet</h2>
-          <p>We believe responsible logistics and business success go hand in hand. Our 2035 Net-Zero roadmap is built on measurable action — not just promises. From electric fleets to verified carbon offsets, every tonne we move has a sustainability commitment behind it.</p>
-          <a href="about.html" class="btn-primary" style="background:#22c55e;box-shadow:0 4px 20px rgba(34,197,94,0.35)">View Our ESG Report →</a>
+          <p>We believe responsible logistics and business success go hand in hand. Our 2035 Net-Zero roadmap is built on measurable action — not just promises.</p>
+          <a href="#" class="btn-primary" style="background:#22c55e;box-shadow:0 4px 20px rgba(34,197,94,0.35);display:inline-flex;">View Our ESG Report →</a>
           <div class="sustain-milestones">
-            <div class="sm-item">
-              <div class="sm-year">2023</div>
-              <p>First EV fleet deployment in Mumbai & Delhi corridors</p>
-            </div>
-            <div class="sm-item">
-              <div class="sm-year">2024</div>
-              <p>ISO 14001 Environmental Management certification</p>
-            </div>
-            <div class="sm-item">
-              <div class="sm-year">2025</div>
-              <p>14 solar warehouses live, 460 EVs on road</p>
-            </div>
-            <div class="sm-item">
-              <div class="sm-year">2035</div>
-              <p>Full Net-Zero across Scope 1, 2 & 3 emissions</p>
-            </div>
+            <div class="sm-item"><div class="sm-year">2023</div><p>First EV fleet deployment in Mumbai & Delhi corridors</p></div>
+            <div class="sm-item"><div class="sm-year">2024</div><p>ISO 14001 Environmental Management certification</p></div>
+            <div class="sm-item"><div class="sm-year">2025</div><p>14 solar warehouses live, 460 EVs on road</p></div>
+            <div class="sm-item"><div class="sm-year">2035</div><p>Full Net-Zero across Scope 1, 2 & 3 emissions</p></div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── GALLERY ── -->
-  <section class="section" style="padding-bottom:90px">
+  <!-- ══════════════════════════════════════════
+       GALLERY
+  ══════════════════════════════════════════ -->
+  <section class="section" style="padding-bottom:clamp(56px,8vw,90px)">
     <div class="container">
-      <div style="margin-bottom:8px" data-aos>
+      <div data-aos>
         <span class="section-label">Follow Our Operations</span>
         <h2 class="section-title">From Our <em style="font-style:italic">Fleet</em> to Your Feed</h2>
       </div>
-      <div class="gallery-grid" style="margin-top:36px">
-        <div class="gal-item"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&q=70&fm=webp" alt="Fleet" loading="lazy" /><div class="gal-hover">📷</div></div>
-        <div class="gal-item"><img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=400&q=70&fm=webp" alt="Warehouse" loading="lazy" /><div class="gal-hover">📷</div></div>
-        <div class="gal-item"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&q=70&fm=webp" alt="Air Cargo" loading="lazy" /><div class="gal-hover">📷</div></div>
-        <div class="gal-item"><img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=400&q=70&fm=webp" alt="Ocean" loading="lazy" /><div class="gal-hover">📷</div></div>
-        <div class="gal-item"><img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&q=70&fm=webp" alt="Operations" loading="lazy" /><div class="gal-hover">📷</div></div>
-        <div class="gal-item"><img src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=400&q=70&fm=webp" alt="Cold Chain" loading="lazy" /><div class="gal-hover">📷</div></div>
-        <div class="gal-item"><img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=400&q=70&fm=webp" alt="Delivery" loading="lazy" /><div class="gal-hover">📷</div></div>
+      <div class="gallery-grid">
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Road Freight" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Warehouse" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Air Cargo" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Ocean Freight" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Operations" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Last Mile" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Network" loading="lazy" /><div class="gal-hover">📷</div></div>
       </div>
     </div>
   </section>
 
-  <!-- ── NEWSLETTER ── -->
+  <!-- ══════════════════════════════════════════
+       NEWSLETTER
+  ══════════════════════════════════════════ -->
   <section class="newsletter-section">
     <div class="container newsletter-inner">
       <div class="nl-text" data-aos="fade-right">
         <h2>Stay in the Know.<br><em>Exclusive</em> Logistics Insights.</h2>
-        <p>Join 24,000+ supply chain professionals. First to hear about new routes, rate changes, regulatory updates, and industry insights. No spam, ever.</p>
+        <p>Join 24,000+ supply chain professionals. First to hear about new routes, rate changes, and regulatory updates.</p>
       </div>
       <div data-aos="fade-left">
         <div class="nl-input-row">
           <input type="email" class="nl-input" placeholder="your@company.com" id="nlEmail" />
-          <button class="btn-primary" onclick="handleNL()" style="white-space:nowrap">Subscribe →</button>
+          <button class="btn-primary" id="nlBtn" style="white-space:nowrap">Subscribe →</button>
         </div>
         <p class="nl-fine">By subscribing you agree to our Privacy Policy. Unsubscribe anytime.</p>
       </div>
     </div>
   </section>
 
-  <!-- ── CTA BANNER ── -->
+  <!-- ══════════════════════════════════════════
+       CTA BANNER
+  ══════════════════════════════════════════ -->
   <div class="cta-banner">
     <div class="container cta-inner">
       <div data-aos="fade-right">
@@ -1338,24 +1823,57 @@
         <p>Get a custom quote in under 2 minutes — no commitment required.</p>
       </div>
       <div class="cta-actions" data-aos="fade-left">
-        <a href="contact.html" class="btn-primary" style="background:#fff;color:var(--orange-dk)">Get Free Quote →</a>
-        <a href="tracking.html" class="btn-secondary" style="color:#fff;border-color:rgba(255,255,255,0.45)">Track Shipment</a>
+        <a href="#" class="btn-primary" style="background:#fff;color:var(--orange-dk)">Get Free Quote →</a>
+        <a href="#" class="btn-secondary" style="color:#fff;border-color:rgba(255,255,255,0.45)">Track Shipment</a>
       </div>
     </div>
   </div>
 
-  <!-- ── FOOTER ── -->
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <div class="footer-logo"><a href="index.html"><img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=200&h=80&output=webp&q=80&fit=inside" alt="Stackly LogiFlow" width="140" /></a></div>
+          <div class="footer-logo">
+            <a href="#"><img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=200&h=80&output=webp&q=80&fit=inside" alt="LogiFlow" width="140" /></a>
+          </div>
           <p>An end-to-end logistics platform rooted in technology, driven by precision. Every shipment, every mile — handled with care since 2008.</p>
-          <div class="footer-social"><a href="404.html">in</a><a href="404.html">𝕏</a><a href="404.html">f</a><a href="404.html">▶</a></div>
+          <div class="footer-social">
+            <a href="#">in</a><a href="#">𝕏</a><a href="#">f</a><a href="#">▶</a>
+          </div>
         </div>
-        <div class="footer-col"><h4>Explore</h4><ul><li><a href="index.html">Home</a></li><li><a href="services.html">Our Services</a></li><li><a href="tracking.html">Track Shipment</a></li><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li></ul></div>
-        <div class="footer-col"><h4>Services</h4><ul><li><a href="services.html">Road Freight</a></li><li><a href="services.html">Air Freight</a></li><li><a href="services.html">Ocean Freight</a></li><li><a href="services.html">Warehousing</a></li><li><a href="services.html">Cold Chain</a></li></ul></div>
-        <div class="footer-col"><h4>Contact Us</h4><ul><li><a href="404.html">Level 12, One BKC Tower, Mumbai</a></li><li><a href="404.html">+91 22 4000 1234</a></li><li><a href="404.html">info@logiflow.com</a></li><li><a href="404.html">Mon–Fri: 8am – 8pm IST</a></li><li><a href="404.html">24/7 Emergency Line</a></li></ul></div>
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Our Services</a></li>
+            <li><a href="#">Track Shipment</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="#">Road Freight</a></li>
+            <li><a href="#">Air Freight</a></li>
+            <li><a href="#">Ocean Freight</a></li>
+            <li><a href="#">Warehousing</a></li>
+            <li><a href="#">Cold Chain</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact Us</h4>
+          <ul>
+            <li><a href="#">Level 12, One BKC Tower, Mumbai</a></li>
+            <li><a href="#">+91 22 4000 1234</a></li>
+            <li><a href="#">info@logiflow.com</a></li>
+            <li><a href="#">Mon–Fri: 8am – 8pm IST</a></li>
+            <li><a href="#">24/7 Emergency Line</a></li>
+          </ul>
+        </div>
       </div>
       <div class="footer-bottom">
         <p>© 2025 Stackly Logistics — Powered by Stackly. All rights reserved.</p>
@@ -1365,214 +1883,319 @@
     </div>
   </footer>
 
-  <script src="js/main.js"></script>
+  <!-- ══════════════════════════════════════════
+       JAVASCRIPT
+  ══════════════════════════════════════════ -->
   <script>
-  /* ── Featured Card Slider ── */
+  'use strict';
+
+  /* ── Navbar scroll ── */
   (function() {
-    const track = document.getElementById('featTrack');
-    const prevBtn = document.getElementById('featPrev');
-    const nextBtn = document.getElementById('featNext');
-    if (!track || !prevBtn || !nextBtn) return;
-    let idx = 0;
-    const cards = track.querySelectorAll('.feat-card');
-    const visibleCount = () => window.innerWidth <= 600 ? 1 : window.innerWidth <= 900 ? 2 : 3;
-    const maxIdx = () => Math.max(0, cards.length - visibleCount());
-    function update() {
-      idx = Math.min(idx, maxIdx());
-      const gap = 24;
-      const w = cards[0].offsetWidth + gap;
-      track.style.transform = `translateX(-${idx * w}px)`;
-    }
-    prevBtn.addEventListener('click', () => { idx = Math.max(0, idx - 1); update(); });
-    nextBtn.addEventListener('click', () => { idx = Math.min(maxIdx(), idx + 1); update(); });
-    window.addEventListener('resize', update, { passive: true });
-    let startX = 0;
-    track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
-    track.addEventListener('touchend', e => {
-      const diff = startX - e.changedTouches[0].clientX;
-      if (Math.abs(diff) > 50) { diff > 0 ? nextBtn.click() : prevBtn.click(); }
+    const nav = document.getElementById('navbar');
+    if (!nav) return;
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
     }, { passive: true });
   })();
 
-  /* ── PROCESS AUTO SLIDER ── */
+  /* ── Hamburger / Mobile Menu ── */
+  (function() {
+    const hamburger = document.getElementById('hamburger');
+    const menu      = document.getElementById('mobileMenu');
+    const closeBtn  = document.getElementById('menuClose');
+    if (!hamburger || !menu) return;
+
+    function open() {
+      hamburger.classList.add('open');
+      hamburger.setAttribute('aria-expanded', 'true');
+      menu.classList.add('open');
+      menu.style.pointerEvents = 'all';
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      hamburger.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      menu.classList.remove('open');
+      document.body.style.overflow = '';
+      setTimeout(() => { if (!menu.classList.contains('open')) menu.style.pointerEvents = 'none'; }, 450);
+    }
+
+    hamburger.addEventListener('click', () => hamburger.classList.contains('open') ? close() : open());
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    menu.addEventListener('click', e => {
+      const panel = menu.querySelector('.mobile-menu-panel');
+      if (!panel.contains(e.target)) close();
+    });
+    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setTimeout(close, 100)));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && menu.classList.contains('open')) close(); });
+
+    // Swipe-right to close
+    let sx = 0;
+    const panel = menu.querySelector('.mobile-menu-panel');
+    if (panel) {
+      panel.addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, { passive: true });
+      panel.addEventListener('touchend', e => { if (e.changedTouches[0].clientX - sx > 60) close(); }, { passive: true });
+    }
+  })();
+
+  /* ── Hero Slider ── */
+  (function() {
+    const wrap  = document.getElementById('heroSlider');
+    const dots  = document.getElementById('sliderDots');
+    if (!wrap) return;
+    const slides = Array.from(wrap.querySelectorAll('.hero-slide'));
+    let cur = 0, timer, isAnim = false, dotEls = [];
+
+    if (dots) {
+      slides.forEach((_, i) => {
+        const d = document.createElement('button');
+        d.className = 'dot' + (i === 0 ? ' active' : '');
+        d.setAttribute('aria-label', `Slide ${i+1}`);
+        d.addEventListener('click', () => goTo(i));
+        dots.appendChild(d);
+        dotEls.push(d);
+      });
+    }
+    function goTo(i) {
+      if (isAnim || i === cur) return;
+      isAnim = true;
+      slides[cur].classList.remove('active');
+      dotEls[cur]?.classList.remove('active');
+      cur = (i + slides.length) % slides.length;
+      slides[cur].classList.add('active');
+      dotEls[cur]?.classList.add('active');
+      setTimeout(() => isAnim = false, 800);
+    }
+    function tick() { goTo(cur + 1); }
+    function startT() { clearInterval(timer); timer = setInterval(tick, 4500); }
+
+    slides[0].classList.add('active');
+    startT();
+    wrap.addEventListener('mouseenter', () => clearInterval(timer));
+    wrap.addEventListener('mouseleave', startT);
+    let sx = 0;
+    wrap.addEventListener('touchstart', e => { sx = e.touches[0].clientX; clearInterval(timer); }, { passive: true });
+    wrap.addEventListener('touchend', e => {
+      const d = sx - e.changedTouches[0].clientX;
+      if (Math.abs(d) > 50) goTo(cur + (d > 0 ? 1 : -1));
+      startT();
+    }, { passive: true });
+  })();
+
+  /* ── AOS ── */
+  (function() {
+    const els = document.querySelectorAll('[data-aos]');
+    if (!els.length) return;
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const delay = parseInt(e.target.dataset.aosDelay || 0);
+        setTimeout(() => e.target.classList.add('aos-animate'), delay);
+        obs.unobserve(e.target);
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+    els.forEach(el => obs.observe(el));
+  })();
+
+  /* ── Counter Animation ── */
+  (function() {
+    const counters = document.querySelectorAll('[data-count]');
+    if (!counters.length) return;
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const target = parseInt(el.dataset.count);
+        const suffix = el.dataset.suffix || '';
+        const dur = 1800, start = performance.now();
+        function ease(t) { return 1 - Math.pow(1 - t, 4); }
+        (function tick(now) {
+          const p = Math.min((now - start) / dur, 1);
+          el.textContent = Math.round(ease(p) * target).toLocaleString() + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+        })(start);
+        obs.unobserve(el);
+      });
+    }, { threshold: 0.5 });
+    counters.forEach(c => obs.observe(c));
+  })();
+
+  /* ── Featured Card Slider ── */
+  (function() {
+    const track = document.getElementById('featTrack');
+    const prev  = document.getElementById('featPrev');
+    const next  = document.getElementById('featNext');
+    if (!track) return;
+    let idx = 0;
+    const cards = track.querySelectorAll('.feat-card');
+    function visible() {
+      if (window.innerWidth <= 600) return 1;
+      if (window.innerWidth <= 900) return 2;
+      return 3;
+    }
+    function maxIdx() { return Math.max(0, cards.length - visible()); }
+    function update() {
+      idx = Math.min(idx, maxIdx());
+      const w = cards[0].offsetWidth + 20;
+      track.style.transform = `translateX(-${idx * w}px)`;
+    }
+    prev?.addEventListener('click', () => { idx = Math.max(0, idx - 1); update(); });
+    next?.addEventListener('click', () => { idx = Math.min(maxIdx(), idx + 1); update(); });
+    window.addEventListener('resize', update, { passive: true });
+    let sx = 0;
+    track.addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, { passive: true });
+    track.addEventListener('touchend', e => {
+      const d = sx - e.changedTouches[0].clientX;
+      if (Math.abs(d) > 50) { d > 0 ? next?.click() : prev?.click(); }
+    }, { passive: true });
+  })();
+
+  /* ── Process Auto Slider ── */
   (function() {
     const track = document.getElementById('processTrack');
     const dotsWrap = document.getElementById('processDots');
-    const bar = document.getElementById('ppBar');
+    const bar   = document.getElementById('ppBar');
     const counter = document.getElementById('ppCounter');
     const prevBtn = document.getElementById('processPrev');
     const nextBtn = document.getElementById('processNext');
     if (!track) return;
-
     const steps = Array.from(track.querySelectorAll('.step'));
-    const TOTAL = steps.length;
-    const STEP_DURATION = 3000; // ms per step
-    let current = 0;
-    let progressTimer = null;
-    let stepTimer = null;
-    let elapsed = 0;
-    let dots = [];
+    const TOTAL = steps.length, DUR = 3000;
+    let cur = 0, pTimer, sTimer, elapsed = 0, dots = [];
 
-    // Build dots
     if (dotsWrap) {
       steps.forEach((_, i) => {
         const d = document.createElement('button');
         d.className = 'pp-dot' + (i === 0 ? ' active' : '');
-        d.setAttribute('aria-label', `Step ${i + 1}`);
         d.addEventListener('click', () => goTo(i));
         dotsWrap.appendChild(d);
         dots.push(d);
       });
     }
-
-    function visibleCount() {
-      if (window.innerWidth <= 600) return 1;
-      if (window.innerWidth <= 900) return 2;
-      if (window.innerWidth <= 1200) return 3;
-      return 4;
-    }
-
-    function getCardWidth() {
-      if (!steps[0]) return 0;
-      return steps[0].offsetWidth + 24;
-    }
-
+    function visible() { return window.innerWidth <= 600 ? 1 : window.innerWidth <= 900 ? 2 : window.innerWidth <= 1100 ? 3 : 4; }
+    function cardW() { return steps[0] ? steps[0].offsetWidth + 20 : 0; }
     function updateSlide() {
-      const vc = visibleCount();
-      const maxIdx = Math.max(0, TOTAL - vc);
-      const slideIdx = Math.min(current, maxIdx);
-      track.style.transform = `translateX(-${slideIdx * getCardWidth()}px)`;
-
-      // Update active step style
-      steps.forEach((s, i) => s.classList.toggle('active-step', i === current));
-
-      // Update dots
-      dots.forEach((d, i) => d.classList.toggle('active', i === current));
-
-      // Update counter
-      if (counter) counter.textContent = `${current + 1} / ${TOTAL}`;
+      const vc = visible();
+      const max = Math.max(0, TOTAL - vc);
+      const si = Math.min(cur, max);
+      track.style.transform = `translateX(-${si * cardW()}px)`;
+      steps.forEach((s, i) => s.classList.toggle('active-step', i === cur));
+      dots.forEach((d, i) => d.classList.toggle('active', i === cur));
+      if (counter) counter.textContent = `${cur + 1} / ${TOTAL}`;
     }
-
-    function startProgress() {
+    function startProg() {
       elapsed = 0;
-      clearInterval(progressTimer);
+      clearInterval(pTimer);
       if (bar) bar.style.width = '0%';
-
-      progressTimer = setInterval(() => {
+      pTimer = setInterval(() => {
         elapsed += 50;
-        const pct = Math.min((elapsed / STEP_DURATION) * 100, 100);
-        if (bar) bar.style.width = pct + '%';
-        if (elapsed >= STEP_DURATION) {
-          clearInterval(progressTimer);
-        }
+        if (bar) bar.style.width = Math.min((elapsed / DUR) * 100, 100) + '%';
+        if (elapsed >= DUR) clearInterval(pTimer);
       }, 50);
     }
-
-    function startAutoSlide() {
-      clearTimeout(stepTimer);
-      startProgress();
-      stepTimer = setTimeout(() => {
-        current = (current + 1) % TOTAL;
-        updateSlide();
-        startAutoSlide();
-      }, STEP_DURATION);
+    function startAuto() {
+      clearTimeout(sTimer);
+      startProg();
+      sTimer = setTimeout(() => { cur = (cur + 1) % TOTAL; updateSlide(); startAuto(); }, DUR);
     }
-
-    function goTo(i) {
-      current = i;
-      updateSlide();
-      clearTimeout(stepTimer);
-      clearInterval(progressTimer);
-      startAutoSlide();
-    }
-
-    if (prevBtn) prevBtn.addEventListener('click', () => goTo((current - 1 + TOTAL) % TOTAL));
-    if (nextBtn) nextBtn.addEventListener('click', () => goTo((current + 1) % TOTAL));
-
-    // Touch swipe
-    let swipeStartX = 0;
-    track.addEventListener('touchstart', e => { swipeStartX = e.touches[0].clientX; }, { passive: true });
-    track.addEventListener('touchend', e => {
-      const diff = swipeStartX - e.changedTouches[0].clientX;
-      if (Math.abs(diff) > 40) goTo(diff > 0 ? (current + 1) % TOTAL : (current - 1 + TOTAL) % TOTAL);
-    }, { passive: true });
-
-    // Pause on hover
+    function goTo(i) { cur = i; updateSlide(); clearTimeout(sTimer); clearInterval(pTimer); startAuto(); }
+    prevBtn?.addEventListener('click', () => goTo((cur - 1 + TOTAL) % TOTAL));
+    nextBtn?.addEventListener('click', () => goTo((cur + 1) % TOTAL));
     const wrap = track.closest('.process-wrap');
     if (wrap) {
-      wrap.addEventListener('mouseenter', () => { clearTimeout(stepTimer); clearInterval(progressTimer); });
-      wrap.addEventListener('mouseleave', () => startAutoSlide());
+      wrap.addEventListener('mouseenter', () => { clearTimeout(sTimer); clearInterval(pTimer); });
+      wrap.addEventListener('mouseleave', () => startAuto());
     }
-
+    let sx = 0;
+    track.addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, { passive: true });
+    track.addEventListener('touchend', e => {
+      const d = sx - e.changedTouches[0].clientX;
+      if (Math.abs(d) > 40) goTo(d > 0 ? (cur+1)%TOTAL : (cur-1+TOTAL)%TOTAL);
+    }, { passive: true });
     window.addEventListener('resize', updateSlide, { passive: true });
     updateSlide();
-    startAutoSlide();
+    startAuto();
   })();
 
   /* ── Testimonials ── */
   (function() {
-    const slides = document.querySelectorAll('.testi-slide');
+    const slides  = document.querySelectorAll('.testi-slide');
     const dotsWrap = document.getElementById('testiDots');
     const prevBtn = document.getElementById('testiPrev');
     const nextBtn = document.getElementById('testiNext');
     if (!slides.length) return;
-    let cur = 0;
-    let dots = [];
+    let cur = 0, dots = [];
     slides.forEach((_, i) => {
       const d = document.createElement('button');
       d.className = 'testi-dot-btn' + (i === 0 ? ' active' : '');
-      d.setAttribute('aria-label', `Testimonial ${i + 1}`);
       d.addEventListener('click', () => goTo(i));
-      dotsWrap.appendChild(d);
+      dotsWrap?.appendChild(d);
       dots.push(d);
     });
     function goTo(i) {
       slides[cur].classList.remove('active');
-      dots[cur].classList.remove('active');
+      dots[cur]?.classList.remove('active');
       cur = (i + slides.length) % slides.length;
       slides[cur].classList.add('active');
-      dots[cur].classList.add('active');
+      dots[cur]?.classList.add('active');
     }
-    if (prevBtn) prevBtn.addEventListener('click', () => goTo(cur - 1));
-    if (nextBtn) nextBtn.addEventListener('click', () => goTo(cur + 1));
+    prevBtn?.addEventListener('click', () => goTo(cur - 1));
+    nextBtn?.addEventListener('click', () => goTo(cur + 1));
     setInterval(() => goTo(cur + 1), 5500);
   })();
 
   /* ── Tech Card Accordion ── */
   (function() {
     const cards = document.querySelectorAll('.tech-card');
-    cards.forEach(card => {
-      card.addEventListener('click', () => {
-        cards.forEach(c => c.classList.remove('tc-active'));
-        card.classList.add('tc-active');
-      });
-    });
+    cards.forEach(c => c.addEventListener('click', () => {
+      cards.forEach(x => x.classList.remove('tc-active'));
+      c.classList.add('tc-active');
+    }));
   })();
 
-  /* ── Sustainability Ring Animation ── */
+  /* ── Sustainability Ring ── */
   (function() {
     const ring = document.getElementById('sustainRing');
-    const pctEl = document.getElementById('ringPct');
-    if (!ring || !pctEl) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          ring.classList.add('animated');
-          // Animate percentage counter to 75
-          let n = 0;
-          const timer = setInterval(() => {
-            n += 1;
-            pctEl.textContent = n + '%';
-            if (n >= 75) clearInterval(timer);
-          }, 30);
-          observer.unobserve(entry.target);
-        }
+    const pct  = document.getElementById('ringPct');
+    if (!ring || !pct) return;
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        ring.classList.add('animated');
+        let n = 0;
+        const t = setInterval(() => { pct.textContent = (++n) + '%'; if (n >= 75) clearInterval(t); }, 28);
+        obs.unobserve(e.target);
       });
     }, { threshold: 0.3 });
-
-    observer.observe(ring);
+    obs.observe(ring);
   })();
+
+  /* ── Newsletter ── */
+  document.getElementById('nlBtn')?.addEventListener('click', function() {
+    const inp = document.getElementById('nlEmail');
+    if (!inp) return;
+    const v = inp.value.trim();
+    if (!v || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+      inp.style.borderColor = 'var(--orange)'; inp.focus();
+      setTimeout(() => { inp.style.borderColor = ''; }, 1200);
+      return;
+    }
+    inp.value = '';
+    inp.placeholder = '✓ Subscribed! Welcome aboard.';
+    inp.style.borderColor = '#10b981';
+  });
+
+  /* ── Ripple ── */
+  document.querySelectorAll('.btn-primary').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      const r = this.getBoundingClientRect();
+      const s = Math.max(r.width, r.height) * 2;
+      const el = document.createElement('span');
+      el.style.cssText = `position:absolute;width:${s}px;height:${s}px;border-radius:50%;background:rgba(255,255,255,0.28);top:${e.clientY-r.top-s/2}px;left:${e.clientX-r.left-s/2}px;transform:scale(0);animation:rippleAnim 0.6s linear;pointer-events:none;`;
+      this.appendChild(el);
+      setTimeout(() => el.remove(), 650);
+    });
+  });
   </script>
 </body>
 </html>

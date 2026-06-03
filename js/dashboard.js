@@ -1,279 +1,329 @@
 /* ============================================================
    DASHBOARD SHARED JS — Stackly LogiFlow
-   Used by: owner-dashboard.html & customer-dashboard.html
+   Handles: auth, sidebar, nav, modals, toasts, count animations,
+            chart bars, table search/filter, global logout
    ============================================================ */
 
-/* ── Auth Guard ── */
-function checkAuth() {
-  const role  = sessionStorage.getItem('lf_role');
-  const email = sessionStorage.getItem('lf_email');
-  if (!role || !email) {
-    window.location.href = 'login.html';
-    return null;
-  }
-  return { role, email, name: sessionStorage.getItem('lf_name') || email };
-}
-
-/* ── Populate user info from session ── */
-function populateUserInfo(user) {
-  const initials = (user.name || user.email).split(' ').map(p => p[0]).join('').toUpperCase().slice(0,2);
-
-  // Sidebar elements
-  const elName  = document.getElementById('sidebarUserName');
-  const elEmail = document.getElementById('sidebarUserEmail');
-  const elAvatar= document.getElementById('sidebarAvatar');
-  const elRole  = document.getElementById('sidebarRole');
-  if (elName)   elName.textContent  = user.name || user.email;
-  if (elEmail)  elEmail.textContent = user.email;
-  if (elAvatar) elAvatar.textContent = initials;
-  if (elRole)   elRole.textContent  = user.role === 'owner' ? '🏢 Owner' : '📦 Customer';
-
-  // Topbar elements
-  const tbName   = document.getElementById('topbarName');
-  const tbAvatar = document.getElementById('topbarAvatar');
-  if (tbName)   tbName.textContent   = (user.name || user.email).split(' ')[0];
-  if (tbAvatar) tbAvatar.textContent = initials;
-
-  // Any welcome text
-  document.querySelectorAll('.user-email-display').forEach(el => { el.textContent = user.email; });
-  document.querySelectorAll('.user-name-display').forEach(el  => { el.textContent = user.name || user.email; });
-}
-
-/* ── Sidebar Navigation ── */
-function initSidebarNav() {
-  const items   = document.querySelectorAll('.nav-item[data-page]');
-  const contents= document.querySelectorAll('.dash-content');
-
-  items.forEach(item => {
-    item.addEventListener('click', () => {
-      const page = item.dataset.page;
-      // Update active nav
-      items.forEach(i => i.classList.remove('active'));
-      item.classList.add('active');
-      // Show matching content
-      contents.forEach(c => {
-        c.classList.toggle('active', c.dataset.page === page);
-      });
-      // Update topbar title
-      const titleEl = document.getElementById('topbarPageTitle');
-      if (titleEl) titleEl.textContent = item.querySelector('.nav-label')?.textContent || '';
-      // Close mobile sidebar
-      closeSidebar();
-    });
-  });
-}
-
-/* ── Mobile Sidebar ── */
-function initMobileSidebar() {
-  const hamburger = document.getElementById('topbarHamburger');
-  const sidebar   = document.getElementById('dashSidebar');
-  const overlay   = document.getElementById('sidebarOverlay');
-
-  if (hamburger) {
-    hamburger.addEventListener('click', () => {
-      sidebar && sidebar.classList.add('open');
-      overlay && overlay.classList.add('open');
-    });
-  }
-  if (overlay) {
-    overlay.addEventListener('click', closeSidebar);
-  }
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeSidebar();
-  });
+/* ══════════════════════════════════════
+   SIDEBAR — open / close
+══════════════════════════════════════ */
+function openSidebar() {
+  document.getElementById('dashSidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeSidebar() {
-  const sidebar = document.getElementById('dashSidebar');
-  const overlay = document.getElementById('sidebarOverlay');
-  sidebar && sidebar.classList.remove('open');
-  overlay && overlay.classList.remove('open');
+  document.getElementById('dashSidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
-/* ── Logout ── */
-function initLogout() {
-  const btn = document.getElementById('logoutBtn');
-  if (btn) {
-    btn.addEventListener('click', () => {
-      sessionStorage.clear();
-      window.location.href = 'index.html';
-    });
+/* ══════════════════════════════════════
+   NAV — switch pages
+   (also exported as navTo for owner dash
+    and navPage for customer dash — both
+    call this same underlying function)
+══════════════════════════════════════ */
+function _navToPage(page) {
+  document.querySelectorAll('.nav-item[data-page]').forEach(function(item) {
+    item.classList.toggle('active', item.dataset.page === page);
+  });
+  document.querySelectorAll('.dash-content[data-page]').forEach(function(section) {
+    section.classList.toggle('active', section.dataset.page === page);
+  });
+
+  // Update topbar title from nav label
+  var label = document.querySelector('.nav-item[data-page="' + page + '"] .nav-label');
+  var titleEl = document.getElementById('topbarPageTitle');
+  if (titleEl && label) {
+    titleEl.innerHTML = label.textContent + ' <span>Dashboard</span>';
   }
+
+  closeSidebar();
+  window.scrollTo(0, 0);
 }
 
-/* ── Toast Notifications ── */
-function showToast(message, type = 'success', duration = 3500) {
-  let container = document.getElementById('toastContainer');
-  if (!container) {
-    container = document.createElement('div');
-    container.className = 'toast-container';
-    container.id = 'toastContainer';
-    document.body.appendChild(container);
-  }
+// Expose under both names used by the two dashboards
+function navTo(page)   { _navToPage(page); }
+function navPage(page) { _navToPage(page); }
 
-  const icons = { success: '✓', error: '✕', warning: '⚠' };
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  toast.innerHTML = `<span>${icons[type] || '•'}</span><span>${message}</span>`;
+/* ══════════════════════════════════════
+   MODALS
+══════════════════════════════════════ */
+function openModal(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.add('open');
+}
+
+function closeModal(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+}
+
+/* ══════════════════════════════════════
+   TOAST
+══════════════════════════════════════ */
+function showToast(message, type) {
+  type = type || 'info';
+  var container = document.getElementById('toastContainer');
+  if (!container) return;
+
+  var toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+
+  var icon = { success: '✅', warning: '⚠️', error: '❌', info: 'ℹ️' }[type] || 'ℹ️';
+  toast.innerHTML = '<span>' + icon + '</span><span>' + message + '</span>';
+
   container.appendChild(toast);
 
-  setTimeout(() => {
-    toast.style.animation = 'toastOut 0.4s ease forwards';
-    setTimeout(() => toast.remove(), 400);
-  }, duration);
+  setTimeout(function() {
+    toast.style.animation = 'toastOut 0.3s ease forwards';
+    setTimeout(function() {
+      if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 300);
+  }, 3200);
 }
 
-/* ── Modal Helpers ── */
-function openModal(id) {
-  const m = document.getElementById(id);
-  if (m) m.classList.add('open');
+/* ══════════════════════════════════════
+   COUNT ANIMATION
+══════════════════════════════════════ */
+function animateCounts() {
+  document.querySelectorAll('[data-count]').forEach(function(el) {
+    var target = parseFloat(el.getAttribute('data-count'));
+    var suffix = el.getAttribute('data-suffix') || '';
+    var isFloat = target % 1 !== 0;
+    var duration = 1200;
+    var start = null;
+
+    function step(timestamp) {
+      if (!start) start = timestamp;
+      var progress = Math.min((timestamp - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      var current = target * eased;
+      el.textContent = (isFloat ? current.toFixed(1) : Math.round(current)) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
 }
-function closeModal(id) {
-  const m = document.getElementById(id);
-  if (m) m.classList.remove('open');
+
+/* ══════════════════════════════════════
+   CHART BAR ANIMATIONS
+══════════════════════════════════════ */
+function animateChartBars() {
+  document.querySelectorAll('.chart-bar[data-h]').forEach(function(bar, i) {
+    setTimeout(function() {
+      bar.style.height = bar.getAttribute('data-h') + '%';
+    }, i * 60);
+  });
 }
-function initModals() {
-  // Close on backdrop click
-  document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
-    backdrop.addEventListener('click', e => {
-      if (e.target === backdrop) backdrop.classList.remove('open');
+
+/* ══════════════════════════════════════
+   TABLE SEARCH
+   searchId  — input element id
+   tableId   — table element id
+   colIndexes — array of column indexes to match against
+══════════════════════════════════════ */
+function initTableSearch(searchId, tableId, colIndexes) {
+  var input = document.getElementById(searchId);
+  var table = document.getElementById(tableId);
+  if (!input || !table) return;
+
+  input.addEventListener('input', function() {
+    var query = this.value.toLowerCase().trim();
+    var rows = table.querySelectorAll('tbody tr');
+
+    rows.forEach(function(row) {
+      var cells = row.querySelectorAll('td');
+      var match = colIndexes.some(function(idx) {
+        return cells[idx] && cells[idx].textContent.toLowerCase().indexOf(query) > -1;
+      });
+      row.style.display = (query === '' || match) ? '' : 'none';
     });
   });
-  // Close buttons
-  document.querySelectorAll('.modal-close, [data-modal-close]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const modal = btn.closest('.modal-backdrop');
+}
+
+/* ══════════════════════════════════════
+   TABLE FILTER SELECT
+   selectId  — select element id
+   tableId   — table element id
+   colIndex  — column index for status
+══════════════════════════════════════ */
+function initFilterSelect(selectId, tableId, colIndex) {
+  var sel = document.getElementById(selectId);
+  var table = document.getElementById(tableId);
+  if (!sel || !table) return;
+
+  sel.addEventListener('change', function() {
+    var val = this.value.toLowerCase();
+    var rows = table.querySelectorAll('tbody tr');
+
+    rows.forEach(function(row) {
+      var cell = row.querySelectorAll('td')[colIndex];
+      if (!val || !cell) {
+        row.style.display = '';
+      } else {
+        var cellText = cell.textContent.toLowerCase();
+        row.style.display = cellText.indexOf(val) > -1 ? '' : 'none';
+      }
+    });
+  });
+}
+
+/* ══════════════════════════════════════
+   AUTH CHECK + POPULATE USER INFO
+══════════════════════════════════════ */
+function checkAuth() {
+  var role = sessionStorage.getItem('lf_role');
+  if (!role) {
+    // Uncomment to enforce login redirect:
+    // window.location.href = 'login.html';
+    return false;
+  }
+  return true;
+}
+
+function populateUserInfo() {
+  var name  = sessionStorage.getItem('lf_name')  || 'User';
+  var email = sessionStorage.getItem('lf_email') || '';
+
+  var initials = name.split(' ')
+    .map(function(w) { return w[0] || ''; })
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+
+  var firstName = name.split(' ')[0];
+
+  // Avatar elements
+  ['sidebarAvatar', 'topbarAvatar', 'settingsAvatar'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = initials;
+  });
+
+  // Name elements
+  document.querySelectorAll('.user-name-display').forEach(function(el) {
+    el.textContent = name;
+  });
+
+  // First name elements
+  var topbarName = document.getElementById('topbarName');
+  if (topbarName) topbarName.textContent = firstName;
+
+  // Sidebar name
+  var sidebarUserName = document.getElementById('sidebarUserName');
+  if (sidebarUserName) sidebarUserName.textContent = name;
+
+  // Email elements
+  document.querySelectorAll('.user-email-display').forEach(function(el) {
+    el.textContent = email;
+  });
+
+  var sidebarEmail = document.getElementById('sidebarUserEmail');
+  if (sidebarEmail) sidebarEmail.textContent = email;
+}
+
+/* ══════════════════════════════════════
+   SIDEBAR NAV CLICK BINDING
+══════════════════════════════════════ */
+function initSidebarNav() {
+  document.querySelectorAll('.nav-item[data-page]').forEach(function(item) {
+    item.addEventListener('click', function() {
+      _navToPage(this.dataset.page);
+    });
+  });
+}
+
+/* ══════════════════════════════════════
+   MOBILE SIDEBAR TOGGLE
+══════════════════════════════════════ */
+function initMobileSidebar() {
+  var hamburger = document.getElementById('topbarHamburger');
+  var overlay   = document.getElementById('sidebarOverlay');
+
+  if (hamburger) {
+    hamburger.addEventListener('click', function() {
+      var sidebar = document.getElementById('dashSidebar');
+      if (sidebar && sidebar.classList.contains('open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+  }
+
+  if (overlay) {
+    overlay.addEventListener('click', closeSidebar);
+  }
+}
+
+/* ══════════════════════════════════════
+   LOGOUT
+══════════════════════════════════════ */
+function initLogout() {
+  var btn = document.getElementById('logoutBtn');
+  if (btn) {
+    btn.addEventListener('click', function() {
+      sessionStorage.clear();
+      window.location.href = 'login.html';
+    });
+  }
+}
+
+/* ══════════════════════════════════════
+   MODAL BACKDROP + CLOSE BUTTONS
+══════════════════════════════════════ */
+function initModals() {
+  // Close on backdrop click
+  document.querySelectorAll('.modal-backdrop').forEach(function(backdrop) {
+    backdrop.addEventListener('click', function(e) {
+      if (e.target === backdrop) {
+        backdrop.classList.remove('open');
+      }
+    });
+  });
+
+  // Close on [data-modal-close] click
+  document.querySelectorAll('[data-modal-close]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var modal = this.closest('.modal-backdrop');
       if (modal) modal.classList.remove('open');
     });
   });
-}
 
-/* ── Animate stat counters ── */
-function animateDashCounters() {
-  const counters = document.querySelectorAll('[data-count]');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      const el = entry.target;
-      const target   = parseFloat(el.dataset.count);
-      const suffix   = el.dataset.suffix || '';
-      const prefix   = el.dataset.prefix || '';
-      const decimals = String(target).includes('.') ? 1 : 0;
-      const duration = 1600;
-      const start    = performance.now();
-
-      function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
-      function tick(now) {
-        const p = Math.min((now - start) / duration, 1);
-        const val = easeOut(p) * target;
-        el.textContent = prefix + val.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + suffix;
-        if (p < 1) requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
-      observer.unobserve(el);
-    });
-  }, { threshold: 0.4 });
-  counters.forEach(c => observer.observe(c));
-}
-
-/* ── Animate chart bars on scroll ── */
-function initChartBars() {
-  const bars = document.querySelectorAll('.chart-bar[data-h]');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.height = entry.target.dataset.h + '%';
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.3 });
-  // Set initial height to 0
-  bars.forEach(b => { b.style.height = '0%'; observer.observe(b); });
-}
-
-/* ── Search/Filter tables ── */
-function initTableSearch(inputId, tableId, colIndexes) {
-  const input = document.getElementById(inputId);
-  const table = document.getElementById(tableId);
-  if (!input || !table) return;
-
-  input.addEventListener('input', () => {
-    const q = input.value.toLowerCase();
-    const rows = table.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-      const cols = row.querySelectorAll('td');
-      const text = Array.from(colIndexes ? colIndexes.map(i => cols[i]) : cols)
-        .map(c => c ? c.textContent.toLowerCase() : '').join(' ');
-      row.style.display = text.includes(q) ? '' : 'none';
-    });
+  // Close on ESC key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-backdrop.open').forEach(function(m) {
+        m.classList.remove('open');
+      });
+    }
   });
 }
 
-/* ── Filter dropdowns ── */
-function initFilterSelect(selectId, tableId, colIndex) {
-  const sel   = document.getElementById(selectId);
-  const table = document.getElementById(tableId);
-  if (!sel || !table) return;
-
-  sel.addEventListener('change', () => {
-    const val = sel.value.toLowerCase();
-    const rows = table.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-      const cell = row.querySelectorAll('td')[colIndex];
-      if (!val || !cell) { row.style.display = ''; return; }
-      row.style.display = cell.textContent.toLowerCase().includes(val) ? '' : 'none';
-    });
-  });
-}
-
-/* ── Ripple on buttons ── */
-function initRipple() {
-  document.addEventListener('click', e => {
-    const btn = e.target.closest('.btn-primary');
-    if (!btn) return;
-    const rect   = btn.getBoundingClientRect();
-    const size   = Math.max(rect.width, rect.height) * 2;
-    const ripple = document.createElement('span');
-    ripple.style.cssText = `
-      position:absolute;width:${size}px;height:${size}px;border-radius:50%;
-      background:rgba(255,255,255,0.25);pointer-events:none;
-      top:${e.clientY - rect.top - size/2}px;
-      left:${e.clientX - rect.left - size/2}px;
-      transform:scale(0);animation:ripAnim 0.6s linear;
-    `;
-    btn.style.position = 'relative';
-    btn.style.overflow = 'hidden';
-    btn.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 700);
-  });
-
-  if (!document.getElementById('rip-css')) {
-    const s = document.createElement('style');
-    s.id = 'rip-css';
-    s.textContent = '@keyframes ripAnim{to{transform:scale(1);opacity:0}}';
-    document.head.appendChild(s);
-  }
-}
-
-/* ── Init all shared features ── */
+/* ══════════════════════════════════════
+   MAIN INIT — call once on DOMContentLoaded
+══════════════════════════════════════ */
 function initDashboard() {
-  const user = checkAuth();
-  if (!user) return;
-  populateUserInfo(user);
+  checkAuth();
+  populateUserInfo();
   initSidebarNav();
   initMobileSidebar();
   initLogout();
   initModals();
-  animateDashCounters();
-  initChartBars();
-  initRipple();
-  return user;
+
+  // Run animations after a short delay so elements are visible
+  setTimeout(function() {
+    animateCounts();
+    animateChartBars();
+  }, 100);
 }
 
-/* Expose globally */
-window.showToast  = showToast;
-window.openModal  = openModal;
-window.closeModal = closeModal;
-window.initTableSearch = initTableSearch;
-window.initFilterSelect = initFilterSelect;
+// Auto-init when DOM ready if not called manually
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    // Only auto-init if initDashboard hasn't been called yet
+    // (pages call it themselves via boot functions)
+  });
+}

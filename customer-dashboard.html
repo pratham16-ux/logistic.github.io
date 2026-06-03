@@ -1307,114 +1307,47 @@
 <script src="/js/dashboard.js"></script>
 
 <!-- ══ Page-specific JS ══ -->
+  <script src="js/dashboard.js"></script>
 <script>
-  /* ─────────────────────────────────────────
-     navPage()  — thin wrapper used by inline
-     onclick handlers throughout this page.
-     The shared initSidebarNav() handles nav
-     clicks; this covers button clicks inside
-     page content.
-  ───────────────────────────────────────── */
-  function navPage(page) {
-    document.querySelectorAll('.nav-item[data-page]').forEach(i => {
-      i.classList.toggle('active', i.dataset.page === page);
-    });
-    document.querySelectorAll('.dash-content').forEach(c => {
-      c.classList.toggle('active', c.dataset.page === page);
-    });
-    const label = document.querySelector(`.nav-item[data-page="${page}"] .nav-label`);
-    const titleEl = document.getElementById('topbarPageTitle');
-    if (titleEl && label) titleEl.textContent = label.textContent + ' Dashboard';
-    closeSidebar();
-    window.scrollTo(0, 0);
-  }
-
-  /* ─────────────────────────────────────────
-     Quick Track
-  ───────────────────────────────────────── */
-  function quickTrack() {
-    const val = document.getElementById('quickTrackInput').value.trim();
-    if (!val) { showToast('Enter a shipment ID', 'warning'); return; }
-    navPage('tracking');
-    showToast('Tracking ' + val, 'success');
-  }
-
-  /* ─────────────────────────────────────────
-     Notifications
-  ───────────────────────────────────────── */
-  function ackNotif(btn, msg, type) {
-    btn.closest('.notif-item').classList.remove('unread');
-    showToast(msg, type);
-  }
-
-  function markAllRead() {
-    document.querySelectorAll('.notif-item.unread').forEach(n => n.classList.remove('unread'));
-    showToast('All marked as read', 'success');
-  }
-
-  /* ─────────────────────────────────────────
-     Global search (Enter → go to Shipments)
-  ───────────────────────────────────────── */
-  document.getElementById('globalSearch').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && this.value.trim()) {
-      navPage('shipments');
-      setTimeout(() => {
-        const si = document.getElementById('shipSearch');
-        if (si) { si.value = this.value; si.dispatchEvent(new Event('input')); }
-      }, 80);
-    }
-  });
-
-  /* ─────────────────────────────────────────
-     Table search & filter wiring
-  ───────────────────────────────────────── */
-  document.addEventListener('DOMContentLoaded', () => {
-    // Shipments search
-    initTableSearch('shipSearch', 'shipmentsTable', [0, 1, 2]);
-
-    // Shipments status filter — column 4 contains the pill text
-    initFilterSelect('shipStatusFilter', 'shipmentsTable', 4);
-
-    // Documents search
-    initTableSearch('docSearch', 'docsTable', [0, 1, 2]);
-
-    /* ── Populate user info (avatar in settings page too) ── */
-    const name = sessionStorage.getItem('lf_name')  || 'Amit Verma';
-    const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-    const sa = document.getElementById('settingsAvatar');
-    if (sa) sa.textContent = initials;
-  });
-
-  /* ─────────────────────────────────────────
-     Boot — calls shared initDashboard() which
-     handles: auth guard, populateUserInfo,
-     sidebar nav, mobile sidebar, logout,
-     modals, count animations, chart bars,
-     ripple effects.
-
-     NOTE: if no session data exists (dev /
-     direct-open), fall back to demo values so
-     the page still renders correctly without
-     redirecting to login.html.
-  ───────────────────────────────────────── */
-  (function boot() {
-    // Dev / preview fallback: seed session so checkAuth() passes
-    if (!sessionStorage.getItem('lf_role')) {
-      sessionStorage.setItem('lf_role',  'customer');
-      sessionStorage.setItem('lf_email', 'customer@gmail.com');
-      sessionStorage.setItem('lf_name',  'Amit Verma');
-    }
-    initDashboard();
-  })();
-  // BEFORE
 (function boot() {
+  // Dev fallback: seed session so auth check passes when opening file directly
   if (!sessionStorage.getItem('lf_role')) {
-    sessionStorage.setItem('lf_role',  'customer');
-    sessionStorage.setItem('lf_email', 'customer@gmail.com');
-    sessionStorage.setItem('lf_name',  'Amit Verma');
+    sessionStorage.setItem('lf_role',  'owner');
+    sessionStorage.setItem('lf_email', 'owner@stackly.com');
+    sessionStorage.setItem('lf_name',  'Rajesh Nair');
   }
+  // initDashboard() sets up auth, sidebar, nav, modals, toasts, animations
   initDashboard();
 })();
+ 
+document.addEventListener('DOMContentLoaded', function() {
+  // Sync settings avatar (populated after user info is set)
+  var name = sessionStorage.getItem('lf_name') || '';
+  var initials = name.split(' ').map(function(w){ return w[0]||''; }).join('').slice(0,2).toUpperCase();
+  var sa = document.getElementById('settingsAvatar');
+  if (sa) sa.textContent = initials;
+ 
+  // Table search & filter
+  initTableSearch('shipSearch',  'shipmentsTable', [0,1,2,3]);
+  initTableSearch('custSearch',  'customersTable', [0,1]);
+  initTableSearch('fleetSearch', 'fleetTable',     [0,1,2,3]);
+  initFilterSelect('shipStatusFilter', 'shipmentsTable', 5);
+ 
+  // Global search → jump to Shipments page
+  var gs = document.getElementById('globalSearch');
+  if (gs) {
+    gs.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && gs.value.trim()) {
+        navTo('shipments');
+        setTimeout(function() {
+          var si = document.getElementById('shipSearch');
+          if (si) { si.value = gs.value; si.dispatchEvent(new Event('input')); }
+        }, 100);
+      }
+    });
+  }
+});
 </script>
+ 
 </body>
 </html>

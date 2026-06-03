@@ -673,68 +673,44 @@
 
 <script src="js/dashboard.js"></script>
 <script>
- document.addEventListener('DOMContentLoaded', () => {
-  initDashboard();
-
-  // Sync settings page avatar to actual session name
-  const name = sessionStorage.getItem('lf_name') || '';
-  const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  const sa = document.getElementById('settingsAvatar');
-  if (sa) sa.textContent = initials;
-
-  // ... rest of your existing table search wiring unchanged
-  initTableSearch('shipSearch', 'shipmentsTable', [0,1,2,3]);
-  initTableSearch('custSearch', 'customersTable', [0,1]);
-  initTableSearch('fleetSearch', 'fleetTable', [0,1,2,3]);
-  initFilterSelect('shipStatusFilter', 'shipmentsTable', 5);
-  // ... global search unchanged
-});
-
-    // AFTER — add this BEFORE the DOMContentLoaded block
 (function boot() {
-  // Dev fallback only — real logins always have session data
+  // Dev fallback: seed session so auth check passes when opening file directly
   if (!sessionStorage.getItem('lf_role')) {
     sessionStorage.setItem('lf_role',  'owner');
     sessionStorage.setItem('lf_email', 'owner@stackly.com');
     sessionStorage.setItem('lf_name',  'Rajesh Nair');
   }
+  // initDashboard() sets up auth, sidebar, nav, modals, toasts, animations
+  initDashboard();
 })();
-    // Table search and filter wiring
-    initTableSearch('shipSearch', 'shipmentsTable', [0,1,2,3]);
-    initTableSearch('custSearch', 'customersTable', [0,1]);
-    initTableSearch('fleetSearch', 'fleetTable', [0,1,2,3]);
-    initFilterSelect('shipStatusFilter', 'shipmentsTable', 5);
-
-    // Global search — jumps to shipments
-    const gs = document.getElementById('globalSearch');
-    if (gs) {
-      gs.addEventListener('keydown', e => {
-        if (e.key === 'Enter' && gs.value) {
-          navTo('shipments');
-          setTimeout(() => {
-            const si = document.getElementById('shipSearch');
-            if (si) { si.value = gs.value; si.dispatchEvent(new Event('input')); }
-          }, 100);
-        }
-      });
-    }
-  
-
-  // Quick navigate helper
-  function navTo(page) {
-    const items    = document.querySelectorAll('.nav-item[data-page]');
-    const contents = document.querySelectorAll('.dash-content');
-    items.forEach(i => {
-      i.classList.toggle('active', i.dataset.page === page);
+ 
+document.addEventListener('DOMContentLoaded', function() {
+  // Sync settings avatar (populated after user info is set)
+  var name = sessionStorage.getItem('lf_name') || '';
+  var initials = name.split(' ').map(function(w){ return w[0]||''; }).join('').slice(0,2).toUpperCase();
+  var sa = document.getElementById('settingsAvatar');
+  if (sa) sa.textContent = initials;
+ 
+  // Table search & filter
+  initTableSearch('shipSearch',  'shipmentsTable', [0,1,2,3]);
+  initTableSearch('custSearch',  'customersTable', [0,1]);
+  initTableSearch('fleetSearch', 'fleetTable',     [0,1,2,3]);
+  initFilterSelect('shipStatusFilter', 'shipmentsTable', 5);
+ 
+  // Global search → jump to Shipments page
+  var gs = document.getElementById('globalSearch');
+  if (gs) {
+    gs.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && gs.value.trim()) {
+        navTo('shipments');
+        setTimeout(function() {
+          var si = document.getElementById('shipSearch');
+          if (si) { si.value = gs.value; si.dispatchEvent(new Event('input')); }
+        }, 100);
+      }
     });
-    contents.forEach(c => {
-      c.classList.toggle('active', c.dataset.page === page);
-    });
-    const titleEl = document.getElementById('topbarPageTitle');
-    const item = document.querySelector(`.nav-item[data-page="${page}"] .nav-label`);
-    if (titleEl && item) titleEl.textContent = item.textContent + ' Dashboard';
-    closeSidebar();
   }
+});
 </script>
 </body>
 </html>
