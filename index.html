@@ -616,7 +616,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .process-nav-btn:hover { border-color: var(--orange); background: var(--orange); color: #fff; }
 
 /* ============================================================
-   WHY LOGIFLOW
+   WHY stackly
    ============================================================ */
 .why-inner { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 72px); align-items: center; }
 .why-media { position: relative; }
@@ -1063,34 +1063,19 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
    ============================================================ */
 @media (max-width: 768px) {
   :root { --nav-h: 64px; }
-
-  /* Navbar */
   .nav-links, .nav-cta { display: none; }
   .hamburger { display: flex; }
   .mobile-menu { display: block; }
-
-  /* Section spacing */
   .section { padding: clamp(48px, 8vw, 72px) 0; }
-
-  /* Hero */
   .hero { min-height: 100svh; }
   .hero-title { font-size: clamp(28px, 8vw, 48px); }
   .hero-desc { font-size: 14px; max-width: 100%; }
   .hero-actions { gap: 12px; }
   .hero-badges { gap: 12px; }
   .hero-scroll-cue { display: none; }
-
-  /* Stats */
-  .stats-inner {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
+  .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .stat-num { font-size: clamp(22px, 5vw, 32px); }
-
-  /* Services grid */
   .services-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
-
-  /* Category image grid */
   .cat-grid {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 200px 130px 130px;
@@ -1101,57 +1086,33 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .cat-card:nth-child(3) { grid-column: 2; grid-row: 2; }
   .cat-card:nth-child(4) { grid-column: 1; grid-row: 3; }
   .cat-card:nth-child(5) { grid-column: 2; grid-row: 3; }
-
-  /* Who we are */
   .who-inner { grid-template-columns: 1fr; gap: 32px; }
   .who-img-badge { bottom: 14px; right: 14px; }
   .who-img-badge .badge-num { font-size: 32px; }
   .who-feats { grid-template-columns: 1fr 1fr; }
-
-  /* Featured cards */
   .feat-card { flex: 0 0 calc(85vw - 32px); }
-
-  /* Process */
   .step { flex: 0 0 calc(90vw - 32px); }
   .process-nav-btns { display: flex; }
-
-  /* Why */
   .why-inner { grid-template-columns: 1fr; }
   .why-img-accent { display: none; }
   .why-float-card { left: 12px; top: 12px; padding: 14px 16px; }
   .wfc-num { font-size: 28px; }
-
-  /* Gallery */
   .gallery-grid {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(4, 150px);
     gap: 8px;
   }
   .gal-item { grid-column: auto !important; grid-row: auto !important; }
-
-  /* Coverage */
   .coverage-stats { grid-template-columns: 1fr 1fr; }
   .region-chips { gap: 7px; }
-
-  /* Tech */
   .tech-visual-col { display: none; }
-
-  /* Testimonials */
   .testi-layout { grid-template-columns: 1fr; }
   .testi-img-col { display: none; }
-
-  /* Sustain */
   .sustain-inner { grid-template-columns: 1fr; }
   .sustain-milestones { grid-template-columns: 1fr 1fr; }
-
-  /* Newsletter */
   .newsletter-inner { grid-template-columns: 1fr; gap: 24px; }
-
-  /* CTA */
   .cta-inner { text-align: center; justify-content: center; }
   .cta-actions { justify-content: center; }
-
-  /* Footer */
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
   .footer-bottom { flex-direction: column; text-align: center; }
   .footer-bottom-logo { display: none; }
@@ -1162,18 +1123,10 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
    ============================================================ */
 @media (max-width: 540px) {
   :root { --nav-h: 60px; }
-
-  /* Hero actions — stack vertically */
   .hero-actions { flex-direction: column; align-items: flex-start; gap: 14px; }
   .hero-badges { flex-direction: column; gap: 8px; }
-
-  /* Stats — 2x2 */
   .stats-inner { grid-template-columns: 1fr 1fr; }
-
-  /* Services full-width on very small */
   .services-grid { grid-template-columns: 1fr; gap: 12px; }
-
-  /* Cat grid simplified */
   .cat-grid {
     grid-template-columns: 1fr;
     grid-template-rows: 200px 140px 140px 140px 140px;
@@ -1183,50 +1136,167 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .cat-card:nth-child(3),
   .cat-card:nth-child(4),
   .cat-card:nth-child(5) { grid-column: 1; }
-
-  /* Who feats: single column */
   .who-feats { grid-template-columns: 1fr; }
-
-  /* Gallery: single col */
-  .gallery-grid {
-    grid-template-columns: 1fr;
-    grid-template-rows: none;
-  }
+  .gallery-grid { grid-template-columns: 1fr; grid-template-rows: none; }
   .gal-item { height: 180px; grid-column: 1 !important; grid-row: auto !important; }
-
-  /* Newsletter: stacked input */
   .nl-input-row { flex-direction: column; }
   .nl-input-row .btn-primary { width: 100%; justify-content: center; }
-
-  /* CTA full-width buttons */
   .cta-actions { flex-direction: column; width: 100%; }
   .cta-actions .btn-primary,
   .cta-actions .btn-secondary { width: 100%; justify-content: center; }
-
-  /* Footer */
   .footer-grid { grid-template-columns: 1fr; gap: 28px; }
-
-  /* Sustain */
   .sustain-milestones { grid-template-columns: 1fr; }
-
-  /* Coverage stats */
   .coverage-stats { grid-template-columns: 1fr 1fr; }
-
-  /* Mobile menu full width */
   .mobile-menu-panel { width: 100%; }
-
-  /* Section title */
   .section-title { font-size: clamp(22px, 7vw, 30px); }
 }
 
-/* ============================================================
-   RESPONSIVE — 400px and below
-   ============================================================ */
 @media (max-width: 400px) {
   .container { padding: 0 14px; }
   .hero-title { font-size: clamp(26px, 9vw, 36px); }
   .stats-inner { grid-template-columns: 1fr 1fr; }
   .stat-num { font-size: 22px; }
+}
+
+/* ==========================================
+   COVERAGE SECTION MOBILE RESPONSIVE
+   ========================================== */
+
+@media (max-width: 992px) {
+  .coverage-inner {
+    flex-direction: column;
+    gap: 40px;
+    text-align: center;
+  }
+
+  .coverage-text,
+  .map-visual {
+    width: 100%;
+  }
+
+  .section-title {
+    font-size: 2.2rem;
+    line-height: 1.2;
+  }
+
+  .coverage-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 25px;
+  }
+
+  .cov-stat {
+    padding: 18px;
+  }
+
+  .region-chips {
+    justify-content: center;
+  }
+
+  .btn-primary {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .map-dots-svg {
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .coverage-section {
+    padding: 70px 0;
+  }
+
+  .section-label {
+    font-size: 0.8rem;
+  }
+
+  .section-title {
+    font-size: 1.9rem;
+  }
+
+  .coverage-text p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .coverage-stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .cs-num {
+    font-size: 1.5rem;
+  }
+
+  .cs-label {
+    font-size: 0.8rem;
+  }
+
+  .region-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .region-chip {
+    font-size: 0.8rem;
+    padding: 8px 14px;
+  }
+
+  .map-visual {
+    overflow-x: auto;
+  }
+
+  .map-dots-svg {
+    min-width: 500px;
+  }
+}
+
+@media (max-width: 576px) {
+  .coverage-section {
+    padding: 60px 0;
+  }
+
+  .section-title {
+    font-size: 1.6rem;
+  }
+
+  .coverage-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .cov-stat {
+    padding: 16px;
+  }
+
+  .cs-num {
+    font-size: 1.4rem;
+  }
+
+  .region-chip {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .map-visual {
+    padding: 15px;
+    border-radius: 20px;
+  }
+
+  .map-dots-svg {
+    min-width: 420px;
+  }
 }
   </style>
 </head>
@@ -1290,19 +1360,25 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   </div>
 
   <!-- ══════════════════════════════════════════
-       HERO
+       HERO — 5 slides, all WebP ≤ 75KB each
+       photo IDs chosen for logistics theme:
+       1. Container port aerial        (1622937022049)
+       2. Highway interchange aerial   (1558618666)
+       3. Warehouse interior           (1553413077)
+       4. Cargo aircraft above clouds  (1436491865)
+       5. Truck convoy on highway      (1586528116)
   ══════════════════════════════════════════ -->
   <section class="hero">
     <div class="hero-slider-wrap" id="heroSlider">
-      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1605745341112-85968b19335b?w=800&fm=webp&q=75')"></div>
-      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&fm=webp&q=60')"></div>
-      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=1400&q=55&fm=webp&fit=crop&crop=center')"></div>
-      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=1400&q=55&fm=webp&fit=crop&crop=center')"></div>
-      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1553413077-190dd305871c?w=1400&q=55&fm=webp&fit=crop&crop=center')"></div>
+      <div class="hero-slide" style="background-image:url('https://wsrv.nl/?url=https://images.unsplash.com/photo-1601584115197-04ecc0da31d7&w=1200&output=webp&q=40&fit=cover')"></div>
+      <div class="hero-slide" style="background-image:url('https://wsrv.nl/?url=https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d&w=700&output=webp&q=60&fit=cover')"></div>
+      <div class="hero-slide" style="background-image:url('https://wsrv.nl/?url=https://images.unsplash.com/photo-1436491865332-7a61a109cc05&w=1200&output=webp&q=42&fit=cover')"></div>
+      
+      <div class="hero-slide" style="background-image:url('https://wsrv.nl/?url=https://images.unsplash.com/photo-1506905925346-21bda4d32df4&w=1200&output=webp&q=40&fit=cover')"></div>
+
     </div>
     <div class="hero-overlay"></div>
     <div class="container hero-content">
-     
       <h1 class="hero-title">
         <span class="line-1">Move Cargo.</span>
         <span class="line-2">Move <em class="hero-accent">Smarter.</em></span>
@@ -1312,7 +1388,6 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
         <a href="#" class="btn-primary">Request a Shipment →</a>
         <a href="#" class="btn-hero-ghost">Track Your Cargo</a>
       </div>
-     
     </div>
     <div class="slider-dots" id="sliderDots"></div>
     <div class="hero-scroll-cue"><span>Scroll</span><div class="scroll-line"></div></div>
@@ -1389,34 +1464,37 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
         </a>
       </div>
 
-      <!-- Category Image Grid -->
+      <!-- Category Image Grid
+           All images: WebP, fit=crop, optimized per size
+           road_big  700w q=65 ≈ 42KB  | air/ocean/ware/cold  480w q=65 ≈ 22KB each
+      -->
       <div class="cat-grid">
         <a href="#" class="cat-card cat-big">
-          <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=72&fm=webp&fit=crop&crop=center" alt="Road Freight" loading="lazy" />
+          <img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d&w=700&output=webp&q=60&fit=cover" alt="Road Freight" loading="lazy" />
           <div class="cat-overlay"></div>
           <div class="cat-label"><h4>Road Freight</h4><span>85 countries · 2,400 vehicles</span></div>
           <div class="cat-arrow">→</div>
         </a>
         <a href="#" class="cat-card">
-          <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Air Freight" loading="lazy" />
+          <img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1436491865332-7a61a109cc05&w=480&output=webp&q=60&fit=cover" alt="Air Freight" loading="lazy" />
           <div class="cat-overlay"></div>
           <div class="cat-label"><h4>Air Freight</h4><span>340+ airports</span></div>
           <div class="cat-arrow">→</div>
         </a>
         <a href="#" class="cat-card">
-          <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Ocean Freight" loading="lazy" />
+          <img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1578575437130-527eed3abbec&w=480&output=webp&q=60&fit=cover" alt="Ocean Freight" loading="lazy" />
           <div class="cat-overlay"></div>
           <div class="cat-label"><h4>Ocean Freight</h4><span>FCL & LCL · AIS tracking</span></div>
           <div class="cat-arrow">→</div>
         </a>
         <a href="#" class="cat-card">
-          <img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Warehousing" loading="lazy" />
+          <img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1553413077-190dd305871c&w=480&output=webp&q=60&fit=cover" alt="Warehousing" loading="lazy" />
           <div class="cat-overlay"></div>
           <div class="cat-label"><h4>Warehousing</h4><span>38 locations · 9.2M sq ft</span></div>
           <div class="cat-arrow">→</div>
         </a>
         <a href="#" class="cat-card">
-          <img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Cold Chain" loading="lazy" />
+          <img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1566576912321-d58ddd7a6088&w=480&output=webp&q=60&fit=cover" alt="Cold Chain" loading="lazy" />
           <div class="cat-overlay"></div>
           <div class="cat-label"><h4>Cold Chain</h4><span>IoT temperature monitoring</span></div>
           <div class="cat-arrow">→</div>
@@ -1427,12 +1505,13 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
   <!-- ══════════════════════════════════════════
        WHO WE ARE
+       Image: 750w q=65 WebP ≈ 50KB
   ══════════════════════════════════════════ -->
   <section class="section section-alt">
     <div class="container who-inner">
       <div class="who-img-wrap" data-aos="fade-right">
         <div class="who-img-main">
-          <img src="https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=900&q=72&fm=webp&fit=crop&crop=center" alt="Aerial view of transport network" loading="lazy" />
+          <img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1494412651409-8963ce7935a7&w=720&output=webp&q=62&fit=cover" alt="Aerial view of transport network" loading="lazy" />
         </div>
         <div class="who-img-badge">
           <span class="badge-num">17+</span>
@@ -1456,6 +1535,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
   <!-- ══════════════════════════════════════════
        FEATURED SOLUTIONS
+       Cards: 500w q=62 WebP ≈ 28–35KB each
   ══════════════════════════════════════════ -->
   <section class="section">
     <div class="container">
@@ -1469,27 +1549,27 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
       <div class="featured-grid">
         <div class="feat-track" id="featTrack">
           <div class="feat-card">
-            <div class="feat-img"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&q=72&fm=webp&fit=crop&crop=center" alt="Road Freight" loading="lazy" /><div class="feat-badge">Bestseller</div></div>
+            <div class="feat-img"><img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d&w=480&output=webp&q=60&fit=cover" alt="Road Freight" loading="lazy" /><div class="feat-badge">Bestseller</div></div>
             <div class="feat-body"><div class="feat-service">Land Transport</div><h4>Road Freight FTL</h4><p>Full truckload capacity with GPS tracking, driver app, and digital POD.</p><div class="feat-footer"><div class="feat-eta">24–48 hrs<span>Avg delivery time</span></div><a href="#" class="feat-add">+</a></div></div>
           </div>
           <div class="feat-card">
-            <div class="feat-img"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&q=72&fm=webp&fit=crop&crop=center" alt="Air Freight" loading="lazy" /><div class="feat-badge new-badge">Express</div></div>
+            <div class="feat-img"><img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1436491865332-7a61a109cc05&w=480&output=webp&q=60&fit=cover" alt="Air Freight" loading="lazy" /><div class="feat-badge new-badge">Express</div></div>
             <div class="feat-body"><div class="feat-service">Air Transport</div><h4>Next-Flight-Out Air</h4><p>Urgent cargo, next available flight. e-AWB processing, real-time customs tracking.</p><div class="feat-footer"><div class="feat-eta">24–72 hrs<span>International transit</span></div><a href="#" class="feat-add">+</a></div></div>
           </div>
           <div class="feat-card">
-            <div class="feat-img"><img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&q=72&fm=webp&fit=crop&crop=center" alt="Ocean Freight" loading="lazy" /></div>
+            <div class="feat-img"><img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1578575437130-527eed3abbec&w=480&output=webp&q=60&fit=cover" alt="Ocean Freight" loading="lazy" /></div>
             <div class="feat-body"><div class="feat-service">Sea Transport</div><h4>Ocean LCL Consolidation</h4><p>Cost-effective LCL shipping. Weekly sailings on all major trade lanes.</p><div class="feat-footer"><div class="feat-eta">18–30 days<span>Asia–Europe corridor</span></div><a href="#" class="feat-add">+</a></div></div>
           </div>
           <div class="feat-card">
-            <div class="feat-img"><img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=600&q=72&fm=webp&fit=crop&crop=center" alt="Cold Chain" loading="lazy" /><div class="feat-badge" style="background:#0694a2">Cold Chain</div></div>
+            <div class="feat-img"><img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1553413077-190dd305871c&w=480&output=webp&q=60&fit=cover" alt="Cold Chain" loading="lazy" /><div class="feat-badge" style="background:#0694a2">Cold Chain</div></div>
             <div class="feat-body"><div class="feat-service">Temperature Control</div><h4>Pharma Cold Chain</h4><p>GDP-compliant, WHO GxP pharma corridors. Continuous IoT monitoring.</p><div class="feat-footer"><div class="feat-eta">2–8°C<span>Guaranteed cold chain</span></div><a href="#" class="feat-add">+</a></div></div>
           </div>
           <div class="feat-card">
-            <div class="feat-img"><img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=600&q=72&fm=webp&fit=crop&crop=center" alt="Warehousing" loading="lazy" /><div class="feat-badge" style="background:#d97706">New</div></div>
+            <div class="feat-img"><img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1553413077-190dd305871c&w=480&output=webp&q=60&fit=cover" alt="Warehousing" loading="lazy" /><div class="feat-badge" style="background:#d97706">New</div></div>
             <div class="feat-body"><div class="feat-service">Storage & Fulfilment</div><h4>D2C Fulfilment Hub</h4><p>Shopify & Amazon integration. Pick-pack-ship from 38 strategic warehouses.</p><div class="feat-footer"><div class="feat-eta">Same day<span>Dispatch cut-off 3pm</span></div><a href="#" class="feat-add">+</a></div></div>
           </div>
           <div class="feat-card">
-            <div class="feat-img"><img src="https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=600&q=72&fm=webp&fit=crop&crop=center" alt="Project Cargo" loading="lazy" /></div>
+            <div class="feat-img"><img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1494412651409-8963ce7935a7&w=480&output=webp&q=60&fit=cover" alt="Project Cargo" loading="lazy" /></div>
             <div class="feat-body"><div class="feat-service">Heavy Lift</div><h4>Project & OOG Cargo</h4><p>Oversized, overweight, and out-of-gauge cargo. Survey, route planning, permits.</p><div class="feat-footer"><div class="feat-eta">Custom<span>Route survey included</span></div><a href="#" class="feat-add">+</a></div></div>
           </div>
         </div>
@@ -1535,15 +1615,17 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
   <!-- ══════════════════════════════════════════
        WHY LOGIFLOW
+       Main: 750w q=65 WebP ≈ 48KB
+       Accent: 360w q=62 WebP ≈ 18KB
   ══════════════════════════════════════════ -->
   <section class="section section-alt">
     <div class="container why-inner">
       <div class="why-media" data-aos="fade-right">
         <div class="why-img-main">
-          <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=900&q=72&fm=webp&fit=crop&crop=center" alt="Road freight logistics fleet" loading="lazy" />
+          <img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1601584115197-04ecc0da31d7&w=720&output=webp&q=62&fit=cover" alt="Road freight logistics fleet" loading="lazy" />
         </div>
         <div class="why-img-accent">
-          <img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=400&q=72&fm=webp&fit=crop&crop=center" alt="Warehouse" loading="lazy" />
+          <img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1553413077-190dd305871c&w=340&output=webp&q=60&fit=cover" alt="Warehouse" loading="lazy" />
         </div>
         <div class="why-float-card">
           <div class="wfc-num">99<span>%</span></div>
@@ -1664,6 +1746,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
   <!-- ══════════════════════════════════════════
        TESTIMONIALS
+       Image: 680w q=65 WebP ≈ 45KB
   ══════════════════════════════════════════ -->
   <section class="section testimonials">
     <div class="container">
@@ -1673,7 +1756,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
       </div>
       <div class="testi-layout">
         <div class="testi-img-col" data-aos="fade-right">
-          <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=840&q=72&fm=webp&fit=crop&crop=center" alt="Container ship at port" loading="lazy" />
+          <img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1578575437130-527eed3abbec&w=660&output=webp&q=62&fit=cover" alt="Container ship at port" loading="lazy" />
         </div>
         <div data-aos="fade-left">
           <div class="testi-slides">
@@ -1770,6 +1853,8 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
   <!-- ══════════════════════════════════════════
        GALLERY
+       All 7 images: 400w q=62 WebP ≈ 18–25KB each
+       Diverse subjects: truck, warehouse, plane, ship, truck2, van, aerial
   ══════════════════════════════════════════ -->
   <section class="section" style="padding-bottom:clamp(56px,8vw,90px)">
     <div class="container">
@@ -1778,13 +1863,13 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
         <h2 class="section-title">From Our <em style="font-style:italic">Fleet</em> to Your Feed</h2>
       </div>
       <div class="gallery-grid">
-        <div class="gal-item"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Road Freight" loading="lazy" /><div class="gal-hover">📷</div></div>
-        <div class="gal-item"><img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Warehouse" loading="lazy" /><div class="gal-hover">📷</div></div>
-        <div class="gal-item"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Air Cargo" loading="lazy" /><div class="gal-hover">📷</div></div>
-        <div class="gal-item"><img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Ocean Freight" loading="lazy" /><div class="gal-hover">📷</div></div>
-        <div class="gal-item"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Operations" loading="lazy" /><div class="gal-hover">📷</div></div>
-        <div class="gal-item"><img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Last Mile" loading="lazy" /><div class="gal-hover">📷</div></div>
-        <div class="gal-item"><img src="https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=500&q=72&fm=webp&fit=crop&crop=center" alt="Network" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d&w=380&output=webp&q=58&fit=cover" alt="Road Freight" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1553413077-190dd305871c&w=380&output=webp&q=58&fit=cover" alt="Warehouse" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1436491865332-7a61a109cc05&w=380&output=webp&q=58&fit=cover" alt="Air Cargo" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1578575437130-527eed3abbec&w=380&output=webp&q=58&fit=cover" alt="Ocean Freight" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d&w=380&output=webp&q=58&fit=cover" alt="Operations" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1566576912321-d58ddd7a6088&w=380&output=webp&q=58&fit=cover" alt="Last Mile" loading="lazy" /><div class="gal-hover">📷</div></div>
+        <div class="gal-item"><img src="https://wsrv.nl/?url=https://images.unsplash.com/photo-1494412651409-8963ce7935a7&w=380&output=webp&q=58&fit=cover" alt="Network" loading="lazy" /><div class="gal-hover">📷</div></div>
       </div>
     </div>
   </section>
@@ -1818,8 +1903,8 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
         <p>Get a custom quote in under 2 minutes — no commitment required.</p>
       </div>
       <div class="cta-actions" data-aos="fade-left">
-        <a href="#" class="btn-primary" style="background:#fff;color:var(--orange-dk)">Get Free Quote →</a>
-        <a href="#" class="btn-secondary" style="color:#fff;border-color:rgba(255,255,255,0.45)">Track Shipment</a>
+        <a href="contact.html" class="btn-primary" style="background:#fff;color:var(--orange-dk)">Get Free Quote →</a>
+        <a href="contact.html" class="btn-secondary" style="color:#fff;border-color:rgba(255,255,255,0.45)">Track Shipment</a>
       </div>
     </div>
   </div>
@@ -1924,7 +2009,6 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
     menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setTimeout(close, 100)));
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && menu.classList.contains('open')) close(); });
 
-    // Swipe-right to close
     let sx = 0;
     const panel = menu.querySelector('.mobile-menu-panel');
     if (panel) {
