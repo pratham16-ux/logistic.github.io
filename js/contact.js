@@ -1,60 +1,69 @@
-/* ── CONTACT PAGE JS ── */
+/* ══════════════════════════════════════
+   contact.js — FAQ + Form
+   Place this file in your js/ folder
+══════════════════════════════════════ */
 
-document.addEventListener('DOMContentLoaded', () => {
+/* ── FAQ ACCORDION ── */
+function toggleFaq(btn) {
+  var item   = btn.parentElement;
+  var isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(function(f) {
+    f.classList.remove('open');
+  });
+  if (!isOpen) item.classList.add('open');
+}
 
-  /* ── FAQ Accordion ── */
-  const faqItems = document.querySelectorAll('.faq-item');
-  faqItems.forEach(item => {
-    const btn = item.querySelector('.faq-q');
-    if (btn) {
-      btn.addEventListener('click', () => {
-        const isOpen = item.classList.contains('open');
-        // Close all
-        faqItems.forEach(f => f.classList.remove('open'));
-        // Toggle current
-        if (!isOpen) item.classList.add('open');
-      });
+/* ── FORM SUBMISSION ── */
+function handleContactSubmit() {
+  var fields  = ['fname', 'lname', 'email', 'origin', 'dest'];
+  var errorEl = document.getElementById('formError');
+  var valid   = true;
+
+  // Clear previous error states
+  fields.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) { el.style.borderColor = ''; el.style.background = ''; }
+  });
+  if (errorEl) errorEl.style.display = 'none';
+
+  // Validate required fields
+  fields.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && !el.value.trim()) {
+      el.style.borderColor = '#ef4444';
+      el.style.background  = 'rgba(239,68,68,0.04)';
+      el.addEventListener('input', function() {
+        el.style.borderColor = '';
+        el.style.background  = '';
+      }, { once: true });
+      valid = false;
     }
   });
 
-  /* ── Form Submit ── */
-  const form    = document.getElementById('contactForm');
-  const success = document.getElementById('formSuccess');
-  const submitBtn = document.getElementById('submitBtn');
-  const submitText = document.getElementById('submitText');
-
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-
-      // Basic validation
-      let valid = true;
-      ['fname','lname','email','origin','dest'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el && !el.value.trim()) {
-          el.classList.add('error');
-          el.addEventListener('input', () => el.classList.remove('error'), { once: true });
-          valid = false;
-        }
-      });
-
-      // Email format
-      const email = document.getElementById('email');
-      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
-        email.classList.add('error');
-        valid = false;
-      }
-
-      if (!valid) return;
-
-      // Simulate submission
-      submitText.textContent = 'Sending...';
-      submitBtn.disabled = true;
-
-      setTimeout(() => {
-        form.style.display = 'none';
-        success.classList.add('visible');
-      }, 1200);
-    });
+  // Email format
+  var emailEl = document.getElementById('email');
+  if (emailEl && emailEl.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)) {
+    emailEl.style.borderColor = '#ef4444';
+    valid = false;
   }
-});
+
+  if (!valid) {
+    if (errorEl) errorEl.style.display = 'block';
+    var firstBad = document.querySelector('#contactForm [style*="ef4444"]');
+    if (firstBad) firstBad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  // Submit
+  var btn  = document.getElementById('submitBtn');
+  var text = document.getElementById('submitText');
+  if (text) text.textContent = 'Sending…';
+  if (btn)  btn.disabled = true;
+
+  setTimeout(function() {
+    var form    = document.getElementById('contactForm');
+    var success = document.getElementById('formSuccess');
+    if (form)    form.style.display = 'none';
+    if (success) success.classList.add('visible');
+  }, 1200);
+}
