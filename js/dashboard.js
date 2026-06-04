@@ -266,7 +266,7 @@ function initLogout() {
   if (btn) {
     btn.addEventListener('click', function() {
       sessionStorage.clear();
-      window.location.href = 'login.html';
+      window.location.href = 'index.html';
     });
   }
 }
