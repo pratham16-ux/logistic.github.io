@@ -231,3 +231,14 @@ function initShipmentMap() {
   /* — Trigger a resize so Leaflet recalculates tile layout — */
   setTimeout(() => shipmentMap && shipmentMap.invalidateSize(), 100);
 }
+
+document.getElementById("trackBtn").addEventListener("click", function () {
+    const input = document.getElementById("trackingInput");
+
+    if (!input.value.trim()) {
+        input.reportValidity();
+        return;
+    }
+
+    document.getElementById("trackResult").style.display = "block";
+});
