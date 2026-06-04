@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account — Stackly Transport</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+    /* ── SIGNUP PAGE ── */
+    body { background: var(--ivory); min-height: 100vh; display: flex; flex-direction: column; }
+
+    .signup-page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* ── LEFT PANEL ── */
+    .signup-left {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 56px;
+      background: var(--steel-dk);
+    }
+    .signup-left-bg {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1200&fm=webp&q=70');
+      background-size: cover; background-position: center;
+      opacity: 0.32;
+    }
+    .signup-left-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, rgba(232,99,26,0.6) 0%, rgba(26,49,86,0.72) 100%);
+    }
+    .signup-left-content { position: relative; z-index: 2; color: #fff; }
+    .signup-brand { margin-bottom: 48px; }
+    .signup-brand img {
+      height: 68px; width: auto;
+      filter: brightness(0) saturate(100%) invert(42%) sepia(85%) saturate(600%) hue-rotate(10deg) brightness(95%) contrast(105%);
+    }
+    .signup-tagline {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 3.5vw, 50px);
+      font-weight: 800; line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 20px;
+    }
+    .signup-tagline span { color: var(--orange-lt); }
+    .signup-desc {
+      font-size: 15px; color: rgba(255,255,255,0.75);
+      line-height: 1.75; max-width: 380px; margin-bottom: 40px;
+    }
+    .signup-perks { display: flex; flex-direction: column; gap: 16px; }
+    .perk-item {
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .perk-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(255,255,255,0.12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .perk-text strong {
+      display: block; font-family: var(--font-display);
+      font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 2px;
+    }
+    .perk-text span { font-size: 12px; color: rgba(255,255,255,0.55); line-height: 1.5; }
+
+    /* ── RIGHT PANEL ── */
+    .signup-right {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 32px;
+      background: var(--white);
+      overflow-y: auto;
+    }
+    .signup-form-wrap { width: 100%; max-width: 460px; }
+
+    .signup-header { text-align: center; margin-bottom: 32px; }
+    .signup-header h2 {
+      font-family: var(--font-display); font-size: 30px; font-weight: 800;
+      color: var(--charcoal); letter-spacing: -0.02em; margin-bottom: 8px;
+    }
+    .signup-header p { color: var(--mid-gray); font-size: 14px; }
+
+    /* Role Selector */
+    .role-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px; }
+    .role-card {
+      border: 2px solid var(--warm-tan);
+      border-radius: var(--radius-lg); padding: 22px 16px;
+      text-align: center; cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      position: relative; overflow: hidden;
+      background: var(--cream);
+    }
+    .role-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(232,99,26,0.08), rgba(43,76,126,0.05));
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .role-card:hover::before { opacity: 1; }
+    .role-card:hover { border-color: var(--orange); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(232,99,26,0.18); }
+    .role-card.selected {
+      border-color: var(--orange); background: #fff;
+      box-shadow: 0 8px 28px rgba(232,99,26,0.22);
+      transform: translateY(-2px);
+    }
+    .role-card.selected::before { opacity: 1; }
+    .role-card input[type="radio"] { display: none; }
+    .role-icon { font-size: 34px; margin-bottom: 10px; display: block; }
+    .role-title {
+      font-family: var(--font-display); font-size: 15px; font-weight: 800;
+      color: var(--charcoal); margin-bottom: 5px;
+    }
+    .role-desc { font-size: 11px; color: var(--mid-gray); line-height: 1.5; }
+    .role-card.selected .role-title { color: var(--orange); }
+    .role-badge {
+      position: absolute; top: 10px; right: 10px;
+      width: 20px; height: 20px; background: var(--orange);
+      border-radius: 50%; display: none;
+      align-items: center; justify-content: center;
+      font-size: 11px; color: #fff; font-weight: 700;
+    }
+    .role-card.selected .role-badge { display: flex; }
+
+    /* Form layout */
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    /* Form Fields */
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block; font-size: 11px; font-weight: 800;
+      font-family: var(--font-display); text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--charcoal); margin-bottom: 7px;
+    }
+    .form-group input, .form-group select {
+      width: 100%; padding: 13px 18px;
+      font-size: 15px; font-family: var(--font-body);
+      border: 2px solid var(--warm-tan);
+      border-radius: var(--radius-md);
+      background: var(--cream); color: var(--charcoal);
+      outline: none; transition: var(--transition);
+      appearance: none; -webkit-appearance: none;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--orange); background: #fff;
+      box-shadow: 0 0 0 4px rgba(232,99,26,0.1);
+    }
+    .form-group input.error, .form-group select.error { border-color: #ef4444; animation: shakeX 0.4s ease; }
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+      content: '▾'; position: absolute; right: 16px; top: 50%;
+      transform: translateY(-50%); font-size: 14px;
+      color: var(--mid-gray); pointer-events: none;
+    }
+
+    .password-wrap { position: relative; }
+    .password-wrap input { padding-right: 52px; }
+    .toggle-pw {
+      position: absolute; right: 16px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px; cursor: pointer; opacity: 0.5;
+      transition: opacity 0.2s; user-select: none;
+    }
+    .toggle-pw:hover { opacity: 1; }
+
+    /* Password strength */
+    .pw-strength { margin-top: 8px; }
+    .pw-bars { display: flex; gap: 4px; margin-bottom: 4px; }
+    .pw-bar {
+      flex: 1; height: 4px; border-radius: 4px;
+      background: var(--warm-tan); transition: background 0.3s ease;
+    }
+    .pw-bar.weak   { background: #ef4444; }
+    .pw-bar.fair   { background: #f59e0b; }
+    .pw-bar.good   { background: #10b981; }
+    .pw-bar.strong { background: #059669; }
+    .pw-label { font-size: 11px; color: var(--mid-gray); font-family: var(--font-display); font-weight: 700; }
+
+    /* Terms checkbox */
+    .terms-group {
+      display: flex; align-items: flex-start; gap: 10px;
+      margin-bottom: 20px; padding: 14px 16px;
+      background: var(--cream); border-radius: var(--radius-md);
+      border: 2px solid var(--warm-tan); cursor: pointer;
+      transition: var(--transition);
+    }
+    .terms-group:hover { border-color: var(--orange); }
+    .terms-group input[type="checkbox"] {
+      width: 18px; height: 18px; flex-shrink: 0;
+      border: 2px solid var(--warm-tan); border-radius: 4px;
+      appearance: none; -webkit-appearance: none;
+      background: #fff; cursor: pointer; margin-top: 1px;
+      transition: var(--transition); position: relative;
+    }
+    .terms-group input[type="checkbox"]:checked {
+      background: var(--orange); border-color: var(--orange);
+    }
+    .terms-group input[type="checkbox"]:checked::after {
+      content: '✓'; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      color: #fff; font-size: 11px; font-weight: 800;
+    }
+    .terms-text { font-size: 12px; color: var(--mid-gray); line-height: 1.6; }
+    .terms-text a { color: var(--orange); font-weight: 700; }
+
+    /* Sign up button */
+    .signup-btn {
+      width: 100%; padding: 16px; font-size: 16px;
+      border-radius: var(--radius-md); justify-content: center;
+      letter-spacing: 0.04em;
+    }
+
+    /* Error / Success */
+    .signup-error {
+      background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25);
+      border-radius: var(--radius-md); padding: 12px 16px;
+      font-size: 13px; color: #dc2626;
+      margin-bottom: 18px; display: none; text-align: center;
+    }
+    .signup-error.show { display: block; animation: slideUp 0.3s ease; }
+
+    /* Login redirect */
+    .signup-footer { text-align: center; margin-top: 20px; font-size: 13px; color: var(--mid-gray); }
+    .signup-footer a { color: var(--orange); font-weight: 700; }
+
+    /* Divider */
+    .form-divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 4px 0 16px; font-size: 11px;
+      font-family: var(--font-display); font-weight: 700;
+      color: var(--lt-gray); letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .form-divider::before, .form-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--warm-tan);
+    }
+
+    /* Loading spinner */
+    .spin {
+      display: inline-block; width: 18px; height: 18px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    /* Success overlay */
+    .signup-success {
+      display: none; flex-direction: column; align-items: center;
+      text-align: center; padding: 56px 24px;
+    }
+    .signup-success.visible { display: flex; }
+    .success-icon {
+      width: 80px; height: 80px; background: #10b981; color: #fff;
+      border-radius: 50%; font-size: 36px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px;
+      animation: bounceIn 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    .signup-success h3 {
+      font-family: var(--font-display); font-size: 26px; font-weight: 800;
+      color: var(--charcoal); margin-bottom: 10px;
+    }
+    .signup-success p { color: var(--mid-gray); font-size: 15px; line-height: 1.7; max-width: 320px; margin-bottom: 28px; }
+    .redirect-bar {
+      width: 100%; background: var(--cream); border-radius: var(--radius-md);
+      height: 6px; overflow: hidden; margin-bottom: 20px; max-width: 280px;
+    }
+    .redirect-fill {
+      height: 100%; background: var(--orange); border-radius: var(--radius-md);
+      width: 0%; transition: width 2.5s linear;
+    }
+    .redirect-fill.go { width: 100%; }
+
+    /* Keyframes */
+    @keyframes slideUp  { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes shakeX   { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+    @keyframes spin     { to { transform: rotate(360deg); } }
+    @keyframes bounceIn { 0%{opacity:0;transform:scale(0.3)} 50%{transform:scale(1.05)} 70%{transform:scale(0.95)} 100%{opacity:1;transform:scale(1)} }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .signup-page { grid-template-columns: 1fr; }
+      .signup-left { display: none; }
+      .signup-right { padding: 40px 24px; align-items: flex-start; }
+    }
+    @media (max-width: 540px) {
+      .signup-form-wrap { max-width: 100%; }
+      .form-row-2 { grid-template-columns: 1fr; gap: 0; }
+      .role-selector { gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+<div class="signup-page">
+
+  <!-- LEFT: Brand Panel -->
+  <div class="signup-left">
+    <div class="signup-left-bg"></div>
+    <div class="signup-left-overlay"></div>
+    <div class="signup-left-content">
+      <div class="signup-brand">
+        <a href="index.html">
+          <img src="https://wsrv.nl/?url=https://snabsolutions.in/wp-content/uploads/2026/02/stackly-snab-solutions.png&w=300&h=100&output=webp&q=80&fit=inside" alt="Stackly" />
+        </a>
+      </div>
+      <h1 class="signup-tagline">Join the Future<br>of <span>Global Freight.</span></h1>
+      <p class="signup-desc">Get instant access to real-time tracking, smart routing, and full supply chain visibility — all from one platform.</p>
+      <div class="signup-perks">
+        <div class="perk-item">
+          <div class="perk-icon">🚀</div>
+          <div class="perk-text">
+            <strong>Instant Activation</strong>
+            <span>Your account is live within minutes. No waiting period.</span>
+          </div>
+        </div>
+        <div class="perk-item">
+          <div class="perk-icon">📡</div>
+          <div class="perk-text">
+            <strong>Live Shipment Tracking</strong>
+            <span>GPS-level precision updated every 5 minutes, 24/7.</span>
+          </div>
+        </div>
+        <div class="perk-item">
+          <div class="perk-icon">🔒</div>
+          <div class="perk-text">
+            <strong>Enterprise-Grade Security</strong>
+            <span>SOC 2 Type II certified. Your data is always protected.</span>
+          </div>
+        </div>
+        <div class="perk-item">
+          <div class="perk-icon">🌍</div>
+          <div class="perk-text">
+            <strong>180+ Countries Covered</strong>
+            <span>Road, air, ocean — every lane, every mode, one login.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Sign Up Form -->
+  <div class="signup-right">
+    <div class="signup-form-wrap">
+
+      <!-- Form view -->
+      <div id="formView">
+        <div class="signup-header">
+          <h2>Create Account ✨</h2>
+          <p>Fill in your details to get started in minutes</p>
+        </div>
+
+        <!-- Role Selection -->
+        <div class="role-selector" id="roleSelector">
+          <label class="role-card" id="ownerCard">
+            <input type="radio" name="role" value="owner" />
+            <span class="role-badge">✓</span>
+            <span class="role-icon">🏢</span>
+            <div class="role-title">Owner</div>
+            <div class="role-desc">Manage fleet, shipments & analytics</div>
+          </label>
+          <label class="role-card" id="customerCard">
+            <input type="radio" name="role" value="customer" />
+            <span class="role-badge">✓</span>
+            <span class="role-icon">📦</span>
+            <div class="role-title">Customer</div>
+            <div class="role-desc">Track orders & manage deliveries</div>
+          </label>
+        </div>
+
+        <!-- Error -->
+        <div class="signup-error" id="signupError">Please fill in all required fields.</div>
+
+        <!-- Name row -->
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" placeholder="Rajesh" autocomplete="given-name" />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" placeholder="Nair" autocomplete="family-name" />
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label for="signupEmail">Work Email</label>
+          <input type="email" id="signupEmail" placeholder="you@company.com" autocomplete="email" />
+        </div>
+
+        <!-- Phone + Company -->
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" placeholder="+91 98765 43210" autocomplete="tel" />
+          </div>
+          <div class="form-group">
+            <label for="company">Company Name</label>
+            <input type="text" id="company" placeholder="Acme Logistics" autocomplete="organization" />
+          </div>
+        </div>
+
+        <!-- Country -->
+        <div class="form-group">
+          <label for="country">Country</label>
+          <div class="select-wrap">
+            <select id="country">
+              <option value="" disabled selected>Select your country</option>
+              <option>India</option>
+              <option>United States</option>
+              <option>United Kingdom</option>
+              <option>Germany</option>
+              <option>United Arab Emirates</option>
+              <option>Singapore</option>
+              <option>Australia</option>
+              <option>Canada</option>
+              <option>France</option>
+              <option>Netherlands</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-divider">Security</div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <div class="password-wrap">
+            <input type="password" id="signupPassword" placeholder="Create a strong password" autocomplete="new-password" oninput="checkStrength(this.value)" />
+            <span class="toggle-pw" id="togglePw1" data-target="signupPassword">👁️</span>
+          </div>
+          <div class="pw-strength" id="pwStrength" style="display:none">
+            <div class="pw-bars">
+              <div class="pw-bar" id="bar1"></div>
+              <div class="pw-bar" id="bar2"></div>
+              <div class="pw-bar" id="bar3"></div>
+              <div class="pw-bar" id="bar4"></div>
+            </div>
+            <span class="pw-label" id="pwLabel">Too weak</span>
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <div class="password-wrap">
+            <input type="password" id="confirmPassword" placeholder="Re-enter your password" autocomplete="new-password" />
+            <span class="toggle-pw" id="togglePw2" data-target="confirmPassword">👁️</span>
+          </div>
+        </div>
+
+        <!-- Terms -->
+        <label class="terms-group">
+          <input type="checkbox" id="termsCheck" />
+          <span class="terms-text">
+            I agree to Stackly's <a href="404.html">Terms of Service</a> and <a href="404.html">Privacy Policy</a>. I consent to receiving shipment updates and platform notifications.
+          </span>
+        </label>
+
+        <!-- Submit -->
+        <button class="btn-primary signup-btn" id="signupBtn" onclick="handleSignup()">
+          <span id="signupBtnText">Create Account →</span>
+        </button>
+
+        <div class="signup-footer">
+          Already have an account? <a href="login.html">Sign in →</a>
+        </div>
+      </div>
+
+      <!-- Success view -->
+      <div class="signup-success" id="successView">
+        <div class="success-icon">✓</div>
+        <h3>Account Created!</h3>
+        <p>Welcome to Stackly. Your account is ready. Redirecting you to the sign-in page…</p>
+        <div class="redirect-bar">
+          <div class="redirect-fill" id="redirectFill"></div>
+        </div>
+        <a href="login.html" class="btn-primary" style="justify-content:center">Go to Sign In →</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  let selectedRole = null;
+
+  /* ── Role card selection ── */
+  document.querySelectorAll('.role-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedRole = card.querySelector('input[type="radio"]').value;
+    });
+  });
+
+  /* ── Password visibility toggles ── */
+  document.querySelectorAll('.toggle-pw').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = document.getElementById(btn.dataset.target);
+      if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+      else { input.type = 'password'; btn.textContent = '👁️'; }
+    });
+  });
+
+  /* ── Password strength ── */
+  function checkStrength(val) {
+    const bars  = ['bar1','bar2','bar3','bar4'];
+    const wrap  = document.getElementById('pwStrength');
+    const label = document.getElementById('pwLabel');
+
+    if (!val) { wrap.style.display = 'none'; return; }
+    wrap.style.display = 'block';
+
+    let score = 0;
+    if (val.length >= 8)             score++;
+    if (/[A-Z]/.test(val))           score++;
+    if (/[0-9]/.test(val))           score++;
+    if (/[^A-Za-z0-9]/.test(val))   score++;
+
+    const classes = ['', 'weak', 'fair', 'good', 'strong'];
+    const labels  = ['', 'Too weak', 'Fair', 'Good', 'Strong 💪'];
+    const colors  = ['', '#ef4444', '#f59e0b', '#10b981', '#059669'];
+
+    bars.forEach((id, i) => {
+      const el = document.getElementById(id);
+      el.className = 'pw-bar';
+      if (i < score) el.classList.add(classes[score]);
+    });
+    label.textContent = labels[score] || '';
+    label.style.color = colors[score];
+  }
+
+  /* ── Validation helper ── */
+  function showError(msg) {
+    const err = document.getElementById('signupError');
+    err.textContent = msg;
+    err.classList.add('show');
+    setTimeout(() => err.classList.remove('show'), 4000);
+  }
+  function markError(id) {
+    const el = document.getElementById(id);
+    if (el) { el.classList.add('error'); setTimeout(() => el.classList.remove('error'), 2000); }
+  }
+
+  /* ── Main signup handler ── */
+  function handleSignup() {
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName  = document.getElementById('lastName').value.trim();
+    const email     = document.getElementById('signupEmail').value.trim().toLowerCase();
+    const phone     = document.getElementById('phone').value.trim();
+    const company   = document.getElementById('company').value.trim();
+    const country   = document.getElementById('country').value;
+    const password  = document.getElementById('signupPassword').value;
+    const confirm   = document.getElementById('confirmPassword').value;
+    const terms     = document.getElementById('termsCheck').checked;
+    const btn       = document.getElementById('signupBtn');
+    const btnText   = document.getElementById('signupBtnText');
+
+    // Validations
+    if (!selectedRole) {
+      showError('Please select your account type (Owner or Customer).'); return;
+    }
+    if (!firstName) { markError('firstName'); showError('Please enter your first name.'); return; }
+    if (!lastName)  { markError('lastName');  showError('Please enter your last name.'); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      markError('signupEmail'); showError('Please enter a valid email address.'); return;
+    }
+    if (!phone)   { markError('phone');   showError('Please enter your phone number.'); return; }
+    if (!company) { markError('company'); showError('Please enter your company name.'); return; }
+    if (!country) { markError('country'); showError('Please select your country.'); return; }
+    if (password.length < 8) {
+      markError('signupPassword');
+      showError('Password must be at least 8 characters long.'); return;
+    }
+    if (password !== confirm) {
+      markError('confirmPassword');
+      showError('Passwords do not match. Please try again.'); return;
+    }
+    if (!terms) {
+      showError('Please accept the Terms of Service and Privacy Policy to continue.'); return;
+    }
+
+    // Save to session
+    sessionStorage.setItem('lf_role',    selectedRole);
+    sessionStorage.setItem('lf_email',   email);
+    sessionStorage.setItem('lf_name',    `${firstName} ${lastName}`);
+    sessionStorage.setItem('lf_company', company);
+
+    // Loading state
+    btnText.innerHTML = '<span class="spin"></span> Creating account…';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      // Show success view
+      document.getElementById('formView').style.display = 'none';
+      const success = document.getElementById('successView');
+      success.classList.add('visible');
+
+      // Start redirect progress bar
+      setTimeout(() => {
+        document.getElementById('redirectFill').classList.add('go');
+      }, 80);
+
+      // Redirect after 2.8s
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 2800);
+    }, 900);
+  }
+
+  /* ── Enter key support ── */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && document.getElementById('formView').style.display !== 'none') {
+      handleSignup();
+    }
+  });
+</script>
+</body>
+</html>
